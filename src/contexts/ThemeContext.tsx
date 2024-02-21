@@ -1,8 +1,15 @@
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { createContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext({
   darkMode: false,
   toggleDarkMode: () => {},
+});
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "Poppins, sans-serif",
+  },
 });
 
 function ThemeContextProvider({ children }: { children: React.ReactNode }) {
@@ -16,7 +23,10 @@ function ThemeContextProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
-      {children}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
     </ThemeContext.Provider>
   );
 }
