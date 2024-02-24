@@ -3,20 +3,28 @@ import {
   RiMenu2Line as MenuIcon,
   RiMoneyDollarCircleLine as PaymentsIcon,
   RiPlayList2Line as PlaylistManagementIcon,
+  RiAccountCircleLine as ProfileIcon,
   RiFileList2Line as ReportsIcon,
+  RiSettingsLine as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
-  RiFolder2Line as VideoManagementIcon,
+  RiFolderVideoLine as VideoManagementIcon,
 } from "react-icons/ri";
-import { IconButton, ListItem, useTheme } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import AccountMenu from "../menu/AccountMenu";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
 
@@ -57,6 +65,21 @@ const navItems = [
       },
     ],
   },
+  {
+    group: "Account",
+    items: [
+      {
+        link: "/profile",
+        text: "Profile Details",
+        icon: ProfileIcon,
+      },
+      {
+        link: "/account-settings",
+        text: "Settings",
+        icon: SettingsIcon,
+      },
+    ],
+  },
 ];
 
 const drawerWidth = 300;
@@ -74,7 +97,7 @@ function DrawerContent() {
   };
 
   return (
-    <Box className="flex flex-col gap-6">
+    <Box className="flex flex-col gap-6 h-screen">
       <Typography variant="h5" pl={4} py={4} fontWeight={600}>
         Of Substance.
       </Typography>
@@ -134,6 +157,14 @@ function DrawerContent() {
           </List>
         </div>
       ))}
+
+      <Button
+        variant="contained"
+        size="large"
+        sx={{ margin: 4, marginTop: "auto" }}
+      >
+        LOGOUT
+      </Button>
     </Box>
   );
 }
@@ -173,7 +204,13 @@ export default function AdminLayout({
           backdropFilter: "blur(6px)",
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            width: "100%",
+            maxWidth: "1200px",
+            mx: "auto",
+          }}
+        >
           <IconButton
             color="primary"
             edge="start"
@@ -182,6 +219,21 @@ export default function AdminLayout({
           >
             <MenuIcon />
           </IconButton>
+
+          <Typography
+            variant="h5"
+            fontWeight={600}
+            color={"primary"}
+            sx={{
+              display: { xs: "block", sm: "none" },
+            }}
+          >
+            Of Substance.
+          </Typography>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <AccountMenu />
         </Toolbar>
       </AppBar>
       <Box
@@ -226,7 +278,6 @@ export default function AdminLayout({
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: "100vh",
           overflow: "auto",
@@ -234,7 +285,16 @@ export default function AdminLayout({
         }}
       >
         <Toolbar />
-        {children}
+        <Box
+          p={3}
+          sx={{
+            width: "100%",
+            maxWidth: "1200px",
+            mx: "auto",
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Box>
   );

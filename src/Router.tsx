@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
+import ContextWrapper from "./contexts/ContextWrapper";
 import ErrorPage from "./pages/ErrorPage";
 import notFoundImg from "./assets/notFound.svg";
 
@@ -35,6 +36,18 @@ function Router() {
               lazy: async () => ({
                 Component: (await import("./pages/VideoManagementPage"))
                   .default,
+              }),
+            },
+            {
+              path: "video-management/upload",
+              lazy: async () => ({
+                Component: (await import("./pages/VideoUploadPage")).default,
+              }),
+            },
+            {
+              path: "video-management/edit/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/VideoEditPage")).default,
               }),
             },
             {
@@ -88,11 +101,13 @@ function Router() {
     {
       path: "*",
       element: (
-        <ErrorPage
-          image={notFoundImg}
-          title="Sorry! We couldn't find the page you are looking for."
-          description="Please, make sure you have typed the correct URL."
-        />
+        <ContextWrapper>
+          <ErrorPage
+            image={notFoundImg}
+            title="Sorry! We couldn't find the page you are looking for."
+            description="Please, make sure you have typed the correct URL."
+          />
+        </ContextWrapper>
       ),
     },
   ]);

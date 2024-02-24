@@ -1,0 +1,100 @@
+import { Chip, Typography } from "@mui/material";
+
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import { RiLogoutCircleRLine as LogoutIcon } from "react-icons/ri";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { useState } from "react";
+
+export default function AccountMenu() {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    <>
+      <Chip
+        avatar={
+          <Avatar src="https://uko-react.vercel.app/static/avatar/001-man.svg" />
+        }
+        label="John Doe"
+        clickable
+        onClick={handleClick}
+      />
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        MenuListProps={{
+          dense: true,
+          className: "text-slate-600",
+        }}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&::before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <div className="flex gap-2 px-4 pb-4 pt-2 items-center">
+          <Avatar
+            alt="John Doe"
+            src="https://uko-react.vercel.app/static/avatar/001-man.svg"
+          />
+
+          <div className="text-slate-500 min-w-40">
+            <Typography fontWeight={600} fontSize={14}>
+              John Doe
+            </Typography>
+            <Typography fontSize={12}>john.doe@email.com</Typography>
+          </div>
+        </div>
+
+        <Divider />
+
+        <MenuItem onClick={handleClose}>Profile & Account</MenuItem>
+        <MenuItem onClick={handleClose}>Account Settings</MenuItem>
+
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <LogoutIcon size={18} />
+          </ListItemIcon>
+          Logout
+        </MenuItem>
+      </Menu>
+    </>
+  );
+}
