@@ -37,12 +37,14 @@ export default function AccountMenu() {
           dense: true,
           className: "text-slate-600",
         }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         slotProps={{
           paper: {
             elevation: 0,
             sx: {
               overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.2))",
               mt: 1.5,
               "& .MuiAvatar-root": {
                 width: 32,
@@ -65,10 +67,8 @@ export default function AccountMenu() {
             },
           },
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <div className="flex gap-2 px-4 pb-4 pt-2 items-center">
+        <MenuItem>
           <Avatar
             alt="John Doe"
             src="https://uko-react.vercel.app/static/avatar/001-man.svg"
@@ -80,7 +80,7 @@ export default function AccountMenu() {
             </Typography>
             <Typography fontSize={12}>john.doe@email.com</Typography>
           </div>
-        </div>
+        </MenuItem>
 
         <Divider />
 
@@ -88,9 +88,10 @@ export default function AccountMenu() {
         <MenuItem onClick={handleClose}>Account Settings</MenuItem>
 
         <Divider />
+
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <LogoutIcon size={18} />
+            <LogoutIcon size={18} className="text-slate-600" />
           </ListItemIcon>
           Logout
         </MenuItem>

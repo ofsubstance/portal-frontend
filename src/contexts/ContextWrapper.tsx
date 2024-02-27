@@ -1,4 +1,4 @@
-import { ThemeContextProvider } from "./ThemeContext";
+import { ThemeContextProvider } from "@/contexts/ThemeContext";
 
 function ContextWrapper({ children }: { children: React.ReactNode }) {
   return <ThemeContextProvider>{children}</ThemeContextProvider>;

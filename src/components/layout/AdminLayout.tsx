@@ -1,11 +1,11 @@
 import {
   RiPieChart2Line as AnalyticsIcon,
   RiMenu2Line as MenuIcon,
+  RiDashboardLine as OverviewIcon,
   RiMoneyDollarCircleLine as PaymentsIcon,
   RiPlayList2Line as PlaylistManagementIcon,
   RiAccountCircleLine as ProfileIcon,
-  RiFileList2Line as ReportsIcon,
-  RiSettingsLine as SettingsIcon,
+  RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
 } from "react-icons/ri";
@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import AccountMenu from "../menu/AccountMenu";
+import AccountMenu from "@/components/menu/AccountMenu";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
 
@@ -34,8 +34,8 @@ const navItems = [
     items: [
       {
         link: "/",
-        text: "Reports",
-        icon: ReportsIcon,
+        text: "Overview",
+        icon: OverviewIcon,
       },
       { link: "/analytics", text: "Analytics", icon: AnalyticsIcon },
     ],

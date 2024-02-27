@@ -1,5 +1,6 @@
 import {
   Button,
+  Grid,
   Pagination,
   Paper,
   Tab,
@@ -7,11 +8,10 @@ import {
   Typography,
 } from "@mui/material";
 
-import { RiVideoAddLine as AddIcon } from "react-icons/ri";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import VideoItem from "../components/videoManagement/VideoItem";
+import { RiVideoAddLine as AddVideoIcon } from "react-icons/ri";
+import VideoItem from "@/components/videoManagement/VideoItem";
 import { useNavigate } from "react-router-dom";
-import videoManagementImg from "../assets/videoManagement.svg";
+import videoManagementImg from "@/assets/videoManagement.svg";
 
 function VideoManagementPage() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ function VideoManagementPage() {
 
           <Button
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={<AddVideoIcon />}
             disableElevation
             size="large"
             fullWidth
@@ -58,6 +58,9 @@ function VideoManagementPage() {
             onChange={() => {}}
             indicatorColor="primary"
             textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
           >
             <Tab value="1" label="Upload Date" />
             <Tab value="2" label="Title" />
@@ -65,18 +68,18 @@ function VideoManagementPage() {
           </Tabs>
         </div>
 
-        <Grid2
+        <Grid
           container
           rowSpacing={5}
           columnSpacing={2}
           columns={{ md: 2, lg: 3, xs: 1 }}
         >
           {Array.from(Array(12)).map((_, index) => (
-            <Grid2 xs={1} key={index}>
+            <Grid item xs={1} key={index}>
               <VideoItem />
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
 
         <Pagination
           count={10}

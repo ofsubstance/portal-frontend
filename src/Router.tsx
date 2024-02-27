@@ -16,58 +16,86 @@ function Router() {
         {
           path: "/",
           lazy: async () => ({
-            Component: (await import("./pages/AdminLandingPage")).default,
+            Component: (await import("./pages/admin/AdminLandingPage")).default,
           }),
           children: [
             {
               index: true,
               lazy: async () => ({
-                Component: (await import("./pages/DashboardPage")).default,
+                Component: (await import("./pages/admin/DashboardPage"))
+                  .default,
               }),
             },
             {
               path: "analytics",
               lazy: async () => ({
-                Component: (await import("./pages/AnalyticsPage")).default,
+                Component: (await import("./pages/admin/AnalyticsPage"))
+                  .default,
               }),
             },
             {
               path: "video-management",
               lazy: async () => ({
-                Component: (await import("./pages/VideoManagementPage"))
+                Component: (await import("./pages/admin/VideoManagementPage"))
                   .default,
               }),
             },
             {
               path: "video-management/upload",
               lazy: async () => ({
-                Component: (await import("./pages/VideoUploadPage")).default,
+                Component: (await import("./pages/admin/VideoUploadPage"))
+                  .default,
               }),
             },
             {
               path: "video-management/edit/:id",
               lazy: async () => ({
-                Component: (await import("./pages/VideoEditPage")).default,
+                Component: (await import("./pages/admin/VideoEditPage"))
+                  .default,
+              }),
+            },
+            {
+              path: "video-management/details/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/admin/VideoDetailsPage"))
+                  .default,
               }),
             },
             {
               path: "playlist-management",
               lazy: async () => ({
-                Component: (await import("./pages/PlaylistManagementPage"))
+                Component: (
+                  await import("./pages/admin/PlaylistManagementPage")
+                ).default,
+              }),
+            },
+            {
+              path: "playlist-management/create",
+              lazy: async () => ({
+                Component: (await import("./pages/admin/PlaylistCreatePage"))
+                  .default,
+              }),
+            },
+            {
+              path: "playlist-management/edit/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/admin/PlaylistEditPage"))
                   .default,
               }),
             },
             {
               path: "user-management",
               lazy: async () => ({
-                Component: (await import("./pages/UserManagementPage")).default,
+                Component: (await import("./pages/admin/UserManagementPage"))
+                  .default,
               }),
             },
             {
               path: "payments-subscriptions",
               lazy: async () => ({
-                Component: (await import("./pages/PaymentsSubscriptionsPage"))
-                  .default,
+                Component: (
+                  await import("./pages/admin/PaymentsSubscriptionsPage")
+                ).default,
               }),
             },
           ],

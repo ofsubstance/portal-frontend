@@ -7,12 +7,12 @@ import {
   useTheme,
 } from "@mui/material";
 
-import MediaDrop from "../components/common/input/MediaDrop";
+import MediaDrop from "@/components/common/input/MediaDrop";
 import { RiVideoUploadFill as VideoIcon } from "react-icons/ri";
 
 function MetaDataSection() {
   return (
-    <Paper className="p-4 space-y-4">
+    <Paper className="w-full p-4 space-y-4">
       <Typography variant="h6" className="text-slate-500">
         Meta Data
       </Typography>
@@ -41,7 +41,7 @@ function MetaDataSection() {
 
 function DetailsSection() {
   return (
-    <Paper className="p-4 space-y-4">
+    <Paper className="w-full p-4 space-y-4">
       <Typography variant="h6" className="text-slate-500">
         Details
       </Typography>
@@ -50,28 +50,28 @@ function DetailsSection() {
         variant="outlined"
         fullWidth
         multiline
-        rows={4}
+        rows={5}
       />
       <TextField
         label="Primary Lesson"
         variant="outlined"
         fullWidth
         multiline
-        rows={4}
+        rows={5}
       />
       <TextField
         label="Theme"
         variant="outlined"
         fullWidth
         multiline
-        rows={4}
+        rows={5}
       />
       <TextField
         label="Story Impact"
         variant="outlined"
         fullWidth
         multiline
-        rows={4}
+        rows={5}
       />
     </Paper>
   );
@@ -102,7 +102,7 @@ function VideoUploadPage() {
         <DetailsSection />
       </div>
 
-      <Button variant="contained" disableElevation fullWidth>
+      <Button variant="contained" size="large" disableElevation fullWidth>
         Upload Video
       </Button>
     </div>

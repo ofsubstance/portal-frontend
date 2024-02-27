@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@mui/material";
 import { RiDeleteBin3Line as RemoveIcon } from "react-icons/ri";
-import mediaUploadImg from "../../../assets/mediaUpload.svg";
+import mediaUploadImg from "@/assets/mediaUpload.svg";
 
 interface MediaDropProps {
   maxSizeMB?: number;
@@ -31,10 +31,10 @@ function MediaPreview({ media, variant, onRemoveClick }: MediaPreviewProps) {
         <img
           src={typeof media === "string" ? media : URL.createObjectURL(media)}
           alt="preview"
-          className="object-cover h-64 w-full rounded-xl"
+          className="w-full rounded-md aspect-video object-cover "
         />
       ) : (
-        <video controls className="max-h-96 w-full rounded-md">
+        <video controls className="w-full rounded-md aspect-video">
           <source
             src={typeof media === "string" ? media : URL.createObjectURL(media)}
             type="video/mp4"

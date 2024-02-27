@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { ToastContainer, toast } from "react-toastify";
 
-import ContextWrapper from "./contexts/ContextWrapper";
+import ContextWrapper from "@/contexts/ContextWrapper";
 import { Outlet } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 

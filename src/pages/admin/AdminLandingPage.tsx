@@ -1,4 +1,4 @@
-import AdminLayout from "../components/layout/AdminLayout";
+import AdminLayout from "@/components/layout/AdminLayout";
 import { Outlet } from "react-router-dom";
 
 function AdminLandingPage() {
