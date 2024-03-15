@@ -199,9 +199,9 @@ export default function AdminLayout({
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: "rgba( 255, 255, 255, 0)",
+          backgroundColor: "rgba(255, 255, 255, 0)",
           boxShadow: "none",
-          backdropFilter: "blur(6px)",
+          backdropFilter: "blur(12px)",
         }}
       >
         <Toolbar

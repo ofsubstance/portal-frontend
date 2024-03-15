@@ -23,6 +23,7 @@ export default function AccountMenu() {
         avatar={
           <Avatar src="https://uko-react.vercel.app/static/avatar/001-man.svg" />
         }
+        color="primary"
         label="John Doe"
         clickable
         onClick={handleClick}

@@ -1,14 +1,21 @@
 import {
+  RiVideoAddLine as AddVideoIcon,
+  RiSearchLine as SearchIcon,
+} from "react-icons/ri";
+import {
   Button,
   Grid,
+  IconButton,
+  MenuItem,
   Pagination,
   Paper,
+  Select,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from "@mui/material";
 
-import { RiVideoAddLine as AddVideoIcon } from "react-icons/ri";
 import VideoItem from "@/components/videoManagement/VideoItem";
 import { useNavigate } from "react-router-dom";
 import videoManagementImg from "@/assets/videoManagement.svg";
@@ -48,10 +55,45 @@ function VideoManagementPage() {
       </Paper>
 
       <Paper className="px-8 py-4 space-y-6">
-        <div className="flex gap-5 justify-between items-center md:flex-row flex-col">
+        <div className="flex gap-5 items-center md:flex-row flex-col">
           <Typography variant="h6" fontWeight={600} className="text-slate-500">
             Video List
           </Typography>
+
+          <div className="flex items-center justify-center">
+            <Select
+              variant="outlined"
+              size="small"
+              autoWidth
+              defaultValue={"title"}
+              sx={{
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                bgcolor: "action.hover",
+              }}
+            >
+              <MenuItem value="title">Title</MenuItem>
+              <MenuItem value="genre">Genre</MenuItem>
+            </Select>
+
+            <TextField
+              variant="outlined"
+              placeholder="Search for videos"
+              size="small"
+              sx={{ maxWidth: 300 }}
+              InputProps={{
+                endAdornment: (
+                  <IconButton edge="end">
+                    <SearchIcon />
+                  </IconButton>
+                ),
+                sx: {
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                },
+              }}
+            />
+          </div>
 
           <Tabs
             value="1"
@@ -61,6 +103,11 @@ function VideoManagementPage() {
             variant="scrollable"
             scrollButtons="auto"
             allowScrollButtonsMobile
+            sx={{
+              ml: {
+                lg: "auto",
+              },
+            }}
           >
             <Tab value="1" label="Upload Date" />
             <Tab value="2" label="Title" />
@@ -71,7 +118,7 @@ function VideoManagementPage() {
         <Grid
           container
           rowSpacing={5}
-          columnSpacing={2}
+          columnSpacing={3}
           columns={{ md: 2, lg: 3, xs: 1 }}
         >
           {Array.from(Array(12)).map((_, index) => (
