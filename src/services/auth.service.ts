@@ -8,6 +8,7 @@ import {
 
 import APIUrl from "../constants/apiUrl";
 import { IResponse } from "@/dtos/response.dto";
+import axios from "axios";
 import httpClient from "../utils/httpClient";
 import storageService from "./storage.service";
 
@@ -42,6 +43,26 @@ class AuthService {
   async signout() {
     await httpClient.post(APIUrl.auth.signout());
     storageService.removeAuthData();
+  }
+
+  async socialSignin(google_access_token: string) {
+    const googleRes = await axios.get(APIUrl.auth.googleApiSignin(), {
+      headers: {
+        Authorization: `Bearer ${google_access_token}`,
+      },
+    });
+
+    const res = await httpClient.post<IResponse<SigninRes>>(
+      APIUrl.auth.socialSignin(),
+      {
+        email: googleRes.data.email,
+        name: googleRes.data.name,
+      }
+    );
+
+    storageService.setAuthData(res.data.body);
+
+    return res.data;
   }
 
   async forgotPassword(data: ForgotPasswordReq) {
