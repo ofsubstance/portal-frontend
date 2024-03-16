@@ -5,7 +5,8 @@ import {
 } from "@tanstack/react-query";
 import { ToastContainer, toast } from "react-toastify";
 
-import ContextWrapper from "@/contexts/ContextWrapper";
+import ContextProvider from "@/contexts/ContextProvider";
+import LoadingOverlay from "./components/common/loader/LoadingOverlay";
 import { Outlet } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -39,9 +40,11 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ContextWrapper>
+      <ContextProvider>
         <Outlet />
-      </ContextWrapper>
+
+        <LoadingOverlay />
+      </ContextProvider>
 
       <ToastContainer
         position={"bottom-center"}
