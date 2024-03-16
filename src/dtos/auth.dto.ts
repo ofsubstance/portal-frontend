@@ -19,3 +19,14 @@ export interface ResetPasswordReq {
   password: string;
   confirmPassword?: string;
 }
+
+export interface SigninRes {
+  access_token: string;
+  refresh_token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+}
