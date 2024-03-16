@@ -111,7 +111,6 @@ function VideoManagementPage() {
           >
             <Tab value="1" label="Upload Date" />
             <Tab value="2" label="Title" />
-            <Tab value="3" label="Duration" />
           </Tabs>
         </div>
 

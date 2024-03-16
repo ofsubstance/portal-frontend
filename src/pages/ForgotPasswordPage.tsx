@@ -1,14 +1,19 @@
 import { Button, TextField, Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 import AppLogo from "../components/common/logo/AppLogo";
 import { ForgotPasswordReq } from "@/dtos/auth.dto";
-import { Link } from "react-router-dom";
 import forgotPasswordImage from "../assets/forgotPassword.svg";
 import { forgotPasswordValidation } from "@/validators/auth.validator";
+import { toast } from "react-toastify";
+import useAuthAction from "@/hooks/useAuthAction";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 function ForgotPasswordPage() {
+  const navigate = useNavigate();
+  const { forgotPasswordMutation } = useAuthAction();
+
   const {
     handleSubmit,
     register,
@@ -18,7 +23,12 @@ function ForgotPasswordPage() {
   });
 
   const onSubmit = (data: ForgotPasswordReq) => {
-    console.log(data);
+    forgotPasswordMutation.mutate(data, {
+      onSuccess: () => {
+        toast.success("A recovery email has been sent to your email address");
+        navigate(-1);
+      },
+    });
   };
 
   return (

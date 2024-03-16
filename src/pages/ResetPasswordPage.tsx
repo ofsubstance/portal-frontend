@@ -9,6 +9,8 @@ import AppLogo from "../components/common/logo/AppLogo";
 import { ResetPasswordReq } from "@/dtos/auth.dto";
 import resetPasswordImage from "../assets/resetPassword.svg";
 import { resetPasswordValidation } from "@/validators/auth.validator";
+import { toast } from "react-toastify";
+import useAuthAction from "@/hooks/useAuthAction";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +24,8 @@ function ResetPasswordPage() {
     confirmPassword: false,
   });
 
+  const { resetPasswordMutation } = useAuthAction();
+
   const {
     register,
     handleSubmit,
@@ -31,7 +35,18 @@ function ResetPasswordPage() {
   });
 
   const onSubmit = (data: ResetPasswordReq) => {
-    console.log(data);
+    resetPasswordMutation.mutate(
+      {
+        data,
+        resetToken: searchParams.get("token") || "",
+      },
+      {
+        onSuccess: () => {
+          toast.success("Password reset successful");
+          navigate("/signin", { replace: true });
+        },
+      }
+    );
   };
 
   return (
