@@ -88,6 +88,9 @@ function PlaylistManagementPage() {
         enableFullScreenToggle={false}
         enableRowActions
         positionActionsColumn="last"
+        muiTableBodyRowProps={({ row }) => ({
+          onClick: () => navigate(`/playlist-management/${row.original.id}`),
+        })}
         renderRowActionMenuItems={({ row, table }) => [
           <MRT_ActionMenuItem //or just use a normal MUI MenuItem component
             icon={<EditIcon />}

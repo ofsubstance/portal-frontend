@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import ContextWrapper from "./contexts/ContextWrapper";
+import ContextProvider from "./contexts/ContextProvider";
 import ErrorPage from "./pages/ErrorPage";
 import notFoundImg from "./assets/notFound.svg";
 
@@ -84,6 +84,13 @@ function Router() {
               }),
             },
             {
+              path: "playlist-management/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/admin/PlaylistDetailsPage"))
+                  .default,
+              }),
+            },
+            {
               path: "user-management",
               lazy: async () => ({
                 Component: (await import("./pages/admin/UserManagementPage"))
@@ -129,13 +136,13 @@ function Router() {
     {
       path: "*",
       element: (
-        <ContextWrapper>
+        <ContextProvider>
           <ErrorPage
             image={notFoundImg}
             title="Sorry! We couldn't find the page you are looking for."
             description="Please, make sure you have typed the correct URL."
           />
-        </ContextWrapper>
+        </ContextProvider>
       ),
     },
   ]);
