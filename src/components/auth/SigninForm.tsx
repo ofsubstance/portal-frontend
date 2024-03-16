@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   IconButton,
   TextField,
@@ -13,7 +12,6 @@ import {
 } from "react-icons/ri";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { FcGoogle as GoogleIcon } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { SigninReq } from "@/dtos/auth.dto";
 import { signinValidation } from "@/validators/auth.validator";
@@ -68,7 +66,7 @@ function SigninForm({ onSubmit }: SigninFormProps) {
       <div className="flex flex-col sm:items-center sm:flex-row justify-between gap-4">
         <FormControlLabel
           control={<Checkbox {...register("remember")} />}
-          label="Remember me"
+          label="Keep me signed in"
         />
 
         <Typography
@@ -83,24 +81,6 @@ function SigninForm({ onSubmit }: SigninFormProps) {
 
       <Button type="submit" variant="contained" size="large" disableElevation>
         Sign In
-      </Button>
-
-      <Divider>OR</Divider>
-
-      <Button
-        variant="outlined"
-        size="large"
-        startIcon={<GoogleIcon />}
-        sx={{
-          borderColor: (theme) => theme.palette.grey[300],
-          color: (theme) => theme.palette.grey[700],
-          "&:hover": {
-            borderColor: (theme) => theme.palette.grey[500],
-            color: (theme) => theme.palette.grey[900],
-          },
-        }}
-      >
-        Signin with Google
       </Button>
     </form>
   );

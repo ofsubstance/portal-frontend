@@ -1,11 +1,10 @@
-import { Button, Divider, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import {
   RiEyeCloseLine as InvisibleIcon,
   RiEyeLine as VisibleIcon,
 } from "react-icons/ri";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { FcGoogle as GoogleIcon } from "react-icons/fc";
 import { SignupReq } from "@/dtos/auth.dto";
 import { signupValidation } from "@/validators/auth.validator";
 import { useState } from "react";
@@ -108,24 +107,6 @@ function SignupForm({ onSubmit }: SignupFormProps) {
 
       <Button type="submit" variant="contained" size="large" disableElevation>
         Create Account
-      </Button>
-
-      <Divider>OR</Divider>
-
-      <Button
-        variant="outlined"
-        size="large"
-        startIcon={<GoogleIcon />}
-        sx={{
-          borderColor: (theme) => theme.palette.grey[300],
-          color: (theme) => theme.palette.grey[700],
-          "&:hover": {
-            borderColor: (theme) => theme.palette.grey[500],
-            color: (theme) => theme.palette.grey[900],
-          },
-        }}
-      >
-        Signin with Google
       </Button>
     </form>
   );
