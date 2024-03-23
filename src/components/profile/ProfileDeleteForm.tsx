@@ -1,10 +1,10 @@
 import { Button, Divider, Paper, TextField, Typography } from "@mui/material";
 
-function PasswordEditForm() {
+function ProfileDeleteForm() {
   return (
     <Paper className="flex-1">
       <Typography variant="body1" fontWeight={600} p={3}>
-        Change Your Password
+        Delete Your Account
       </Typography>
 
       <Divider />
@@ -71,4 +71,4 @@ function PasswordEditForm() {
   );
 }
 
-export default PasswordEditForm;
+export default ProfileDeleteForm;

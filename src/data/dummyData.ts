@@ -63,3 +63,22 @@ export const playListItemData = {
 export const playList = Array(10).fill(
   playListItemData
 ) as (typeof playListItemData)[];
+
+export const user = {
+  id: "1",
+  firstName: "John",
+  lastName: "Doe",
+  avatar: "https://uko-react.vercel.app/static/avatar/001-man.svg",
+  email: "john.doe@email.com",
+  contactNumber: "+8801234567890",
+  gender: "Male",
+  createdAt: "2021-10-10T12:00:00Z",
+  updatedAt: "2021-10-10T12:00:00Z",
+  role: "User",
+  status: "Active",
+  language: "English",
+  about:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+};
+
+export const userList = Array(10).fill(user) as (typeof user)[];

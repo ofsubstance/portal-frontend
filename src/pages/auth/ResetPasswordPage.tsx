@@ -5,9 +5,9 @@ import {
 } from "react-icons/ri";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import AppLogo from "../../components/common/logo/AppLogo";
+import AppLogo from "@/components/common/logo/AppLogo";
 import { ResetPasswordReq } from "@/dtos/auth.dto";
-import resetPasswordImage from "../assets/resetPassword.svg";
+import resetPasswordImage from "@/assets/resetPassword.svg";
 import { resetPasswordValidation } from "@/validators/auth.validator";
 import { toast } from "react-toastify";
 import useAuthAction from "@/hooks/useAuthAction";

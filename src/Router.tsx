@@ -33,6 +33,13 @@ function Router() {
               }),
             },
             {
+              path: "profile/settings",
+              lazy: async () => ({
+                Component: (await import("./pages/common/ProfileUpdatePage"))
+                  .default,
+              }),
+            },
+            {
               path: "analytics",
               lazy: async () => ({
                 Component: (await import("./pages/admin/AnalyticsPage"))

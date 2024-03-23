@@ -1,6 +1,6 @@
+import VideoListItem from "@/components/videoItem/VideoListItem";
 import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
 
-import PlaylistItem from "@/components/playlistManagement/PlaylistItem";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -59,7 +59,7 @@ function PlaylistDetailsPage() {
 
       <Stack spacing={2} divider={<Divider />} flex={2}>
         {Array.from(Array(12)).map((_, index) => (
-          <PlaylistItem key={index} />
+          <VideoListItem key={index} />
         ))}
       </Stack>
     </div>

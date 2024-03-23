@@ -1,23 +1,12 @@
 import {
-  Chip,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Typography,
-} from "@mui/material";
-import {
   RiDeleteBin2Line as DeleteIcon,
   RiEdit2Line as EditIcon,
   RiMore2Fill as MoreIcon,
 } from "react-icons/ri";
+import { IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 
-import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
-import { videoData } from "@/data/dummyData";
-
-function PlaylistItemMenu() {
+export default function VideoItemMenu() {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,7 +39,6 @@ function PlaylistItemMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         MenuListProps={{
           dense: true,
-          className: "text-slate-600",
         }}
         slotProps={{
           paper: {
@@ -97,50 +85,3 @@ function PlaylistItemMenu() {
     </>
   );
 }
-
-function PlaylistItem() {
-  const navigate = useNavigate();
-
-  const [data, setData] = useState(videoData);
-
-  return (
-    <div
-      className="flex gap-4 cursor-pointer"
-      onClick={() => navigate("/video-management/details/1")}
-    >
-      <div className="relative h-24 aspect-video">
-        <img
-          src={data.thumbnail}
-          alt="thumbnail"
-          className="object-cover rounded-md"
-        />
-
-        <Chip
-          size="small"
-          className="absolute bottom-2 right-2"
-          sx={{ backgroundColor: "rgba(0, 0, 0, 0.6)", color: "white" }}
-          label={`${Math.floor(data.duration / 60)} min`}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2 text-slate-600 flex-1">
-        <Typography variant="body1" fontWeight={600}>
-          {data.title}
-        </Typography>
-
-        <Typography variant="subtitle2">
-          {dayjs(data.createdAt).format("MMMM DD, YYYY h:mm A")}
-        </Typography>
-
-        <div className="flex gap-1 flex-wrap mt-auto">
-          {data.genre.map((g) => (
-            <Chip key={g} label={g} />
-          ))}
-        </div>
-      </div>
-      <PlaylistItemMenu />
-    </div>
-  );
-}
-
-export default PlaylistItem;

@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useContext, useEffect } from "react";
 
-import AppLogo from "../../components/common/logo/AppLogo";
+import AppLogo from "@/components/common/logo/AppLogo";
 import { AuthContext } from "@/contexts/AuthContextProvider";
 import { FcGoogle as GoogleIcon } from "react-icons/fc";
-import SignupForm from "../../components/auth/SignupForm";
+import SignupForm from "@/components/auth/SignupForm";
 import { SignupReq } from "@/dtos/auth.dto";
-import signupImage from "../assets/signup.svg";
+import signupImage from "@/assets/signup.svg";
 import useAuthAction from "@/hooks/useAuthAction";
 
 function SignupPage() {

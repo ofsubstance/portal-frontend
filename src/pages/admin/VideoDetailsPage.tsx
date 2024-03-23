@@ -42,13 +42,11 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
         expandIcon={<ExpandMoreIcon size={24} />}
         sx={{ px: 0 }}
       >
-        <Typography variant="h6" fontWeight={600} className="text-slate-600">
+        <Typography variant="h6" fontWeight={600}>
           {title}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: 0 }} className="text-slate-600">
-        {details}
-      </AccordionDetails>
+      <AccordionDetails sx={{ px: 0 }}>{details}</AccordionDetails>
     </Accordion>
   );
 }

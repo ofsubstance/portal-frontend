@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import VideoItem from "@/components/videoManagement/VideoItem";
+import VideoGridItem from "@/components/videoItem/VideoGridItem";
 import { useNavigate } from "react-router-dom";
 import videoManagementImg from "@/assets/videoManagement.svg";
 
@@ -26,7 +26,7 @@ function VideoManagementPage() {
   return (
     <div className="flex flex-col gap-5">
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
-        <div className="space-y-4 text-slate-500">
+        <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
             Video Management
           </Typography>
@@ -55,7 +55,7 @@ function VideoManagementPage() {
 
       <Paper className="px-8 py-4 space-y-6">
         <div className="flex gap-5 items-center md:flex-row flex-col">
-          <Typography variant="h6" fontWeight={600} className="text-slate-500">
+          <Typography variant="h6" fontWeight={600}>
             Video List
           </Typography>
 
@@ -121,7 +121,7 @@ function VideoManagementPage() {
         >
           {Array.from(Array(12)).map((_, index) => (
             <Grid item xs={1} key={index}>
-              <VideoItem />
+              <VideoGridItem />
             </Grid>
           ))}
         </Grid>

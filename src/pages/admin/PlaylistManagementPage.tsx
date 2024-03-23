@@ -54,7 +54,7 @@ function PlaylistManagementPage() {
   return (
     <div className="flex flex-col gap-5">
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
-        <div className="space-y-4 text-slate-500">
+        <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
             Playlist Management
           </Typography>

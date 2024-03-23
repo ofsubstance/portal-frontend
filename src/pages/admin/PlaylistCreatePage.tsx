@@ -154,7 +154,7 @@ function PlaylistCreatePage() {
   return (
     <div className="flex flex-col gap-4 pb-10">
       <div className="flex gap-2 justify-between md:flex-row flex-col items-center">
-        <Typography variant="h5" fontWeight={600} className="text-slate-500">
+        <Typography variant="h5" fontWeight={600}>
           <PlaylistIcon
             className="inline-block mr-3"
             size={40}

@@ -7,20 +7,40 @@ import {
   Typography,
 } from "@mui/material";
 
+import { RiCameraLine as CameraIcon } from "react-icons/ri";
 import { DatePicker } from "@mui/x-date-pickers";
 
 function ProfileEditForm() {
   return (
     <Paper className="flex-1">
       <Typography variant="body1" fontWeight={600} p={3}>
-        Edit your account information:
+        Edit Your Account Information
       </Typography>
 
       <Divider />
 
       <div className="p-6 space-y-6">
         <div className="flex gap-2 items-center justify-between w-full">
-          <Avatar sx={{ width: 100, height: 100 }} />
+          <div className="relative">
+            <Avatar
+              sx={{ width: 100, height: 100 }}
+              src="https://uko-react.vercel.app/static/avatar/001-man.svg"
+            />
+
+            <label
+              htmlFor="avatar"
+              className="absolute bottom-0 right-0 bg-primary text-white rounded-full cursor-pointer p-1.5 bg-indigo-500 hover:bg-indigo-600 transition-colors duration-300 ease-in-out"
+            >
+              <input
+                type="file"
+                id="avatar"
+                className="hidden"
+                accept="image/*"
+              />
+
+              <CameraIcon color="white" size={20} />
+            </label>
+          </div>
 
           <div className="flex gap-6">
             <Button

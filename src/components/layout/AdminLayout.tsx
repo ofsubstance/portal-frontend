@@ -25,7 +25,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 
 import AccountMenu from "@/components/menu/AccountMenu";
-import { twMerge } from "tailwind-merge";
+import AppLogo from "../common/logo/AppLogo";
 import { useState } from "react";
 
 const navItems = [
@@ -74,7 +74,7 @@ const navItems = [
         icon: ProfileIcon,
       },
       {
-        link: "/account-settings",
+        link: "/profile/settings",
         text: "Settings",
         icon: SettingsIcon,
       },
@@ -98,9 +98,9 @@ function DrawerContent() {
 
   return (
     <Box className="flex flex-col gap-6 h-screen">
-      <Typography variant="h5" pl={4} py={4} fontWeight={600}>
-        Of Substance.
-      </Typography>
+      <span className="pl-8 py-6">
+        <AppLogo />
+      </span>
       {navItems.map((group) => (
         <div key={group.group} className="flex flex-col">
           <Typography
@@ -108,7 +108,6 @@ function DrawerContent() {
             fontWeight={600}
             pl={4}
             textTransform={"uppercase"}
-            className="text-slate-500"
           >
             {group.group}
           </Typography>
@@ -131,11 +130,8 @@ function DrawerContent() {
                     color={
                       isActiveLink(item.link)
                         ? theme.palette.primary.main
-                        : undefined
+                        : theme.palette.text.primary
                     }
-                    className={twMerge(
-                      !isActiveLink(item.link) && "text-slate-500"
-                    )}
                   />
                   <Typography
                     variant="body2"
@@ -143,11 +139,8 @@ function DrawerContent() {
                     color={
                       isActiveLink(item.link)
                         ? theme.palette.primary.main
-                        : undefined
+                        : theme.palette.text.primary
                     }
-                    className={twMerge(
-                      !isActiveLink(item.link) && "text-slate-500"
-                    )}
                   >
                     {item.text}
                   </Typography>
@@ -220,16 +213,9 @@ export default function AdminLayout({
             <MenuIcon />
           </IconButton>
 
-          <Typography
-            variant="h5"
-            fontWeight={600}
-            color={"primary"}
-            sx={{
-              display: { xs: "block", sm: "none" },
-            }}
-          >
-            Of Substance.
-          </Typography>
+          <span className="sm:hidden">
+            <AppLogo />
+          </span>
 
           <Box sx={{ flexGrow: 1 }} />
 

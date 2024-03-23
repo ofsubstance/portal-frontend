@@ -12,7 +12,6 @@ import {
   useTheme,
 } from "@mui/material";
 
-import { twMerge } from "tailwind-merge";
 import { useSearchParams } from "react-router-dom";
 
 const items = [
@@ -33,7 +32,7 @@ const items = [
   },
 ];
 
-function ProfileNavSection() {
+function ProfileSettingsNavSection() {
   const [searchParams, setSearchParams] = useSearchParams();
   const theme = useTheme();
 
@@ -74,9 +73,8 @@ function ProfileNavSection() {
                 color={
                   isActiveLink(item.tab)
                     ? theme.palette.primary.main
-                    : undefined
+                    : theme.palette.text.primary
                 }
-                className={twMerge(!isActiveLink(item.tab) && "text-slate-500")}
               />
               <Typography
                 variant="body2"
@@ -84,9 +82,8 @@ function ProfileNavSection() {
                 color={
                   isActiveLink(item.tab)
                     ? theme.palette.primary.main
-                    : undefined
+                    : theme.palette.text.primary
                 }
-                className={twMerge(!isActiveLink(item.tab) && "text-slate-500")}
               >
                 {item.text}
               </Typography>
@@ -98,4 +95,4 @@ function ProfileNavSection() {
   );
 }
 
-export default ProfileNavSection;
+export default ProfileSettingsNavSection;

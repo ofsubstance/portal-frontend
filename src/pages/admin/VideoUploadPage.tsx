@@ -13,10 +13,8 @@ import { RiVideoUploadFill as VideoIcon } from "react-icons/ri";
 function MetaDataSection() {
   return (
     <Paper className="w-full p-4 space-y-4">
-      <Typography variant="h6" className="text-slate-500">
-        Meta Data
-      </Typography>
-      <Typography variant="body1" fontWeight={600} className="text-slate-500">
+      <Typography variant="h6">Meta Data</Typography>
+      <Typography variant="body1" fontWeight={600}>
         Thumbnail
       </Typography>
       <MediaDrop variant="image" />
@@ -42,9 +40,7 @@ function MetaDataSection() {
 function DetailsSection() {
   return (
     <Paper className="w-full p-4 space-y-4">
-      <Typography variant="h6" className="text-slate-500">
-        Details
-      </Typography>
+      <Typography variant="h6">Details</Typography>
       <TextField
         label="About"
         variant="outlined"
@@ -82,7 +78,7 @@ function VideoUploadPage() {
 
   return (
     <div className="flex flex-col gap-4 pb-10">
-      <Typography variant="h5" fontWeight={600} className="text-slate-500">
+      <Typography variant="h5" fontWeight={600}>
         <VideoIcon
           className="inline-block mr-3"
           size={40}

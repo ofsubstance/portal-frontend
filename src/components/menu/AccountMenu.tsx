@@ -36,7 +36,6 @@ export default function AccountMenu() {
         onClick={handleClose}
         MenuListProps={{
           dense: true,
-          className: "text-slate-600",
         }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
@@ -75,7 +74,7 @@ export default function AccountMenu() {
             src="https://uko-react.vercel.app/static/avatar/001-man.svg"
           />
 
-          <div className="text-slate-500 min-w-40">
+          <div className="min-w-40">
             <Typography fontWeight={600} fontSize={14}>
               John Doe
             </Typography>
