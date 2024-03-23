@@ -47,13 +47,19 @@ function SubmittedFeedbackSection() {
                   backgroundColor: "rgba(0, 0, 0, .03)",
                 }}
               >
-                <Typography
-                  fontWeight={600}
-                  sx={{ width: "33%", flexShrink: 0 }}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                  width={"100%"}
                 >
-                  Feedback
-                </Typography>
-                <Typography>Submitted on: October 10, 2021</Typography>
+                  <Typography
+                    fontWeight={600}
+                    sx={{ width: "33%", flexShrink: 0 }}
+                  >
+                    Feedback
+                  </Typography>
+                  <Typography>Submitted on: October 10, 2021</Typography>
+                </Stack>
               </AccordionSummary>
               <AccordionDetails>
                 <Typography>

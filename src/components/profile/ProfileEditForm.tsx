@@ -20,7 +20,7 @@ function ProfileEditForm() {
       <Divider />
 
       <div className="p-6 space-y-6">
-        <div className="flex gap-2 items-center justify-between w-full">
+        <div className="flex gap-6 items-center justify-between w-full md:flex-row flex-col-reverse">
           <div className="relative">
             <Avatar
               sx={{ width: 100, height: 100 }}
@@ -42,7 +42,7 @@ function ProfileEditForm() {
             </label>
           </div>
 
-          <div className="flex gap-6">
+          <div className="md:flex gap-6 hidden">
             <Button
               variant="outlined"
               color="ghost"
@@ -66,7 +66,7 @@ function ProfileEditForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField label="First Name" variant="outlined" fullWidth />
           <TextField label="Last Name" variant="outlined" fullWidth />
           <TextField label="Email" variant="outlined" fullWidth />
@@ -82,9 +82,32 @@ function ProfileEditForm() {
             fullWidth
             multiline
             rows={6}
-            className="col-span-2"
+            className="md:col-span-2"
           />
         </div>
+
+        <Button
+          variant="outlined"
+          color="ghost"
+          size="large"
+          fullWidth
+          sx={{
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          sx={{
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          Save
+        </Button>
       </div>
     </Paper>
   );

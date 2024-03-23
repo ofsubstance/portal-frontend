@@ -42,6 +42,9 @@ function ProfilePage() {
           <Tabs
             value={tabValue}
             onChange={(_, newValue) => setTabValue(newValue)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
           >
             <Tab label="Bookmarked Videos" value={0} />
             <Tab label="Watched Videos" value={1} />
@@ -50,8 +53,8 @@ function ProfilePage() {
         </div>
       </Paper>
 
-      <div className="flex gap-6 relative">
-        <Paper className="p-6 flex-1 h-fit sticky top-20">
+      <div className="flex gap-6 relative flex-col md:flex-row">
+        <Paper className="p-6 flex-1 h-fit md:sticky top-20">
           <ProfileAboutSection />
         </Paper>
 

@@ -1,5 +1,6 @@
-import { Chip, Typography } from "@mui/material";
+import { Chip, Theme, Typography, useMediaQuery } from "@mui/material";
 
+import VideoGridItem from "./VideoGridItem";
 import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +10,15 @@ import { videoData } from "@/data/dummyData";
 function VideoListItem() {
   const navigate = useNavigate();
 
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md")
+  );
+
   const [data, setData] = useState(videoData);
+
+  if (smallScreen) {
+    return <VideoGridItem />;
+  }
 
   return (
     <div
