@@ -66,7 +66,6 @@ function PlaylistManagementPage() {
           <Button
             variant="contained"
             startIcon={<AddPlaylistIcon />}
-            disableElevation
             size="large"
             fullWidth
             onClick={() => navigate("/playlist-management/create")}

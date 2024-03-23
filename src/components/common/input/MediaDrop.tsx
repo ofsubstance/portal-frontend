@@ -46,7 +46,6 @@ function MediaPreview({ media, variant, onRemoveClick }: MediaPreviewProps) {
         fullWidth
         onClick={onRemoveClick}
         variant="contained"
-        disableElevation
         color="error"
         startIcon={<RemoveIcon />}
         sx={{

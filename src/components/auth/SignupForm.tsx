@@ -105,7 +105,7 @@ function SignupForm({ onSubmit }: SignupFormProps) {
         }}
       />
 
-      <Button type="submit" variant="contained" size="large" disableElevation>
+      <Button type="submit" variant="contained" size="large">
         Create Account
       </Button>
     </form>

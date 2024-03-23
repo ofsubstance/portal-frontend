@@ -79,7 +79,7 @@ function SigninForm({ onSubmit }: SigninFormProps) {
         </Typography>
       </div>
 
-      <Button type="submit" variant="contained" size="large" disableElevation>
+      <Button type="submit" variant="contained" size="large">
         Sign In
       </Button>
     </form>

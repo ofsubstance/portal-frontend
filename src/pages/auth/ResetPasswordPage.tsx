@@ -5,7 +5,7 @@ import {
 } from "react-icons/ri";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import AppLogo from "../components/common/logo/AppLogo";
+import AppLogo from "../../components/common/logo/AppLogo";
 import { ResetPasswordReq } from "@/dtos/auth.dto";
 import resetPasswordImage from "../assets/resetPassword.svg";
 import { resetPasswordValidation } from "@/validators/auth.validator";
@@ -119,7 +119,7 @@ function ResetPasswordPage() {
           }}
         />
 
-        <Button type="submit" variant="contained" size="large" disableElevation>
+        <Button type="submit" variant="contained" size="large">
           Change Password
         </Button>
       </form>

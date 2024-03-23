@@ -47,15 +47,10 @@ function PlaylistDetailsPage() {
           </Stack>
 
           <div className="flex gap-2">
-            <Button fullWidth variant="contained" disableElevation>
+            <Button fullWidth variant="contained">
               Edit
             </Button>
-            <Button
-              fullWidth
-              variant="contained"
-              disableElevation
-              color="error"
-            >
+            <Button fullWidth variant="contained" color="error">
               Delete
             </Button>
           </div>

@@ -38,7 +38,6 @@ function VideoManagementPage() {
           <Button
             variant="contained"
             startIcon={<AddVideoIcon />}
-            disableElevation
             size="large"
             fullWidth
             onClick={() => navigate("/video-management/upload")}

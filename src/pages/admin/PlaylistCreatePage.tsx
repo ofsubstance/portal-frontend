@@ -132,7 +132,7 @@ function PlaylistInfoDialog({
 
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
-        <Button variant="contained" onClick={onClose} disableElevation>
+        <Button variant="contained" onClick={onClose}>
           Create Playlist
         </Button>
       </DialogActions>
@@ -163,11 +163,7 @@ function PlaylistCreatePage() {
           Create Playlist
         </Typography>
 
-        <Button
-          variant="contained"
-          disableElevation
-          onClick={() => setOpenInfoDialog(true)}
-        >
+        <Button variant="contained" onClick={() => setOpenInfoDialog(true)}>
           Save Playlist
         </Button>
       </div>
@@ -192,7 +188,6 @@ function PlaylistCreatePage() {
           <div className="flex flex-wrap p-2 gap-4">
             <Button
               variant="contained"
-              disableElevation
               onClick={() => setOpenVideosDialog(true)}
             >
               Add Videos To Playlist
@@ -201,7 +196,6 @@ function PlaylistCreatePage() {
             <Button
               variant="contained"
               color={"error"}
-              disableElevation
               disabled={
                 !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
               }

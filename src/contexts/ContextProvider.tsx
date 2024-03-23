@@ -1,5 +1,7 @@
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AuthContextProvider } from "./AuthContextProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { ThemeContextProvider } from "@/contexts/ThemeContextProvider";
 
 const googleClientId =
@@ -9,7 +11,9 @@ function ContextProvider({ children }: { children: React.ReactNode }) {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <ThemeContextProvider>
-        <AuthContextProvider>{children}</AuthContextProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <AuthContextProvider>{children}</AuthContextProvider>
+        </LocalizationProvider>
       </ThemeContextProvider>
     </GoogleOAuthProvider>
   );

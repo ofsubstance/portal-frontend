@@ -78,19 +78,13 @@ function VideoDetailsPage() {
           <Button
             variant="contained"
             fullWidth
-            disableElevation
             startIcon={<PlayIcon />}
             onClick={() => setVideoPlay(true)}
           >
             Watch Video
           </Button>
 
-          <Button
-            variant="outlined"
-            fullWidth
-            disableElevation
-            startIcon={<DownloadIcon />}
-          >
+          <Button variant="outlined" fullWidth startIcon={<DownloadIcon />}>
             Download Video
           </Button>
 
@@ -99,7 +93,6 @@ function VideoDetailsPage() {
               variant="contained"
               color={"info"}
               fullWidth
-              disableElevation
               startIcon={<EditIcon />}
             >
               Edit
@@ -109,7 +102,6 @@ function VideoDetailsPage() {
               variant="contained"
               color={"error"}
               fullWidth
-              disableElevation
               startIcon={<DeleteIcon />}
             >
               Delete

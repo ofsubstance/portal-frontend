@@ -1,7 +1,7 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
-import AppLogo from "../components/common/logo/AppLogo";
+import AppLogo from "../../components/common/logo/AppLogo";
 import { ForgotPasswordReq } from "@/dtos/auth.dto";
 import forgotPasswordImage from "../assets/forgotPassword.svg";
 import { forgotPasswordValidation } from "@/validators/auth.validator";
@@ -59,7 +59,7 @@ function ForgotPasswordPage() {
           helperText={errors?.email?.message}
         />
 
-        <Button variant="contained" size="large" disableElevation type="submit">
+        <Button variant="contained" size="large" type="submit">
           Send Recovery Email
         </Button>
 

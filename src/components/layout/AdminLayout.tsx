@@ -69,7 +69,7 @@ const navItems = [
     group: "Account",
     items: [
       {
-        link: "/profile",
+        link: "/profile/1",
         text: "Profile Details",
         icon: ProfileIcon,
       },

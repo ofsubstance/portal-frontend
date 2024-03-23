@@ -102,7 +102,7 @@ function VideoUploadPage() {
         <DetailsSection />
       </div>
 
-      <Button variant="contained" size="large" disableElevation fullWidth>
+      <Button variant="contained" size="large" fullWidth>
         Upload Video
       </Button>
     </div>

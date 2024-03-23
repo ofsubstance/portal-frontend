@@ -27,6 +27,12 @@ function Router() {
               }),
             },
             {
+              path: "profile/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/common/ProfilePage")).default,
+              }),
+            },
+            {
               path: "analytics",
               lazy: async () => ({
                 Component: (await import("./pages/admin/AnalyticsPage"))
@@ -110,25 +116,26 @@ function Router() {
         {
           path: "/signup",
           lazy: async () => ({
-            Component: (await import("./pages/SignupPage")).default,
+            Component: (await import("./pages/auth/SignupPage")).default,
           }),
         },
         {
           path: "/signin",
           lazy: async () => ({
-            Component: (await import("./pages/SigninPage")).default,
+            Component: (await import("./pages/auth/SigninPage")).default,
           }),
         },
         {
           path: "/forgot-password",
           lazy: async () => ({
-            Component: (await import("./pages/ForgotPasswordPage")).default,
+            Component: (await import("./pages/auth/ForgotPasswordPage"))
+              .default,
           }),
         },
         {
           path: "/reset-password",
           lazy: async () => ({
-            Component: (await import("./pages/ResetPasswordPage")).default,
+            Component: (await import("./pages/auth/ResetPasswordPage")).default,
           }),
         },
       ],

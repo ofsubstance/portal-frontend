@@ -1,6 +1,21 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { createContext, useEffect, useState } from "react";
 
+declare module "@mui/material/styles" {
+  interface Palette {
+    ghost: Palette["primary"];
+  }
+
+  interface PaletteOptions {
+    ghost?: PaletteOptions["primary"];
+  }
+}
+declare module "@mui/material/Button" {
+  interface ButtonPropsColorOverrides {
+    ghost: true;
+  }
+}
+
 const ThemeContext = createContext({
   darkMode: false,
   toggleDarkMode: () => {},
@@ -11,12 +26,18 @@ const theme = createTheme({
     primary: {
       main: "#6366f1",
     },
+    ghost: {
+      main: "#6d6d6d",
+    },
   },
   typography: {
     fontFamily: "Poppins, sans-serif",
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
           textTransform: "none",
