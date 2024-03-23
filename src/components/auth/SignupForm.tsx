@@ -1,13 +1,9 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import {
-  RiEyeCloseLine as InvisibleIcon,
-  RiEyeLine as VisibleIcon,
-} from "react-icons/ri";
+import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import PasswordField from "@/components/common/input/PasswordField";
 import { SignupReq } from "@/dtos/auth.dto";
 import { signupValidation } from "@/validators/auth.validator";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface SignupFormProps {
@@ -15,10 +11,6 @@ interface SignupFormProps {
 }
 
 function SignupForm({ onSubmit }: SignupFormProps) {
-  const [showPassword, setShowPassword] = useState({
-    password: false,
-    confirmPassword: false,
-  });
   const {
     register,
     handleSubmit,
@@ -53,56 +45,22 @@ function SignupForm({ onSubmit }: SignupFormProps) {
         helperText={errors?.email?.message}
       />
 
-      <TextField
+      <PasswordField
         {...register("password")}
-        type={showPassword.password ? "text" : "password"}
         label="Password"
         variant="outlined"
         fullWidth
         error={!!errors.password}
         helperText={errors?.password?.message}
-        InputProps={{
-          endAdornment: (
-            <IconButton
-              onClick={() =>
-                setShowPassword((prev) => ({
-                  ...prev,
-                  password: !prev.password,
-                }))
-              }
-            >
-              {showPassword.password ? <InvisibleIcon /> : <VisibleIcon />}
-            </IconButton>
-          ),
-        }}
       />
 
-      <TextField
+      <PasswordField
         {...register("confirmPassword")}
-        type={showPassword.confirmPassword ? "text" : "password"}
         label="Confirm Password"
         variant="outlined"
         fullWidth
         error={!!errors.confirmPassword}
         helperText={errors?.confirmPassword?.message}
-        InputProps={{
-          endAdornment: (
-            <IconButton
-              onClick={() =>
-                setShowPassword((prev) => ({
-                  ...prev,
-                  confirmPassword: !prev.confirmPassword,
-                }))
-              }
-            >
-              {showPassword.confirmPassword ? (
-                <InvisibleIcon />
-              ) : (
-                <VisibleIcon />
-              )}
-            </IconButton>
-          ),
-        }}
       />
 
       <Button type="submit" variant="contained" size="large">

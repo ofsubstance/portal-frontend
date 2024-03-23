@@ -2,20 +2,15 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  RiEyeCloseLine as InvisibleIcon,
-  RiEyeLine as VisibleIcon,
-} from "react-icons/ri";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Link } from "react-router-dom";
+import PasswordField from "@/components/common/input/PasswordField";
 import { SigninReq } from "@/dtos/auth.dto";
 import { signinValidation } from "@/validators/auth.validator";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface SigninFormProps {
@@ -23,7 +18,6 @@ interface SigninFormProps {
 }
 
 function SigninForm({ onSubmit }: SigninFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -46,21 +40,13 @@ function SigninForm({ onSubmit }: SigninFormProps) {
         helperText={errors?.email?.message}
       />
 
-      <TextField
+      <PasswordField
         {...register("password")}
-        type={showPassword ? "text" : "password"}
         label="Password"
         variant="outlined"
         fullWidth
         error={!!errors.password}
         helperText={errors?.password?.message}
-        InputProps={{
-          endAdornment: (
-            <IconButton onClick={() => setShowPassword((prev) => !prev)}>
-              {showPassword ? <InvisibleIcon /> : <VisibleIcon />}
-            </IconButton>
-          ),
-        }}
       />
 
       <div className="flex flex-col sm:items-center sm:flex-row justify-between gap-4">

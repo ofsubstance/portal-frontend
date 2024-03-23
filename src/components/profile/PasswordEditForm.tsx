@@ -1,4 +1,6 @@
-import { Button, Divider, Paper, TextField, Typography } from "@mui/material";
+import { Button, Divider, Paper, Typography } from "@mui/material";
+
+import PasswordField from "@/components/common/input/PasswordField";
 
 function PasswordEditForm() {
   return (
@@ -12,9 +14,13 @@ function PasswordEditForm() {
       <div className="p-6 space-y-6">
         <div className="flex gap-8 flex-col md:flex-row">
           <div className="flex flex-col gap-6 flex-1">
-            <TextField label="Current Password" variant="outlined" fullWidth />
-            <TextField label="New Password" variant="outlined" fullWidth />
-            <TextField
+            <PasswordField
+              label="Current Password"
+              variant="outlined"
+              fullWidth
+            />
+            <PasswordField label="New Password" variant="outlined" fullWidth />
+            <PasswordField
               label="Confirm New Password"
               variant="outlined"
               fullWidth
