@@ -1,28 +1,19 @@
-import { Button, IconButton, TextField } from "@mui/material";
-import {
-  RiEyeCloseLine as InvisibleIcon,
-  RiEyeLine as VisibleIcon,
-} from "react-icons/ri";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import AppLogo from "@/components/common/logo/AppLogo";
+import { Button } from "@mui/material";
+import PasswordField from "@/components/common/input/PasswordField";
 import { ResetPasswordReq } from "@/dtos/auth.dto";
 import resetPasswordImage from "@/assets/resetPassword.svg";
 import { resetPasswordValidation } from "@/validators/auth.validator";
 import { toast } from "react-toastify";
 import useAuthAction from "@/hooks/useAuthAction";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  const [showPassword, setShowPassword] = useState({
-    password: false,
-    confirmPassword: false,
-  });
 
   const { resetPasswordMutation } = useAuthAction();
 
@@ -67,56 +58,22 @@ function ResetPasswordPage() {
         className="flex flex-col gap-5 max-w-lg w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <TextField
+        <PasswordField
           {...register("password")}
-          type={showPassword.password ? "text" : "password"}
           label="New Password"
           variant="outlined"
           fullWidth
           error={!!errors.password}
           helperText={errors?.password?.message}
-          InputProps={{
-            endAdornment: (
-              <IconButton
-                onClick={() =>
-                  setShowPassword((prev) => ({
-                    ...prev,
-                    password: !prev.password,
-                  }))
-                }
-              >
-                {showPassword.password ? <VisibleIcon /> : <InvisibleIcon />}
-              </IconButton>
-            ),
-          }}
         />
 
-        <TextField
+        <PasswordField
           {...register("confirmPassword")}
-          type={showPassword.confirmPassword ? "text" : "password"}
           label="Confirm New Password"
           variant="outlined"
           fullWidth
           error={!!errors.confirmPassword}
           helperText={errors?.confirmPassword?.message}
-          InputProps={{
-            endAdornment: (
-              <IconButton
-                onClick={() =>
-                  setShowPassword((prev) => ({
-                    ...prev,
-                    confirmPassword: !prev.confirmPassword,
-                  }))
-                }
-              >
-                {showPassword.confirmPassword ? (
-                  <VisibleIcon />
-                ) : (
-                  <InvisibleIcon />
-                )}
-              </IconButton>
-            ),
-          }}
         />
 
         <Button type="submit" variant="contained" size="large">
