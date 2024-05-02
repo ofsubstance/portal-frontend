@@ -45,7 +45,7 @@ class AuthService {
     storageService.removeAuthData();
   }
 
-  async socialSignin(google_access_token: string) {
+  async googleSignin(google_access_token: string) {
     const googleRes = await axios.get(APIUrl.auth.googleApiSignin(), {
       headers: {
         Authorization: `Bearer ${google_access_token}`,
@@ -53,7 +53,7 @@ class AuthService {
     });
 
     const res = await httpClient.post<IResponse<SigninRes>>(
-      APIUrl.auth.socialSignin(),
+      APIUrl.auth.googleSignin(),
       {
         email: googleRes.data.email,
         name: googleRes.data.name,

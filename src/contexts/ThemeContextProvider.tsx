@@ -24,7 +24,7 @@ const ThemeContext = createContext({
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6366f1",
+      main: "#ed5e5e",
     },
     text: {
       primary: "#606f85",
@@ -45,6 +45,27 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          marginTop: 4,
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderColor: "divider",
+          boxShadow:
+            "0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1)",
+        },
+        list: {
+          padding: "6px 0",
+        },
+        root: {
+          "& .MuiMenuItem-root": {
+            margin: "0 6px",
+            borderRadius: 4,
+          },
         },
       },
     },

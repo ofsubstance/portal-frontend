@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   Divider,
+  Fab,
   Paper,
   TextField,
   Typography,
@@ -27,19 +28,19 @@ function ProfileEditForm() {
               src="https://uko-react.vercel.app/static/avatar/001-man.svg"
             />
 
-            <label
-              htmlFor="avatar"
-              className="absolute bottom-0 right-0 bg-primary text-white rounded-full cursor-pointer p-1.5 bg-indigo-500 hover:bg-indigo-600 transition-colors duration-300 ease-in-out"
+            <Fab
+              component="label"
+              color="primary"
+              size="small"
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+              }}
             >
-              <input
-                type="file"
-                id="avatar"
-                className="hidden"
-                accept="image/*"
-              />
-
-              <CameraIcon color="white" size={20} />
-            </label>
+              <CameraIcon color="white" size={22} />
+              <input type="file" hidden accept="image/*" />
+            </Fab>
           </div>
 
           <div className="md:flex gap-6 hidden">

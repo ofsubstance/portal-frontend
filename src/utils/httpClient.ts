@@ -4,7 +4,7 @@ import APIUrl from "../constants/apiUrl";
 import authService from "../services/auth.service";
 
 const httpClient = axios.create({
-  baseURL: APIUrl.base,
+  baseURL: APIUrl.base + "/api",
   withCredentials: true,
 });
 

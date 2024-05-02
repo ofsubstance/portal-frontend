@@ -42,10 +42,8 @@ export default function VideoItemMenu() {
         }}
         slotProps={{
           paper: {
-            elevation: 0,
             sx: {
               overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.2))",
               mt: 1.5,
               "& .MuiAvatar-root": {
                 width: 32,
@@ -61,6 +59,8 @@ export default function VideoItemMenu() {
                 right: 14,
                 width: 10,
                 height: 10,
+                borderColor: "divider",
+                borderWidth: "1px 0 0 1px",
                 bgcolor: "background.paper",
                 transform: "translateY(-50%) rotate(45deg)",
                 zIndex: 0,

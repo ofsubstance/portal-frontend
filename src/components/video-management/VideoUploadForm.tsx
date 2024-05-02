@@ -1,0 +1,201 @@
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { Paper, TextField, Typography } from "@mui/material";
+
+import Dropzone from "../common/dropzone/Dropzone";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { VideoUploadDto } from "@/dtos/video.dto";
+import { useIsMutating } from "@tanstack/react-query";
+import { videoUploadValidation } from "@/validators/video.validator";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+interface VideoUploadFormProps {
+  onSubmit: (data: VideoUploadDto) => void;
+}
+
+function MetaDataSection() {
+  const {
+    register,
+    formState: { errors },
+    setValue,
+  } = useFormContext<VideoUploadDto>();
+  return (
+    <Paper className="w-full p-4 space-y-4">
+      <Typography variant="h6">Meta Data</Typography>
+      <Typography variant="body1" fontWeight={600}>
+        Thumbnail
+      </Typography>
+      <Dropzone
+        variant="image"
+        onChange={(file) => setValue("thumbnail", file)}
+        error={!!errors.thumbnail}
+      />
+      <TextField
+        {...register("title")}
+        label="Title"
+        variant="outlined"
+        fullWidth
+        error={!!errors.title}
+        helperText={errors?.title?.message}
+      />
+      <TextField
+        {...register("genre")}
+        label="Genre"
+        variant="outlined"
+        fullWidth
+        error={!!errors.genre}
+        helperText={
+          errors?.genre?.message || "Separate multiple genres with a comma"
+        }
+      />
+      <TextField
+        {...register("duration")}
+        label="Duration (MM:SS)"
+        variant="outlined"
+        fullWidth
+        error={!!errors.duration}
+        helperText={errors?.duration?.message}
+      />
+      <TextField
+        {...register("cost", { setValueAs: (value) => Number(value) })}
+        label="Video Cost"
+        variant="outlined"
+        fullWidth
+        type="number"
+        error={!!errors.cost}
+        helperText={errors?.cost?.message}
+      />
+    </Paper>
+  );
+}
+
+function DetailsSection() {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<VideoUploadDto>();
+  return (
+    <Paper className="w-full p-4 space-y-4">
+      <Typography variant="h6">Details</Typography>
+      <TextField
+        {...register("short_desc")}
+        label="Short Description"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={3}
+        error={!!errors.short_desc}
+        helperText={errors?.short_desc?.message}
+      />
+      <TextField
+        {...register("about")}
+        label="About"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={3}
+        error={!!errors.about}
+        helperText={errors?.about?.message}
+      />
+      <TextField
+        {...register("primary_lesson")}
+        label="Primary Lesson"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={3}
+        error={!!errors.primary_lesson}
+        helperText={errors?.primary_lesson?.message}
+      />
+      <TextField
+        {...register("theme")}
+        label="Theme"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={3}
+        error={!!errors.theme}
+        helperText={errors?.theme?.message}
+      />
+      <TextField
+        {...register("impact")}
+        label="Story Impact"
+        variant="outlined"
+        fullWidth
+        multiline
+        rows={3}
+        error={!!errors.impact}
+        helperText={errors?.impact?.message}
+      />
+    </Paper>
+  );
+}
+
+export default function VideoUploadForm({ onSubmit }: VideoUploadFormProps) {
+  const isMutating = useIsMutating();
+
+  const formFields = useForm<VideoUploadDto>({
+    resolver: zodResolver(videoUploadValidation),
+    defaultValues: {
+      video_url: "",
+      trailer_url: "",
+      thumbnail: null,
+      title: "",
+      genre: "",
+      duration: "",
+      cost: 0,
+      short_desc: "",
+      about: "",
+      primary_lesson: "",
+      theme: "",
+      impact: "",
+    },
+  });
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = formFields;
+
+  return (
+    <FormProvider {...formFields}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Paper className="w-full p-4 space-y-4">
+          <Typography variant="h6">URLs</Typography>
+          <div className="flex gap-4">
+            <TextField
+              {...register("video_url")}
+              label="Video URL"
+              variant="outlined"
+              fullWidth
+              error={!!errors.video_url}
+              helperText={errors?.video_url?.message}
+            />
+
+            <TextField
+              {...register("trailer_url")}
+              label="Trailer URL"
+              variant="outlined"
+              fullWidth
+              error={!!errors.trailer_url}
+              helperText={errors?.trailer_url?.message}
+            />
+          </div>
+        </Paper>
+        <div className="flex gap-4 lg:flex-row flex-col">
+          <MetaDataSection />
+          <DetailsSection />
+        </div>
+        <LoadingButton
+          loading={isMutating > 0}
+          variant="contained"
+          size="large"
+          fullWidth
+          type="submit"
+        >
+          Upload Video
+        </LoadingButton>
+      </form>
+    </FormProvider>
+  );
+}

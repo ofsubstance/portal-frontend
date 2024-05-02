@@ -7,9 +7,9 @@ import useUserActions from "../hooks/useUserAction";
 
 const AuthContext = createContext({
   authData: undefined as SigninRes["user"] | undefined,
-  setAuthData: (data?: SigninRes["user"]) => {},
+  setAuthData: (_data?: SigninRes["user"]) => {},
   isAuthenticated: false,
-  setIsAuthenticated: (data: boolean) => {},
+  setIsAuthenticated: (_data: boolean) => {},
 });
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {

@@ -26,6 +26,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import AccountMenu from "@/components/menu/AccountMenu";
 import AppLogo from "../common/logo/AppLogo";
+import useAuthAction from "@/hooks/useAuthAction";
 import { useState } from "react";
 
 const navItems = [
@@ -85,6 +86,7 @@ const navItems = [
 const drawerWidth = 300;
 
 function DrawerContent() {
+  const { signoutMutation } = useAuthAction();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -96,9 +98,14 @@ function DrawerContent() {
     );
   };
 
+  const handleLogout = () => {
+    signoutMutation.mutate();
+    navigate("/signin");
+  };
+
   return (
-    <Box className="flex flex-col gap-6 h-screen">
-      <span className="pl-8 py-6">
+    <Box className="flex flex-col gap-6 h-screen py-4">
+      <span className="pl-8 py-4">
         <AppLogo />
       </span>
       {navItems.map((group) => (
@@ -154,7 +161,8 @@ function DrawerContent() {
       <Button
         variant="contained"
         size="large"
-        sx={{ margin: 4, marginTop: "auto" }}
+        sx={{ marginTop: "auto", mx: 2 }}
+        onClick={handleLogout}
       >
         LOGOUT
       </Button>

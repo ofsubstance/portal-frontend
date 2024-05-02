@@ -14,7 +14,7 @@ import useAuthAction from "@/hooks/useAuthAction";
 function SignupPage() {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-  const { signupMutation, socialSigninMutation } = useAuthAction();
+  const { signupMutation, googleSigninMutation } = useAuthAction();
 
   const onSignup = (data: SignupReq) => {
     signupMutation.mutate(data, {
@@ -27,7 +27,7 @@ function SignupPage() {
 
   const onGoogleSignin = useGoogleLogin({
     onSuccess: (data: TokenResponse) => {
-      socialSigninMutation.mutate(data.access_token, {
+      googleSigninMutation.mutate(data.access_token, {
         onSuccess: () => {
           console.log("Signed in successfully");
           setIsAuthenticated(true);

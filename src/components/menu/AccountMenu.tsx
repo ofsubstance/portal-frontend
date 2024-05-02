@@ -6,17 +6,29 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { RiLogoutCircleRLine as LogoutIcon } from "react-icons/ri";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import useAuthAction from "@/hooks/useAuthAction";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function AccountMenu() {
+  const { signoutMutation } = useAuthAction();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = () => {
+    signoutMutation.mutate();
+    navigate("/signin");
+  };
+
   return (
     <>
       <Chip
@@ -41,10 +53,8 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         slotProps={{
           paper: {
-            elevation: 0,
             sx: {
               overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.2))",
               mt: 1.5,
               "& .MuiAvatar-root": {
                 width: 32,
@@ -60,6 +70,8 @@ export default function AccountMenu() {
                 right: 14,
                 width: 10,
                 height: 10,
+                borderColor: "divider",
+                borderWidth: "1px 0 0 1px",
                 bgcolor: "background.paper",
                 transform: "translateY(-50%) rotate(45deg)",
                 zIndex: 0,
@@ -89,7 +101,7 @@ export default function AccountMenu() {
 
         <Divider />
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <LogoutIcon size={18} className="text-slate-600" />
           </ListItemIcon>

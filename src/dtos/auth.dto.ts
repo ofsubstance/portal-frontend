@@ -1,25 +1,18 @@
-export interface SigninReq {
-  email: string;
-  password: string;
-  remember?: boolean;
-}
+import {
+  forgotPasswordValidation,
+  resetPasswordValidation,
+  signinValidation,
+  signupValidation,
+} from "@/validators/auth.validator";
 
-export interface SignupReq {
-  email: string;
-  name: string;
-  password: string;
-  confirmPassword?: string;
-}
+import { z } from "zod";
 
-export interface ForgotPasswordReq {
-  email: string;
-}
+export type SigninReq = z.infer<typeof signinValidation>;
 
-export interface ResetPasswordReq {
-  password: string;
-  confirmPassword?: string;
-}
+export type SignupReq = z.infer<typeof signupValidation>;
+export type ForgotPasswordReq = z.infer<typeof forgotPasswordValidation>;
 
+export type ResetPasswordReq = z.infer<typeof resetPasswordValidation>;
 export interface SigninRes {
   access_token: string;
   refresh_token: string;

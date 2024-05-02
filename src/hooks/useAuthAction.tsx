@@ -15,8 +15,8 @@ function useAuthAction() {
     mutationFn: authService.signout,
   });
 
-  const socialSigninMutation = useMutation({
-    mutationFn: authService.socialSignin,
+  const googleSigninMutation = useMutation({
+    mutationFn: authService.googleSignin,
   });
 
   const resetPasswordMutation = useMutation({
@@ -36,7 +36,7 @@ function useAuthAction() {
   return {
     signinMutation,
     signupMutation,
-    socialSigninMutation,
+    googleSigninMutation,
     signoutMutation,
     resetPasswordMutation,
     forgotPasswordMutation,
