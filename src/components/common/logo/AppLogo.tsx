@@ -1,16 +1,20 @@
 import { Link } from "react-router-dom";
 import { Typography } from "@mui/material";
 
-function AppLogo() {
+interface AppLogoProps {
+  type?: "compact" | "full";
+}
+
+function AppLogo({ type = "full" }: AppLogoProps) {
   return (
     <Typography
-      variant="h5"
-      color="primary"
-      fontWeight={700}
+      fontSize={"2rem"}
+      color="black"
+      fontFamily={"Pistilli-Roman"}
       component={Link}
       to={"/"}
     >
-      Of Substance.
+      {type === "compact" ? "O|S" : "Of Substance."}
     </Typography>
   );
 }

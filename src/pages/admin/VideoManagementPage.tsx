@@ -40,7 +40,7 @@ function VideoManagementPage() {
             startIcon={<AddVideoIcon />}
             size="large"
             fullWidth
-            onClick={() => navigate("/video-management/upload")}
+            onClick={() => navigate("/admin/video-management/upload")}
           >
             Upload Video
           </Button>

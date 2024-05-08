@@ -47,7 +47,7 @@ function ProfileAboutSection() {
       <Button
         variant="outlined"
         fullWidth
-        onClick={() => navigate("/profile/settings")}
+        onClick={() => navigate("/admin/profile/settings")}
       >
         Edit Profile
       </Button>

@@ -68,7 +68,7 @@ function PlaylistManagementPage() {
             startIcon={<AddPlaylistIcon />}
             size="large"
             fullWidth
-            onClick={() => navigate("/playlist-management/create")}
+            onClick={() => navigate("/admin/playlist-management/create")}
           >
             Create New Playlist
           </Button>
@@ -88,7 +88,8 @@ function PlaylistManagementPage() {
         enableRowActions
         positionActionsColumn="last"
         muiTableBodyRowProps={({ row }) => ({
-          onClick: () => navigate(`/playlist-management/${row.original.id}`),
+          onClick: () =>
+            navigate(`/admin/playlist-management/${row.original.id}`),
         })}
         renderRowActionMenuItems={({ row, table }) => [
           <MRT_ActionMenuItem //or just use a normal MUI MenuItem component

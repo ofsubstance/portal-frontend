@@ -14,7 +14,7 @@ function VideoGridItem() {
   return (
     <div
       className="space-y-2 cursor-pointer"
-      onClick={() => navigate("/video-management/details/1")}
+      onClick={() => navigate("/admin/video-management/details/1")}
     >
       <div className="relative">
         <img

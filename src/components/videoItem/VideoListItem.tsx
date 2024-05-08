@@ -23,7 +23,7 @@ function VideoListItem() {
   return (
     <div
       className="flex gap-4 cursor-pointer"
-      onClick={() => navigate("/video-management/details/1")}
+      onClick={() => navigate("/admin/video-management/details/1")}
     >
       <div className="relative h-24 aspect-video">
         <img

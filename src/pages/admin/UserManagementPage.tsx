@@ -105,7 +105,7 @@ function UserManagementPage() {
         enableRowActions
         positionActionsColumn="last"
         muiTableBodyRowProps={({ row }) => ({
-          onClick: () => navigate(`/profile/${row.original.id}`),
+          onClick: () => navigate(`/admin/profile/${row.original.id}`),
         })}
         renderRowActionMenuItems={({ row, table }) => [
           <MRT_ActionMenuItem //or just use a normal MUI MenuItem component

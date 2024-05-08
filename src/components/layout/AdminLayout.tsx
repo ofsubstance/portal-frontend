@@ -34,33 +34,33 @@ const navItems = [
     group: "Dashboard",
     items: [
       {
-        link: "/",
+        link: "/admin",
         text: "Overview",
         icon: OverviewIcon,
       },
-      { link: "/analytics", text: "Analytics", icon: AnalyticsIcon },
+      { link: "/admin/analytics", text: "Analytics", icon: AnalyticsIcon },
     ],
   },
   {
     group: "Management",
     items: [
       {
-        link: "/video-management",
+        link: "/admin/video-management",
         text: "Video Management",
         icon: VideoManagementIcon,
       },
       {
-        link: "/playlist-management",
+        link: "/admin/playlist-management",
         text: "Playlist Management",
         icon: PlaylistManagementIcon,
       },
       {
-        link: "/user-management",
+        link: "/admin/user-management",
         text: "User Management",
         icon: UserManagementIcon,
       },
       {
-        link: "/payments-subscriptions",
+        link: "/admin/payments-subscriptions",
         text: "Payments & Subscriptions",
         icon: PaymentsIcon,
       },
@@ -70,12 +70,12 @@ const navItems = [
     group: "Account",
     items: [
       {
-        link: "/profile/1",
+        link: "/admin/profile/1",
         text: "Profile Details",
         icon: ProfileIcon,
       },
       {
-        link: "/profile/settings",
+        link: "/admin/profile/settings",
         text: "Settings",
         icon: SettingsIcon,
       },
@@ -94,7 +94,7 @@ function DrawerContent() {
   const isActiveLink = (itemLink: string) => {
     return (
       location.pathname === itemLink ||
-      (itemLink !== "/" && location.pathname.startsWith(itemLink))
+      (itemLink !== "/admin" && location.pathname.startsWith(itemLink))
     );
   };
 

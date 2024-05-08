@@ -14,7 +14,7 @@ function Router() {
       }),
       children: [
         {
-          path: "/",
+          path: "/admin",
           lazy: async () => ({
             Component: (await import("./pages/admin/AdminLandingPage")).default,
           }),

@@ -16,7 +16,7 @@ function VideoUploadPage() {
     uploadVideoMutation.mutate(data, {
       onSuccess: () => {
         toast.success("Video uploaded successfully");
-        navigate("/video-management");
+        navigate("/admin/video-management");
       },
     });
   };
