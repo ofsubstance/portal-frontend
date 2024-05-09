@@ -51,7 +51,7 @@ function VideoListItem() {
 
         <div className="flex gap-1 flex-wrap mt-auto">
           {data.genre.map((g) => (
-            <Chip key={g} label={g} />
+            <Chip key={g} label={g} size="small" />
           ))}
         </div>
       </div>

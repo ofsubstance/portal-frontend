@@ -16,7 +16,7 @@ function Router() {
         {
           path: "/admin",
           lazy: async () => ({
-            Component: (await import("./pages/admin/AdminLandingPage")).default,
+            Component: (await import("./pages/admin/AdminLayoutPage")).default,
           }),
           children: [
             {
@@ -116,6 +116,34 @@ function Router() {
                 Component: (
                   await import("./pages/admin/PaymentsSubscriptionsPage")
                 ).default,
+              }),
+            },
+          ],
+        },
+        {
+          path: "/",
+          lazy: async () => ({
+            Component: (await import("./pages/user/UserLayoutPage")).default,
+          }),
+          children: [
+            {
+              index: true,
+              lazy: async () => ({
+                Component: (await import("./pages/user/UserLandingPage"))
+                  .default,
+              }),
+            },
+            {
+              path: "profile/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/common/ProfilePage")).default,
+              }),
+            },
+            {
+              path: "profile/settings",
+              lazy: async () => ({
+                Component: (await import("./pages/common/ProfileUpdatePage"))
+                  .default,
               }),
             },
           ],

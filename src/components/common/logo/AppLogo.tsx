@@ -3,13 +3,14 @@ import { Typography } from "@mui/material";
 
 interface AppLogoProps {
   type?: "compact" | "full";
+  color?: string;
 }
 
-function AppLogo({ type = "full" }: AppLogoProps) {
+function AppLogo({ type = "full", color = "black" }: AppLogoProps) {
   return (
     <Typography
       fontSize={"2rem"}
-      color="black"
+      color={color}
       fontFamily={"Pistilli-Roman"}
       component={Link}
       to={"/"}
