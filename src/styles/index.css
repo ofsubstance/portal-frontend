@@ -11,6 +11,8 @@
 
 :root {
   font-family: "Poppins", sans-serif;
+  --swiper-navigation-color: gray;
+  --swiper-pagination-color: gray;
 }
 
 /* total width */
