@@ -7,7 +7,7 @@ import VideoListItem from "@/components/videoItem/VideoListItem";
 
 export default function UserLandingPage() {
   return (
-    <div className="-mt-16">
+    <div>
       <HeroSlider />
       <div className="flex gap-10 p-6 md:p-10 md:px-20">
         <div className="flex-1 space-y-14">

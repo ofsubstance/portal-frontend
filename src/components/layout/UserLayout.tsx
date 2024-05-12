@@ -283,7 +283,6 @@ export default function UserLayout({
           overflow: "auto",
         }}
       >
-        <Toolbar />
         <Box
           sx={{
             width: "100%",

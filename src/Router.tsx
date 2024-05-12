@@ -134,6 +134,13 @@ function Router() {
               }),
             },
             {
+              path: "video/:id",
+              lazy: async () => ({
+                Component: (await import("./pages/user/VideoDetailsPage"))
+                  .default,
+              }),
+            },
+            {
               path: "profile/:id",
               lazy: async () => ({
                 Component: (await import("./pages/common/ProfilePage")).default,

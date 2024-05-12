@@ -17,7 +17,7 @@ export const videoUploadValidation = z.object({
   duration: z
     .string()
     .regex(/^\d{2}:\d{2}$/, { message: "Invalid duration format." }),
-  cost: z.number().int().min(0, { message: "Cost must be a positive number." }),
+  cost: z.number().int().nonnegative({ message: "Cost must be a positive number." }),
   short_desc: z.string().min(1, { message: "Short description is required." }),
   about: z.string().min(1, { message: "About is required." }),
   primary_lesson: z.string().min(1, { message: "Primary lesson is required." }),

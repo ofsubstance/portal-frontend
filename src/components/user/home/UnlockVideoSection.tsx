@@ -1,4 +1,5 @@
 import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import { Link } from "react-router-dom";
 import { Typography } from "@mui/material";
 import VideoGridItem from "@/components/videoItem/VideoGridItem";
 
@@ -15,7 +16,9 @@ export default function UnlockVideoSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Array.from(Array(3)).map((_, index) => (
-          <VideoGridItem key={index} />
+          <Link key={index} to="/video/1">
+            <VideoGridItem />
+          </Link>
         ))}
       </div>
     </div>
