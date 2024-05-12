@@ -12,26 +12,7 @@ import {
 import { Chip, Fab, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-const slides = [
-  {
-    img: "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649443692195-U0VTSEYT7EPXFKFRUBWT/Slide%2B1.jpg",
-    title: "The Future of Storytelling",
-    createdAt: new Date(),
-    duration: "15 min",
-    genre: ["Drama", "Thriller"],
-    summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.",
-  },
-  {
-    img: "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649442525770-8J75N5GLA1D2WGVANJE1/Trapped+-+Vimeo+Thumbnail.png",
-    title: "Trapped",
-    createdAt: new Date(),
-    duration: "30 min",
-    genre: ["Drama", "Thriller", "Mystery"],
-    summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.",
-  },
-];
+import { slides } from "@/data/dummyData";
 
 export default function HeroSlider() {
   return (
