@@ -1,6 +1,6 @@
 import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
-import RecommendationItem from "./RecommendationItem";
 import { Typography } from "@mui/material";
+import VideoGridItem from "@/components/videoItem/VideoGridItem";
 
 export default function UnlockVideoSection() {
   return (
@@ -15,7 +15,7 @@ export default function UnlockVideoSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Array.from(Array(3)).map((_, index) => (
-          <RecommendationItem key={index} />
+          <VideoGridItem key={index} />
         ))}
       </div>
     </div>

@@ -1,15 +1,16 @@
+import {
+  RiCalendar2Line as CalendarIcon,
+  RiPlayFill as PlayIcon,
+} from "react-icons/ri";
 import { Chip, Theme, Typography, useMediaQuery } from "@mui/material";
 
 import VideoGridItem from "./VideoGridItem";
 import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { videoData } from "@/data/dummyData";
 
 function VideoListItem() {
-  const navigate = useNavigate();
-
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
@@ -21,16 +22,16 @@ function VideoListItem() {
   }
 
   return (
-    <div
-      className="flex gap-4 cursor-pointer"
-      onClick={() => navigate("/admin/video-management/details/1")}
-    >
-      <div className="relative h-24 aspect-video">
-        <img
-          src={data.thumbnail}
-          alt="thumbnail"
-          className="object-cover rounded-md"
-        />
+    <div className="flex gap-4 cursor-pointer [&:hover_.bg-opacity-0]:bg-opacity-40 [&:hover_.opacity-0]:opacity-100">
+      <div className="relative h-24 aspect-video rounded-md overflow-clip">
+        <img src={data.thumbnail} alt="thumbnail" className="object-cover" />
+
+        <div className="absolute grid place-content-center inset-0 bg-black bg-opacity-0 transition-[background] duration-500">
+          <PlayIcon
+            size={40}
+            className="text-white opacity-0 transition-opacity duration-500"
+          />
+        </div>
 
         <Chip
           size="small"
@@ -40,22 +41,20 @@ function VideoListItem() {
         />
       </div>
 
-      <div className="flex flex-col gap-2 flex-1">
-        <Typography variant="body1" fontWeight={600}>
-          {data.title}
-        </Typography>
+      <div className="flex flex-col gap-3 flex-1">
+        <div className="flex gap-2 justify-between">
+          <Typography variant="body1" fontWeight={600}>
+            {data.title}
+          </Typography>
 
-        <Typography variant="subtitle2">
-          {dayjs(data.createdAt).format("MMMM DD, YYYY h:mm A")}
-        </Typography>
-
-        <div className="flex gap-1 flex-wrap mt-auto">
-          {data.genre.map((g) => (
-            <Chip key={g} label={g} size="small" />
-          ))}
+          {/* <VideoItemMenu /> */}
         </div>
+
+        <Typography variant="subtitle2" className="inline-flex gap-2">
+          <CalendarIcon size={20} />
+          {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+        </Typography>
       </div>
-      <VideoItemMenu />
     </div>
   );
 }

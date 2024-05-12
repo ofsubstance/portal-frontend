@@ -15,6 +15,7 @@ export type IVideo = {
   createdAt: string;
   updatedAt: string;
   genre: string[];
+  summary: string;
   about: string;
   primaryLesson: string;
   theme: string;
@@ -38,7 +39,8 @@ export const videoData: IVideo = {
     "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649443692195-U0VTSEYT7EPXFKFRUBWT/Slide%2B1.jpg",
   createdAt: "2021-10-10T12:00:00Z",
   updatedAt: "2021-10-10T12:00:00Z",
-  genre: ["Action", "Adventure", "Comedy", "Romance", "Sci Fi"],
+  genre: ["Drama", "Thriller", "Mystery"],
+  summary: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   about:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   primaryLesson:

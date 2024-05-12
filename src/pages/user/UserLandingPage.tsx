@@ -2,8 +2,8 @@ import { Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 
 import HeroSlider from "@/components/user/home/HeroSlider";
 import Recommendation from "@/components/user/home/RecommendationSection";
-import TrailerItem from "@/components/user/home/TrailerItem";
 import UnlockVideoSection from "@/components/user/home/UnlockVideoSection";
+import VideoListItem from "@/components/videoItem/VideoListItem";
 
 export default function UserLandingPage() {
   return (
@@ -39,7 +39,7 @@ export default function UserLandingPage() {
 
             <Stack spacing={2} divider={<Divider />} p={2}>
               {Array.from(Array(4)).map((_, index) => (
-                <TrailerItem key={index} />
+                <VideoListItem key={index} />
               ))}
             </Stack>
           </Paper>

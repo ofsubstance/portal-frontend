@@ -24,8 +24,8 @@ export default function VideoItemMenu() {
       <IconButton
         onClick={handleMenuClick}
         sx={{
-          width: "40px",
-          height: "40px",
+          width: "34px",
+          height: "34px",
         }}
       >
         <MoreIcon className="text-slate-600" />

@@ -1,54 +1,68 @@
+import {
+  RiCalendar2Line as CalendarIcon,
+  RiTimeLine as ClockIcon,
+} from "react-icons/ri";
 import { Chip, Typography } from "@mui/material";
 
 import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { videoData } from "@/data/dummyData";
 
-function VideoGridItem() {
-  const navigate = useNavigate();
-
+export default function VideoGridItem() {
   const [data, setData] = useState(videoData);
 
   return (
-    <div
-      className="space-y-2 cursor-pointer"
-      onClick={() => navigate("/admin/video-management/details/1")}
-    >
-      <div className="relative">
-        <img
-          src={data.thumbnail}
-          alt="thumbnail"
-          className="w-full h-44 object-cover rounded-lg"
-        />
-
-        <Chip
-          className="absolute bottom-2 right-2"
-          sx={{ backgroundColor: "rgba(0, 0, 0, 0.6)", color: "white" }}
-          label={`${Math.floor(data.duration / 60)} min`}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <div className="flex gap-2 justify-between">
-          <Typography variant="h6" fontWeight={600}>
-            {data.title}
+    <div className="cursor-pointer [&:hover_.bg-gradient-to-t]:m-0 [&:hover_.bg-gradient-to-t]:pt-3">
+      <div
+        className="relative w-full h-56 rounded-xl overflow-clip drop-shadow-lg shadow-lg bg-cover bg-center"
+        style={{ backgroundImage: `url(${data.thumbnail})` }}
+      >
+        <div className="absolute inset-0 p-3 pt-32 mt-16 flex flex-col gap-2 bg-gradient-to-t from-black transition-all duration-300">
+          <Typography variant="body1" className="flex gap-2 text-white ">
+            <ClockIcon size={20} />
+            {data.duration / 60} min
           </Typography>
 
-          <VideoItemMenu />
-        </div>
-        <Typography variant="subtitle1" color="text.secondary">
-          {dayjs(data.createdAt).format("MMMM DD, YYYY h:mm A")}
-        </Typography>
-        <div className="flex gap-1 pt-2 flex-wrap">
-          {data.genre.map((g) => (
-            <Chip key={g} label={g} />
-          ))}
+          <div className="flex gap-1 flex-wrap">
+            {data.genre.map((g) => (
+              <Chip
+                key={g}
+                label={g}
+                size="small"
+                variant="outlined"
+                sx={{
+                  borderColor: "white",
+                  color: "white",
+                }}
+              />
+            ))}
+          </div>
+
+          <Typography variant="body1" className="text-white line-clamp-5">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
+            velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor
+            sit amet, consectetur adipiscing elit.
+          </Typography>
         </div>
       </div>
+
+      <div className="pt-3 flex gap-2 justify-between">
+        <Typography variant="h6" fontWeight={600}>
+          {data.title}
+        </Typography>
+
+        {/* <VideoItemMenu /> */}
+      </div>
+
+      <Typography
+        variant="subtitle1"
+        color="text.secondary"
+        className="flex gap-2 items-center"
+      >
+        <CalendarIcon size={20} />
+        {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+      </Typography>
     </div>
   );
 }
-
-export default VideoGridItem;
