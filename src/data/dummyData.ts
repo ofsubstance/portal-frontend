@@ -35,7 +35,7 @@ export const videoData: IVideo = {
     },
   ],
   thumbnail:
-    "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/3611f0f1-d47f-4622-a419-ddc80ab99ab5/Slide+20.jpg?format=2500w",
+    "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649443692195-U0VTSEYT7EPXFKFRUBWT/Slide%2B1.jpg",
   createdAt: "2021-10-10T12:00:00Z",
   updatedAt: "2021-10-10T12:00:00Z",
   genre: ["Action", "Adventure", "Comedy", "Romance", "Sci Fi"],

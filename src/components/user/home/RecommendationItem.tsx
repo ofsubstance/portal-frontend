@@ -4,7 +4,6 @@ import {
 } from "react-icons/ri";
 import { Chip, Typography } from "@mui/material";
 
-import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -30,7 +29,7 @@ export default function RecommendationItem() {
             {data.duration / 60} min
           </Typography>
 
-          <div className="flex gap-1 mb-auto flex-wrap">
+          <div className="flex gap-1 flex-wrap">
             {data.genre.map((g) => (
               <Chip
                 key={g}
@@ -45,29 +44,26 @@ export default function RecommendationItem() {
             ))}
           </div>
 
-          <Typography variant="body1" className="text-white">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+          <Typography variant="body1" className="text-white line-clamp-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
+            velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor
+            sit amet, consectetur adipiscing elit.
           </Typography>
         </div>
       </div>
 
-      <div>
-        <div className="flex gap-2 justify-between">
-          <Typography variant="h6" fontWeight={600}>
-            {data.title}
-          </Typography>
+      <Typography variant="h6" fontWeight={600}>
+        {data.title}
+      </Typography>
 
-          <VideoItemMenu />
-        </div>
-        <Typography
-          variant="subtitle1"
-          color="text.secondary"
-          className="flex gap-2 items-center"
-        >
-          <CalendarIcon size={20} />
-          {dayjs(data.createdAt).format("MMMM DD, YYYY")}
-        </Typography>
-      </div>
+      <Typography
+        variant="subtitle1"
+        color="text.secondary"
+        className="flex gap-2 items-center"
+      >
+        <CalendarIcon size={20} />
+        {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+      </Typography>
     </div>
   );
 }

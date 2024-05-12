@@ -1,7 +1,6 @@
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import "swiper/css";
 import "swiper/css/effect-fade";
 
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
@@ -47,7 +46,7 @@ export default function HeroSlider() {
       pagination={{ clickable: true }}
       navigation={true}
       modules={[Autoplay, Pagination, Navigation, EffectFade]}
-      className="w-full h-[80vh]"
+      className="w-full h-screen"
     >
       {slides.map((slide, index) => (
         <SwiperSlide key={index}>
@@ -56,7 +55,7 @@ export default function HeroSlider() {
             style={{ backgroundImage: `url(${slide.img})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black from-[20%]"></div>
-            <div className="w-1/3 absolute inset-0 mt-40 pl-52 space-y-6 text-white">
+            <div className="p-14 md:pl-52 md:w-1/3 absolute inset-0 flex flex-col gap-6 justify-center items-start text-white">
               <Typography variant="h6" color="primary">
                 # Spotlight {index + 1}
               </Typography>
