@@ -3,12 +3,13 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 import ContextProvider from "@/contexts/ContextProvider";
-import LoadingOverlay from "./components/common/loader/LoadingOverlay";
-import { Outlet } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import LoadingOverlay from "./components/common/loader/LoadingOverlay";
 
 const onHttpError = (
   error: any,
@@ -38,6 +39,19 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const { pathname } = useLocation();
+  const scrollRef = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    if (!scrollRef.current) {
+      scrollRef.current = document.getElementsByTagName(
+        "main"
+      )[0] as HTMLDivElement;
+    }
+
+    scrollRef.current.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ContextProvider>

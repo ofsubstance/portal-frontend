@@ -1,3 +1,4 @@
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import {
   Breakpoint,
   Button,
@@ -15,12 +16,14 @@ import CloseIcon from "@mui/icons-material/Close";
 interface ModalLayoutProps {
   title: React.ReactNode;
   maxWidth?: false | Breakpoint;
+  fullWidth?: boolean;
   children: React.ReactNode;
   dialogActions?: {
     confirmButtonProps?: {
       text: string;
       error?: boolean;
       onClick: () => any;
+      disabled?: boolean;
     };
     cancelButtonProps?: {
       text: string;
@@ -34,6 +37,7 @@ interface ModalLayoutProps {
 export default function ModalLayout({
   title,
   maxWidth,
+  fullWidth = true,
   externalControl,
   children,
   dialogActions,
@@ -87,6 +91,7 @@ export default function ModalLayout({
       {renderOpenModalComponent()}
       <Dialog
         maxWidth={maxWidth}
+        fullWidth={fullWidth}
         scroll="paper"
         open={openModal}
         onClose={handleClose}
@@ -118,6 +123,7 @@ export default function ModalLayout({
                 variant="contained"
                 autoFocus
                 onClick={handleConfirmButtonClick}
+                disabled={dialogActions.confirmButtonProps.disabled}
               >
                 {dialogActions.confirmButtonProps.text}
               </Button>
@@ -128,3 +134,19 @@ export default function ModalLayout({
     </>
   );
 }
+
+export const ModalHookLayout = NiceModal.create((props: ModalLayoutProps) => {
+  const modal = useModal();
+
+  return (
+    <ModalLayout
+      {...props}
+      externalControl={{
+        open: modal.visible,
+        onClose: modal.hide,
+      }}
+    >
+      {props.children}
+    </ModalLayout>
+  );
+});

@@ -1,16 +1,4 @@
 import {
-  RiPieChart2Line as AnalyticsIcon,
-  RiMenu2Line as MenuIcon,
-  RiDashboardLine as OverviewIcon,
-  RiMoneyDollarCircleLine as PaymentsIcon,
-  RiPlayList2Line as PlaylistManagementIcon,
-  RiAccountCircleLine as ProfileIcon,
-  RiSearch2Line as SearchIcon,
-  RiSettings2Line as SettingsIcon,
-  RiUserSettingsLine as UserManagementIcon,
-  RiFolderVideoLine as VideoManagementIcon,
-} from "react-icons/ri";
-import {
   AppBar,
   Box,
   Button,
@@ -25,12 +13,24 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import {
+  RiPieChart2Line as AnalyticsIcon,
+  RiMenu2Line as MenuIcon,
+  RiDashboardLine as OverviewIcon,
+  RiMoneyDollarCircleLine as PaymentsIcon,
+  RiPlayList2Line as PlaylistManagementIcon,
+  RiAccountCircleLine as ProfileIcon,
+  RiSearch2Line as SearchIcon,
+  RiSettings2Line as SettingsIcon,
+  RiUserSettingsLine as UserManagementIcon,
+  RiFolderVideoLine as VideoManagementIcon,
+} from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import AccountMenu from "@/components/menu/AccountMenu";
-import AppLogo from "../common/logo/AppLogo";
 import useAuthAction from "@/hooks/useAuthAction";
 import { useState } from "react";
+import AppLogo from "../common/logo/AppLogo";
 
 const navItems = [
   {
@@ -245,13 +245,21 @@ export default function UserLayout({
             <MenuIcon />
           </IconButton>
 
-          <AppLogo color="white" />
+          <div className="hidden md:block">
+            <AppLogo color="white" />
+          </div>
+
+          <div className="block md:hidden">
+            <AppLogo color="white" type="compact" />
+          </div>
 
           <SearchBar />
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <AccountMenu />
+          <div className="hidden md:block">
+            <AccountMenu />
+          </div>
         </Toolbar>
       </AppBar>
 

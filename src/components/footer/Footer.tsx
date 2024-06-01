@@ -1,15 +1,15 @@
+import { Grid, Paper, Typography } from "@mui/material";
 import {
   RiFacebookCircleFill as FacebookIcon,
   RiTelegramFill as TelegramIcon,
   RiTwitterFill as TwitterIcon,
 } from "react-icons/ri";
-import { Grid, Paper, Typography } from "@mui/material";
 
 import AppLogo from "../common/logo/AppLogo";
 
 export default function Footer() {
   return (
-    <Paper variant="outlined" className="p-10 m-20 space-y-6">
+    <Paper variant="outlined" className="p-10 m-10 md:m-20 space-y-6">
       <Grid container rowSpacing={3} columnSpacing={3}>
         <Grid item xs={12} md={4} className="space-y-4">
           <AppLogo type="compact" />

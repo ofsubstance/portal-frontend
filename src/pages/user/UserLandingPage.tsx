@@ -17,7 +17,7 @@ export default function UserLandingPage() {
 
           <UnlockVideoSection />
         </div>
-        <div className="flex-[0.4] space-y-10 hidden md:block">
+        <div className="flex-[0.3] space-y-10 hidden md:block">
           <Paper variant="outlined">
             <Typography variant="body1" fontWeight={600} p={2}>
               Categories
@@ -33,7 +33,7 @@ export default function UserLandingPage() {
 
           <Paper variant="outlined">
             <Typography variant="body1" fontWeight={600} p={2}>
-              Watch Trailers
+              Top Picks
             </Typography>
             <Divider />
 

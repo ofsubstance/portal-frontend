@@ -1,15 +1,4 @@
 import {
-  RiPieChart2Line as AnalyticsIcon,
-  RiMenu2Line as MenuIcon,
-  RiDashboardLine as OverviewIcon,
-  RiMoneyDollarCircleLine as PaymentsIcon,
-  RiPlayList2Line as PlaylistManagementIcon,
-  RiAccountCircleLine as ProfileIcon,
-  RiSettings2Line as SettingsIcon,
-  RiUserSettingsLine as UserManagementIcon,
-  RiFolderVideoLine as VideoManagementIcon,
-} from "react-icons/ri";
-import {
   AppBar,
   Box,
   Button,
@@ -22,12 +11,23 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import {
+  RiPieChart2Line as AnalyticsIcon,
+  RiMenu2Line as MenuIcon,
+  RiDashboardLine as OverviewIcon,
+  RiMoneyDollarCircleLine as PaymentsIcon,
+  RiPlayList2Line as PlaylistManagementIcon,
+  RiAccountCircleLine as ProfileIcon,
+  RiSettings2Line as SettingsIcon,
+  RiUserSettingsLine as UserManagementIcon,
+  RiFolderVideoLine as VideoManagementIcon,
+} from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import AccountMenu from "@/components/menu/AccountMenu";
-import AppLogo from "../common/logo/AppLogo";
 import useAuthAction from "@/hooks/useAuthAction";
 import { useState } from "react";
+import AppLogo from "../common/logo/AppLogo";
 
 const navItems = [
   {

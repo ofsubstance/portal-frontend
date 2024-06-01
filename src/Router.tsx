@@ -1,8 +1,8 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
+import notFoundImg from "./assets/notFound.svg";
 import ContextProvider from "./contexts/ContextProvider";
 import ErrorPage from "./pages/ErrorPage";
-import notFoundImg from "./assets/notFound.svg";
 
 function Router() {
   const router = createBrowserRouter([

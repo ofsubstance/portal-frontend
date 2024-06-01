@@ -1,166 +1,66 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  Chip,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import {
-  RiArrowRightSLine as ArrowRightIcon,
-  RiArrowDownSLine as ExpandMoreIcon,
-  RiPlayCircleLine as PlayIcon,
-} from "react-icons/ri";
+import { Toolbar, Typography } from "@mui/material";
 
+import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import VideoCommentItem from "@/components/user/video/VideoCommentItem";
+import VideoDetailsHero from "@/components/user/video/VideoDetailsHero";
+import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
 import VideoGridItem from "@/components/videoItem/VideoGridItem";
+import { videoData } from "@/data/dummyData";
+import { useModal } from "@ebay/nice-modal-react";
+import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
-import { videoData } from "@/data/dummyData";
+import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import { useSearchParams } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 
-interface VideoDescriptionItemProps {
-  title: string;
-  details: string;
-}
-
-function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
-  return (
-    <Accordion
-      defaultExpanded
-      disableGutters
-      sx={{
-        backgroundColor: "transparent",
-        boxShadow: "none",
-        color: "white",
-      }}
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon size={24} className="text-white" />}
-        sx={{ px: 0 }}
-      >
-        <Typography variant="h6" fontWeight={600}>
-          {title}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails sx={{ px: 0 }}>{details}</AccordionDetails>
-    </Accordion>
-  );
-}
-
 export default function VideoDetailsPage() {
+  const modal = useModal(ModalHookLayout);
   const [data, setData] = useState(videoData);
+  const [searchParam, setSearchParam] = useSearchParams();
+
+  const handlePlayClick = () => {
+    setSearchParam({ playing: "true" });
+  };
+
+  const handlePlayTrailerClick = () => {
+    modal.show({
+      title: data.title,
+      maxWidth: "lg",
+      children: (
+        <div className="w-full">
+          <Vimeo
+            video={"https://vimeo.com/862974723/04dbe39eaf?share=copy"}
+            responsive={true}
+          />
+        </div>
+      ),
+    });
+  };
 
   return (
-    <div>
+    <div className="space-y-10">
       <div
-        className="bg-cover bg-center text-white"
+        className="bg-cover bg-center text-white min-h-screen"
         style={{ backgroundImage: `url(${data.thumbnail})` }}
       >
-        <Toolbar />
-        <div className="backdrop-filter backdrop-blur-md flex bg-black bg-opacity-20">
-          <div className="w-1/3 space-y-6 p-20 bg-white backdrop-filter backdrop-blur-md bg-opacity-15">
-            <img
-              className="rounded-md w-full object-cover"
-              src={data.thumbnail}
-              alt="thumbnail"
+        <div className="min-h-screen backdrop-filter backdrop-blur-md bg-black bg-opacity-20">
+          <Toolbar />
+          {searchParam.get("playing") == "true" ? (
+            <VideoPlayerSection data={data} />
+          ) : (
+            <VideoDetailsHero
+              data={data}
+              onPlay={handlePlayClick}
+              onPlayTrailer={handlePlayTrailerClick}
             />
-
-            <div className="flex gap-2">
-              <Button
-                variant="contained"
-                color="ghost"
-                fullWidth
-                startIcon={<PlayIcon />}
-              >
-                Watch Trailer
-              </Button>
-
-              <Button variant="contained" fullWidth startIcon={<PlayIcon />}>
-                Watch Video
-              </Button>
-            </div>
-
-            <Typography variant="subtitle1" fontWeight={300}>
-              <span className="font-semibold">Title: </span>
-              {data.title}
-            </Typography>
-
-            <Typography variant="subtitle1" fontWeight={300}>
-              <span className="font-semibold">Publish Date: </span>
-              {dayjs(data.createdAt).format("MMMM DD, YYYY")}
-            </Typography>
-
-            <Typography variant="subtitle1" fontWeight={300}>
-              <span className="font-semibold">Last Updated: </span>
-              {dayjs(data.updatedAt).fromNow()}
-            </Typography>
-
-            <Typography variant="subtitle1" fontWeight={300}>
-              <span className="font-semibold">Duration: </span>
-              {Math.floor(data.duration / 60)} min
-            </Typography>
-
-            <Typography
-              variant="subtitle1"
-              fontWeight={300}
-              className="flex gap-2 flex-wrap"
-            >
-              <span className="font-semibold">Genres: </span>
-              {data.genre.map((genre) => (
-                <Chip
-                  key={genre}
-                  label={genre}
-                  variant="outlined"
-                  sx={{ color: "white", borderColor: "white" }}
-                />
-              ))}
-            </Typography>
-          </div>
-          {/* {videoPlay && (
-            <div className="p-20 mx-auto space-y-6 w-full">
-              <video controls className="w-full rounded-md aspect-video">
-                <source src={data.videoData[0].url} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          )} */}
-
-          <div className="p-20 mx-auto space-y-6">
-            <Typography variant="h4" fontWeight={600}>
-              {data.title}
-            </Typography>
-
-            <div className="flex gap-2 flex-wrap">
-              {data.genre.map((genre) => (
-                <Chip
-                  key={genre}
-                  label={genre}
-                  variant="outlined"
-                  sx={{ color: "white", borderColor: "white" }}
-                />
-              ))}
-            </div>
-
-            <Typography variant="body1">{data.summary}</Typography>
-
-            <VideoDescriptionItem title="About" details={data.about} />
-
-            <VideoDescriptionItem
-              title="Primary Lesson"
-              details={data.primaryLesson}
-            />
-
-            <VideoDescriptionItem title="Theme" details={data.theme} />
-
-            <VideoDescriptionItem title="Impact" details={data.impact} />
-          </div>
+          )}
         </div>
       </div>
 
-      <div className="space-y-6 p-20">
+      <div className="space-y-6 px-10 md:px-20">
         <Typography
           variant="h6"
           fontWeight={600}
@@ -171,6 +71,17 @@ export default function VideoDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {Array.from(Array(4)).map((_, index) => (
             <VideoGridItem key={index} />
+          ))}
+        </div>
+      </div>
+
+      <div className="px-10 md:px-20 space-y-4">
+        <Typography variant="h6" fontWeight={600}>
+          Comments
+        </Typography>
+        <div className="space-y-6">
+          {Array.from(Array(5)).map((_, index) => (
+            <VideoCommentItem key={index} />
           ))}
         </div>
       </div>

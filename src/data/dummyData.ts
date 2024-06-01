@@ -12,8 +12,8 @@ export type IVideo = {
   ];
   duration: number;
   thumbnail: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   genre: string[];
   summary: string;
   about: string;
@@ -37,10 +37,11 @@ export const videoData: IVideo = {
   ],
   thumbnail:
     "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649443692195-U0VTSEYT7EPXFKFRUBWT/Slide%2B1.jpg",
-  createdAt: "2021-10-10T12:00:00Z",
-  updatedAt: "2021-10-10T12:00:00Z",
+  createdAt: new Date(),
+  updatedAt: new Date(),
   genre: ["Drama", "Thriller", "Mystery"],
-  summary: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  summary:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.",
   about:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   primaryLesson:
@@ -58,8 +59,8 @@ export const playListItemData = {
   title: "The Shawshank Redemption",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   videoCount: 2,
-  createdAt: "2021-10-10T12:00:00Z",
-  updatedAt: "2021-10-10T12:00:00Z",
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export const playList = Array(10).fill(
@@ -74,8 +75,8 @@ export const user = {
   email: "john.doe@email.com",
   contactNumber: "+8801234567890",
   gender: "Male",
-  createdAt: "2021-10-10T12:00:00Z",
-  updatedAt: "2021-10-10T12:00:00Z",
+  createdAt: new Date(),
+  updatedAt: new Date(),
   role: "User",
   status: "Active",
   language: "English",
