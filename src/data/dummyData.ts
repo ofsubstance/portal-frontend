@@ -88,6 +88,7 @@ export const userList = Array(10).fill(user) as (typeof user)[];
 
 export const slides = [
   {
+    id: "1",
     img: "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649443692195-U0VTSEYT7EPXFKFRUBWT/Slide%2B1.jpg",
     title: "The Future of Storytelling",
     createdAt: new Date(),
@@ -97,6 +98,7 @@ export const slides = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.",
   },
   {
+    id: "2",
     img: "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649442525770-8J75N5GLA1D2WGVANJE1/Trapped+-+Vimeo+Thumbnail.png",
     title: "Trapped",
     createdAt: new Date(),
@@ -106,6 +108,7 @@ export const slides = [
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque.",
   },
   {
+    id: "3",
     img: "https://images.squarespace-cdn.com/content/v1/6247629c7ddcb32cb3082400/1649442673872-FE667OKK8O8GKJDNI9PD/Slide%2B28.jpg",
     title: "Day 96",
     createdAt: new Date(),

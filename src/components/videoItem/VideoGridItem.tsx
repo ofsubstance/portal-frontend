@@ -1,10 +1,10 @@
 import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
+  RiLock2Fill as LockIcon,
 } from "react-icons/ri";
 import { Chip, Typography } from "@mui/material";
 
-import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { videoData } from "@/data/dummyData";
@@ -22,6 +22,7 @@ export default function VideoGridItem() {
           <Typography variant="body1" className="flex gap-2 text-white ">
             <ClockIcon size={20} />
             {data.duration / 60} min
+            <LockIcon size={22} className="ml-auto" />
           </Typography>
 
           <div className="flex gap-1 flex-wrap">

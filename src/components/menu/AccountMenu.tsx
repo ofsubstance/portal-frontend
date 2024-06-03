@@ -1,4 +1,5 @@
 import { Chip, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
@@ -6,15 +7,18 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { RiLogoutCircleRLine as LogoutIcon } from "react-icons/ri";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import UserGuide from "../user/guide/UserGuide";
 import useAuthAction from "@/hooks/useAuthAction";
+import { useModal } from "@ebay/nice-modal-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 export default function AccountMenu() {
-  const { signoutMutation } = useAuthAction();
+  const modal = useModal(ModalHookLayout);
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+
+  const { signoutMutation } = useAuthAction();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -28,6 +32,20 @@ export default function AccountMenu() {
     signoutMutation.mutate();
     navigate("/signin");
   };
+
+  const handleUserGuideClick = () => {
+    modal.show({
+      title: "Welcome User!",
+      children: <UserGuide />,
+    });
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("userGuide")) {
+      handleUserGuideClick();
+      localStorage.setItem("userGuide", "true");
+    }
+  }, []);
 
   return (
     <>
@@ -43,7 +61,7 @@ export default function AccountMenu() {
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
-        open={open}
+        open={Boolean(anchorEl)}
         onClose={handleClose}
         onClick={handleClose}
         MenuListProps={{
@@ -98,6 +116,7 @@ export default function AccountMenu() {
 
         <MenuItem onClick={handleClose}>Profile & Account</MenuItem>
         <MenuItem onClick={handleClose}>Account Settings</MenuItem>
+        <MenuItem onClick={handleUserGuideClick}>User Guide</MenuItem>
 
         <Divider />
 

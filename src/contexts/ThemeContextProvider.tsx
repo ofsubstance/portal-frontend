@@ -71,7 +71,7 @@ const theme = createTheme({
     },
     MuiPaper: {
       styleOverrides: {
-        root: {
+        elevation: {
           boxShadow:
             "rgba(95, 116, 141, 0.03) 0px 2px 1px -1px, rgba(95, 116, 141, 0.04) 0px 1px 1px 0px, rgba(95, 116, 141, 0.08) 0px 1px 3px 0px;",
         },

@@ -1,7 +1,7 @@
 import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import {
@@ -12,6 +12,7 @@ import {
 import { Chip, Fab, Typography } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import { Link } from "react-router-dom";
 import { slides } from "@/data/dummyData";
 
 export default function HeroSlider() {
@@ -69,7 +70,13 @@ export default function HeroSlider() {
               </div>
               <Typography variant="body1">{slide.summary}</Typography>
 
-              <Fab variant="extended" size="large" color="primary">
+              <Fab
+                variant="extended"
+                size="large"
+                color="primary"
+                component={Link}
+                to={"/video/" + slide.id}
+              >
                 <PlayIcon size={20} className="mr-2" />
                 Watch Now
               </Fab>
