@@ -11,6 +11,7 @@ import {
   RiTimeLine as ClockIcon,
   RiArrowDownSLine as ExpandMoreIcon,
   RiPlayCircleLine as PlayIcon,
+  RiLockUnlockLine as UnlockIcon,
 } from "react-icons/ri";
 
 import { IVideo } from "@/data/dummyData";
@@ -52,12 +53,14 @@ interface VideoDetailsHeroProps {
   data: IVideo;
   onPlay: () => void;
   onPlayTrailer: () => void;
+  onUnlock: () => void;
 }
 
 export default function VideoDetailsHero({
   data,
   onPlay,
   onPlayTrailer,
+  onUnlock,
 }: VideoDetailsHeroProps) {
   return (
     <div className="flex md:flex-row flex-col md:min-h-[calc(100vh-64px)]">
@@ -82,10 +85,19 @@ export default function VideoDetailsHero({
           <Button
             variant="contained"
             fullWidth
+            startIcon={<UnlockIcon />}
+            onClick={onUnlock}
+          >
+            Unlock Film
+          </Button>
+
+          <Button
+            variant="contained"
+            fullWidth
             startIcon={<PlayIcon />}
             onClick={onPlay}
           >
-            Watch Video
+            Watch Film
           </Button>
         </div>
 

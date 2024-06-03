@@ -1,18 +1,19 @@
 import { Toolbar, Typography } from "@mui/material";
 
+import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import GeneralFeedbackForm from "@/components/user/feedback/GeneralFeedbackForm";
 import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
 import VideoCommentItem from "@/components/user/video/VideoCommentItem";
 import VideoDetailsHero from "@/components/user/video/VideoDetailsHero";
-import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
 import VideoGridItem from "@/components/videoItem/VideoGridItem";
-import { videoData } from "@/data/dummyData";
-import { useModal } from "@ebay/nice-modal-react";
+import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
 import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useState } from "react";
-import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import { useModal } from "@ebay/nice-modal-react";
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { videoData } from "@/data/dummyData";
 
 dayjs.extend(relativeTime);
 
@@ -40,6 +41,19 @@ export default function VideoDetailsPage() {
     });
   };
 
+  const handleUnlockClick = () => {
+    modal.show({
+      title: "Submit Feedback To Proceed Unlocking Video",
+      children: (
+        <GeneralFeedbackForm
+          onSubmit={(data) => {
+            console.log(data);
+          }}
+        />
+      ),
+    });
+  };
+
   return (
     <div className="space-y-10">
       <div
@@ -55,6 +69,7 @@ export default function VideoDetailsPage() {
               data={data}
               onPlay={handlePlayClick}
               onPlayTrailer={handlePlayTrailerClick}
+              onUnlock={handleUnlockClick}
             />
           )}
         </div>
