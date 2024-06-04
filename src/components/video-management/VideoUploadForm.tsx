@@ -1,19 +1,21 @@
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Paper, TextField, Typography } from "@mui/material";
+import { VideoDto, VideoUploadDto } from "@/dtos/video.dto";
 
 import Dropzone from "../common/dropzone/Dropzone";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { VideoUploadDto } from "@/dtos/video.dto";
 import { useIsMutating } from "@tanstack/react-query";
 import { videoUploadValidation } from "@/validators/video.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface VideoUploadFormProps {
   onSubmit: (data: VideoUploadDto) => void;
+  defaultValues?: VideoDto;
 }
 
 function MetaDataSection() {
   const {
+    getValues,
     register,
     formState: { errors },
     setValue,
@@ -26,6 +28,7 @@ function MetaDataSection() {
       </Typography>
       <Dropzone
         variant="image"
+        defaultValue={getValues("thumbnail")}
         onChange={(file) => setValue("thumbnail", file)}
         error={!!errors.thumbnail}
       />
@@ -49,7 +52,7 @@ function MetaDataSection() {
       />
       <TextField
         {...register("duration")}
-        label="Duration (MM:SS)"
+        label="Duration (Min:Sec)"
         variant="outlined"
         fullWidth
         error={!!errors.duration}
@@ -130,7 +133,10 @@ function DetailsSection() {
   );
 }
 
-export default function VideoUploadForm({ onSubmit }: VideoUploadFormProps) {
+export default function VideoUploadForm({
+  onSubmit,
+  defaultValues,
+}: VideoUploadFormProps) {
   const isMutating = useIsMutating();
 
   const formFields = useForm<VideoUploadDto>({
@@ -138,7 +144,7 @@ export default function VideoUploadForm({ onSubmit }: VideoUploadFormProps) {
     defaultValues: {
       video_url: "",
       trailer_url: "",
-      thumbnail: null,
+      thumbnail: defaultValues?.thumbnail_url,
       title: "",
       genre: "",
       duration: "",
@@ -148,6 +154,7 @@ export default function VideoUploadForm({ onSubmit }: VideoUploadFormProps) {
       primary_lesson: "",
       theme: "",
       impact: "",
+      ...defaultValues,
     },
   });
 
@@ -193,7 +200,7 @@ export default function VideoUploadForm({ onSubmit }: VideoUploadFormProps) {
           fullWidth
           type="submit"
         >
-          Upload Video
+          Submit
         </LoadingButton>
       </form>
     </FormProvider>

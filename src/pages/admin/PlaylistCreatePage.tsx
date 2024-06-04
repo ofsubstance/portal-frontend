@@ -5,22 +5,29 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  MenuItem,
   TextField,
   Typography,
+  capitalize,
   useTheme,
 } from "@mui/material";
 
 import { RiPlayList2Fill as PlaylistIcon } from "react-icons/ri";
 
-import {
-  MaterialReactTable,
-  type MRT_ColumnDef,
-  MRT_RowModel,
-} from "material-react-table";
+import { PlaylistTag } from "@/constants/enums";
 import { IVideo, vidoeList } from "@/data/dummyData";
+import { PlaylistCreateDto } from "@/dtos/playlist.dto";
+import { playlistCreateValidation } from "@/validators/playlist.validator";
+import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {
+  MRT_RowModel,
+  MaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 dayjs.extend(relativeTime);
 
@@ -113,21 +120,59 @@ function PlaylistInfoDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<PlaylistCreateDto>({
+    resolver: zodResolver(playlistCreateValidation),
+  });
+
+  const onSubmit = (data: PlaylistCreateDto) => {
+    console.log(data);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth={"sm"}>
       <DialogTitle>Playlist Information</DialogTitle>
       <DialogContent>
-        <div className="space-y-4 py-1.5">
-          <TextField label="Playlist Title" variant="outlined" fullWidth />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-1.5">
+          <TextField
+            {...register("title")}
+            label="Playlist Title"
+            variant="outlined"
+            fullWidth
+            error={!!errors.title}
+            helperText={errors.title?.message}
+          />
 
           <TextField
+            {...register("description")}
             label="Description"
             variant="outlined"
             fullWidth
             multiline
             rows={4}
+            error={!!errors.description}
+            helperText={errors.description?.message}
           />
-        </div>
+
+          <TextField
+            {...register("tag")}
+            label="Tags"
+            variant="outlined"
+            select
+            fullWidth
+            error={!!errors.tag}
+            helperText={errors.tag?.message}
+          >
+            {Object.values(PlaylistTag).map((tag) => (
+              <MenuItem key={tag} value={tag}>
+                {capitalize(tag)}
+              </MenuItem>
+            ))}
+          </TextField>
+        </form>
       </DialogContent>
 
       <DialogActions>

@@ -4,27 +4,31 @@ import {
 } from "react-icons/ri";
 import { Chip, Theme, Typography, useMediaQuery } from "@mui/material";
 
+import { VideoDto } from "@/dtos/video.dto";
 import VideoGridItem from "./VideoGridItem";
-import VideoItemMenu from "@/components/menu/VideoItemMenu";
 import dayjs from "dayjs";
-import { useState } from "react";
-import { videoData } from "@/data/dummyData";
 
-function VideoListItem() {
+interface VideoListItemProps {
+  data: VideoDto;
+}
+
+function VideoListItem({ data }: VideoListItemProps) {
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("md")
   );
 
-  const [data, setData] = useState(videoData);
-
   if (smallScreen) {
-    return <VideoGridItem />;
+    return <VideoGridItem data={data} />;
   }
 
   return (
     <div className="flex gap-4 cursor-pointer [&:hover_.bg-opacity-0]:bg-opacity-40 [&:hover_.opacity-0]:opacity-100">
       <div className="relative h-24 aspect-video rounded-md overflow-clip">
-        <img src={data.thumbnail} alt="thumbnail" className="object-cover" />
+        <img
+          src={data.thumbnail_url}
+          alt="thumbnail"
+          className="object-cover"
+        />
 
         <div className="absolute grid place-content-center inset-0 bg-black bg-opacity-0 transition-[background] duration-500">
           <PlayIcon
@@ -37,7 +41,7 @@ function VideoListItem() {
           size="small"
           className="absolute bottom-2 right-2"
           sx={{ backgroundColor: "rgba(0, 0, 0, 0.6)", color: "white" }}
-          label={`${Math.floor(data.duration / 60)} min`}
+          label={`${data.duration} min`}
         />
       </div>
 

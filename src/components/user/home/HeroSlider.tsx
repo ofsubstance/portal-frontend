@@ -3,19 +3,25 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import { Chip, Fab, Typography } from "@mui/material";
 import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiPlayFill as PlayIcon,
 } from "react-icons/ri";
-import { Chip, Fab, Typography } from "@mui/material";
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import { PlaylistTag } from "@/constants/enums";
+import usePlaylistManagementActions from "@/hooks/usePlaylistManagementAction";
+import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import { slides } from "@/data/dummyData";
 
 export default function HeroSlider() {
+  const { usePlaylistTagQuery } = usePlaylistManagementActions();
+
+  const { data: playlist } = usePlaylistTagQuery(PlaylistTag.Carousel);
+
   return (
     <Swiper
       effect="fade"
@@ -30,11 +36,11 @@ export default function HeroSlider() {
       modules={[Autoplay, Pagination, Navigation, EffectFade]}
       className="w-full h-screen"
     >
-      {slides.map((slide, index) => (
+      {playlist?.videos.map((slide, index) => (
         <SwiperSlide key={index}>
           <div
             className="relative w-full h-full bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.img})` }}
+            style={{ backgroundImage: `url(${slide.thumbnail_url})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black from-[20%]"></div>
             <div className="p-14 md:pl-52 md:w-1/3 absolute inset-0 flex flex-col gap-6 justify-center items-start text-white">
@@ -47,19 +53,19 @@ export default function HeroSlider() {
               <div className="flex gap-4 items-center">
                 <Typography variant="body1" className="flex gap-2">
                   <CalendarIcon size={20} />
-                  {slide.createdAt.toDateString()}
+                  {dayjs(slide.createdAt).format("MMMM DD, YYYY")}
                 </Typography>
 
                 <Typography variant="body1" className="flex gap-2">
                   <ClockIcon size={20} />
-                  {slide.duration}
+                  {slide.duration} min
                 </Typography>
               </div>
               <div className="flex gap-2">
-                {slide.genre.map((genre) => (
+                {slide.genre.split(",").map((genre) => (
                   <Chip
                     key={genre}
-                    label={genre}
+                    label={genre.trim()}
                     variant="outlined"
                     sx={{
                       borderColor: "white",
@@ -68,7 +74,7 @@ export default function HeroSlider() {
                   />
                 ))}
               </div>
-              <Typography variant="body1">{slide.summary}</Typography>
+              <Typography variant="body1">{slide.short_desc}</Typography>
 
               <Fab
                 variant="extended"

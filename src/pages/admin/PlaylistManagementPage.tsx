@@ -1,30 +1,28 @@
 import { Button, Paper, Typography } from "@mui/material";
 
-import {
-  RiPlayListAddLine as AddPlaylistIcon,
-  RiEditLine as EditIcon,
-  RiDeleteBin2Line as DeleteIcon,
-} from "react-icons/ri";
 import playlistManagementImg from "@/assets/playlistManagement.svg";
-import { useNavigate } from "react-router-dom";
+import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import { PlaylistDto } from "@/dtos/playlist.dto";
+import usePlaylistManagementActions from "@/hooks/usePlaylistManagementAction";
+import { useModal } from "@ebay/nice-modal-react";
+import dayjs from "dayjs";
 import {
-  MaterialReactTable,
   MRT_ActionMenuItem,
+  MaterialReactTable,
   type MRT_ColumnDef,
 } from "material-react-table";
-import { playList } from "@/data/dummyData";
-import dayjs from "dayjs";
+import {
+  RiPlayListAddLine as AddPlaylistIcon,
+  RiDeleteBin2Line as DeleteIcon,
+  RiEditLine as EditIcon,
+} from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
-type Playlist = {
-  id: string;
-  title: string;
-  description: string;
-  videoCount: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-const playlistColumns: MRT_ColumnDef<Playlist>[] = [
+const playlistColumns: MRT_ColumnDef<PlaylistDto>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
   {
     accessorKey: "title",
     header: "Title",
@@ -34,8 +32,13 @@ const playlistColumns: MRT_ColumnDef<Playlist>[] = [
     header: "Description",
   },
   {
-    accessorKey: "videoCount",
+    accessorKey: "tag",
+    header: "Tag",
+  },
+  {
+    accessorKey: "videos",
     header: "Video Count",
+    Cell: ({ row }) => row.original.videos.length,
   },
   {
     accessorKey: "createdAt",
@@ -51,6 +54,37 @@ const playlistColumns: MRT_ColumnDef<Playlist>[] = [
 
 function PlaylistManagementPage() {
   const navigate = useNavigate();
+  const modal = useModal(ModalHookLayout);
+  const { usePlaylistsQuery, playlistDeleteMutation } =
+    usePlaylistManagementActions();
+
+  const { data: playList = [] } = usePlaylistsQuery();
+
+  const handleDeletePlaylist = (playlistId: string) => {
+    modal.show({
+      title: "Delete Playlist",
+      children: (
+        <Typography variant="h6">
+          Are you sure you want to delete this playlist?
+        </Typography>
+      ),
+      dialogActions: {
+        confirmButtonProps: {
+          text: "Yes, Delete Playlist",
+          color: "error",
+          onClick: () => {
+            playlistDeleteMutation.mutate(playlistId);
+            modal.hide();
+          },
+        },
+        cancelButtonProps: {
+          text: "No, Cancel",
+          onClick: () => modal.hide(),
+        },
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
@@ -92,18 +126,20 @@ function PlaylistManagementPage() {
             navigate(`/admin/playlist-management/${row.original.id}`),
         })}
         renderRowActionMenuItems={({ row, table }) => [
-          <MRT_ActionMenuItem //or just use a normal MUI MenuItem component
+          <MRT_ActionMenuItem
             icon={<EditIcon />}
             key="edit"
             label="Edit"
-            onClick={() => console.info("Edit")}
+            onClick={() =>
+              navigate(`/admin/playlist-management/edit/${row.original.id}`)
+            }
             table={table}
           />,
           <MRT_ActionMenuItem
             icon={<DeleteIcon />}
             key="delete"
             label="Delete"
-            onClick={() => console.info("Delete")}
+            onClick={() => handleDeletePlaylist(row.original.id)}
             table={table}
           />,
         ]}

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import userService from "../services/user.service";
 
 function useUserActions() {
-  const fetchCurrentUser = (isAuthenticated: boolean) =>
+  const useCurrentUserQuery = (isAuthenticated: boolean) =>
     useQuery({
       enabled: isAuthenticated,
       queryKey: ["getCurrentUser"],
@@ -11,7 +11,7 @@ function useUserActions() {
     });
 
   return {
-    fetchCurrentUser,
+    useCurrentUserQuery,
   };
 }
 

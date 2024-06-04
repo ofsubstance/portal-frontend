@@ -1,15 +1,16 @@
-import { Chip, Fab, Typography } from "@mui/material";
 import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiFeedbackLine as FeedbackIcon,
 } from "react-icons/ri";
+import { Chip, Fab, Typography } from "@mui/material";
 
-import { IVideo } from "@/data/dummyData";
+import { VideoDto } from "@/dtos/video.dto";
 import Vimeo from "@u-wave/react-vimeo";
+import dayjs from "dayjs";
 
 interface VideoPlayerSectionProps {
-  data: IVideo;
+  data: VideoDto;
   onFeedback: () => any;
 }
 
@@ -20,15 +21,12 @@ export default function VideoPlayerSection({
   return (
     <div className="flex md:flex-row flex-col items-start gap-8 p-6">
       <div className="flex-1 w-full">
-        <Vimeo
-          video={"https://vimeo.com/862974723/04dbe39eaf?share=copy"}
-          responsive={true}
-        />
+        <Vimeo video={data.video_url} responsive={true} />
       </div>
       <div className="flex flex-col items-start gap-6 flex-[0.4]">
         <img
           className="rounded-md w-3/5 object-cover"
-          src={data.thumbnail}
+          src={data.thumbnail_url}
           alt="thumbnail"
         />
 
@@ -37,7 +35,7 @@ export default function VideoPlayerSection({
         <div className="flex gap-4 items-center">
           <Typography variant="body1" className="flex gap-2">
             <CalendarIcon size={20} />
-            {data.createdAt.toDateString()}
+            {dayjs(data.createdAt).format("MMMM DD, YYYY")}
           </Typography>
 
           <Typography variant="body1" className="flex gap-2">
@@ -46,10 +44,10 @@ export default function VideoPlayerSection({
           </Typography>
         </div>
         <div className="flex gap-2">
-          {data.genre.map((genre) => (
+          {data.genre.split(",").map((genre) => (
             <Chip
               key={genre}
-              label={genre}
+              label={genre.trim()}
               variant="outlined"
               sx={{
                 borderColor: "white",
@@ -58,7 +56,7 @@ export default function VideoPlayerSection({
             />
           ))}
         </div>
-        <Typography variant="body1">{data.summary}</Typography>
+        <Typography variant="body1">{data.short_desc}</Typography>
 
         <Fab
           variant="extended"

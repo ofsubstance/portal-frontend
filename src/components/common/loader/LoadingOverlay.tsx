@@ -12,8 +12,6 @@ function LoadingOverlay() {
 
   if (!isFetching && !isMutating) return null;
 
-  console.log("LoadingOverlay is rendering");
-
   return createPortal(
     <LinearProgress
       color="primary"

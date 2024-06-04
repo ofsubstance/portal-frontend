@@ -1,3 +1,4 @@
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Toolbar, Typography } from "@mui/material";
 
 import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
@@ -12,16 +13,18 @@ import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useModal } from "@ebay/nice-modal-react";
-import { useSearchParams } from "react-router-dom";
-import { useState } from "react";
-import { videoData } from "@/data/dummyData";
+import useVideoManagementActions from "@/hooks/useVideoManagementAction";
 
 dayjs.extend(relativeTime);
 
 export default function VideoDetailsPage() {
   const modal = useModal(ModalHookLayout);
-  const [data, setData] = useState(videoData);
+  const { videoId } = useParams();
   const [searchParam, setSearchParam] = useSearchParams();
+
+  const { useVideoQuery } = useVideoManagementActions();
+
+  const { data: video } = useVideoQuery(videoId!);
 
   const handlePlayClick = () => {
     setSearchParam({ playing: "true" });
@@ -29,14 +32,11 @@ export default function VideoDetailsPage() {
 
   const handlePlayTrailerClick = () => {
     modal.show({
-      title: data.title,
+      title: video?.title,
       maxWidth: "lg",
       children: (
         <div className="w-full">
-          <Vimeo
-            video={"https://vimeo.com/862974723/04dbe39eaf?share=copy"}
-            responsive={true}
-          />
+          {video && <Vimeo video={video.trailer_url} responsive={true} />}
         </div>
       ),
     });
@@ -57,10 +57,10 @@ export default function VideoDetailsPage() {
 
   const handleFeedbackClick = () => {
     modal.show({
-      title: "Feedback on " + data.title,
+      title: "Feedback on " + video?.title,
       children: (
         <FlimFeedbackForm
-          filmTitle={data.title}
+          filmTitle={video?.title || ""}
           onSubmit={(data) => {
             console.log(data);
           }}
@@ -69,19 +69,21 @@ export default function VideoDetailsPage() {
     });
   };
 
+  if (!video) return null;
+
   return (
     <div className="space-y-10">
       <div
         className="bg-cover bg-center text-white min-h-screen"
-        style={{ backgroundImage: `url(${data.thumbnail})` }}
+        style={{ backgroundImage: `url(${video.thumbnail_url})` }}
       >
         <div className="min-h-screen backdrop-filter backdrop-blur-md bg-black bg-opacity-20">
           <Toolbar />
           {searchParam.get("playing") == "true" ? (
-            <VideoPlayerSection data={data} onFeedback={handleFeedbackClick} />
+            <VideoPlayerSection data={video} onFeedback={handleFeedbackClick} />
           ) : (
             <VideoDetailsHero
-              data={data}
+              data={video}
               onPlay={handlePlayClick}
               onPlayTrailer={handlePlayTrailerClick}
               onUnlock={handleUnlockClick}
@@ -100,7 +102,9 @@ export default function VideoDetailsPage() {
         </Typography>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {Array.from(Array(4)).map((_, index) => (
-            <VideoGridItem key={index} />
+            <Link key={index} to={`/video/${video.id}`}>
+              <VideoGridItem data={video} />
+            </Link>
           ))}
         </div>
       </div>

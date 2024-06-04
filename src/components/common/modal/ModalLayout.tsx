@@ -1,4 +1,3 @@
-import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import {
   Breakpoint,
   Button,
@@ -9,6 +8,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
+import NiceModal, { useModal } from "@ebay/nice-modal-react";
 import React, { useEffect, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,6 +21,14 @@ interface ModalLayoutProps {
   dialogActions?: {
     confirmButtonProps?: {
       text: string;
+      color?:
+        | "primary"
+        | "secondary"
+        | "inherit"
+        | "success"
+        | "error"
+        | "info"
+        | "warning";
       error?: boolean;
       onClick: () => any;
       disabled?: boolean;
@@ -121,6 +129,7 @@ export default function ModalLayout({
               <Button
                 fullWidth
                 variant="contained"
+                color={dialogActions.confirmButtonProps.color}
                 autoFocus
                 onClick={handleConfirmButtonClick}
                 disabled={dialogActions.confirmButtonProps.disabled}

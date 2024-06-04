@@ -9,8 +9,8 @@ interface DropzoneProps {
   maxSizeMB?: number;
   imageTypes?: string[];
   videoTypes?: string[];
-  onChange?: (file: File | null) => void;
-  defaultValue?: File | null;
+  onChange?: (file: File | string | null) => void;
+  defaultValue?: File | string | null;
   compact?: boolean;
   previewHeight?: number;
   variant?: "image" | "video";
@@ -40,7 +40,6 @@ export default function Dropzone({
   }, [defaultValue]);
 
   useEffect(() => {
-    if (typeof preview === "string") return;
     onChange?.(preview);
   }, [preview]);
 

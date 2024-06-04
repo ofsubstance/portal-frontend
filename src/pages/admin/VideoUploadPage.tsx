@@ -7,13 +7,13 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import useVideoManagementActions from "@/hooks/useVideoManagementAction";
 
-function VideoUploadPage() {
+export default function VideoUploadPage() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { uploadVideoMutation } = useVideoManagementActions();
+  const { videoCreateMutation } = useVideoManagementActions();
 
   const onVideoUpload = (data: VideoUploadDto) => {
-    uploadVideoMutation.mutate(data, {
+    videoCreateMutation.mutate(data, {
       onSuccess: () => {
         toast.success("Video uploaded successfully");
         navigate("/admin/video-management");
@@ -36,5 +36,3 @@ function VideoUploadPage() {
     </div>
   );
 }
-
-export default VideoUploadPage;

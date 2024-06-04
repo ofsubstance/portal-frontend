@@ -9,17 +9,19 @@ import {
 import {
   RiCalendarLine as CalendarIcon,
   RiDeleteBinLine as DeleteIcon,
-  RiDownload2Line as DownloadIcon,
   RiTimeLine as DurationIcon,
   RiEdit2Line as EditIcon,
   RiArrowDownSLine as ExpandMoreIcon,
   RiPlayCircleLine as PlayIcon,
 } from "react-icons/ri";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
+import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useState } from "react";
-import { videoData } from "@/data/dummyData";
+import { useModal } from "@ebay/nice-modal-react";
+import useVideoManagementActions from "@/hooks/useVideoManagementAction";
 
 dayjs.extend(relativeTime);
 
@@ -52,24 +54,71 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
 }
 
 function VideoDetailsPage() {
-  const [videoPlay, setVideoPlay] = useState(false);
+  const { videoId } = useParams();
+  const [searchParam, setSearchParam] = useSearchParams();
+  const navigate = useNavigate();
+  const modal = useModal(ModalHookLayout);
+  const { useVideoQuery, videoDeleteMutation } = useVideoManagementActions();
 
-  const [data, setData] = useState(videoData);
+  const { data } = useVideoQuery(videoId!);
+
+  const handleDeleteClick = () => {
+    modal.show({
+      title: "Delete Video!",
+      children: (
+        <Typography variant="h6">
+          Are you sure you want to delete this video?
+        </Typography>
+      ),
+      dialogActions: {
+        confirmButtonProps: {
+          text: "Yes, Delete Video",
+          color: "error",
+          onClick: () =>
+            videoDeleteMutation.mutate(videoId!, {
+              onSuccess: () => {
+                modal.hide();
+                navigate("/admin/video-management");
+              },
+            }),
+        },
+        cancelButtonProps: {
+          text: "No, Cancel",
+          onClick: () => {
+            modal.hide();
+          },
+        },
+      },
+    });
+  };
+
+  const handlePlayTrailerClick = () => {
+    modal.show({
+      title: data?.title,
+      maxWidth: "lg",
+      children: (
+        <div className="w-full">
+          {data && <Vimeo video={data.trailer_url} responsive={true} />}
+        </div>
+      ),
+    });
+  };
+
+  if (!data) return null;
 
   return (
     <div className="space-y-8 text-slate-600">
-      {videoPlay && (
-        <video controls className="w-full rounded-md aspect-video">
-          <source src={data.videoData[0].url} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+      {searchParam.get("playing") === "true" && (
+        <div className="flex-1 w-full">
+          <Vimeo video={data.video_url} responsive={true} />
+        </div>
       )}
 
       <div className="flex gap-10 flex-col lg:flex-row">
         <div className="space-y-4">
           <img
-            className="rounded-md w-[700px] object-cover"
-            src={data.thumbnail}
+            className="rounded-md w-[800px] object-cover"
+            src={data.thumbnail_url}
             alt="thumbnail"
           />
 
@@ -77,13 +126,18 @@ function VideoDetailsPage() {
             variant="contained"
             fullWidth
             startIcon={<PlayIcon />}
-            onClick={() => setVideoPlay(true)}
+            onClick={() => setSearchParam({ playing: "true" })}
           >
             Watch Video
           </Button>
 
-          <Button variant="outlined" fullWidth startIcon={<DownloadIcon />}>
-            Download Video
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<PlayIcon />}
+            onClick={handlePlayTrailerClick}
+          >
+            Watch Trailer
           </Button>
 
           <div className="flex gap-2">
@@ -92,6 +146,9 @@ function VideoDetailsPage() {
               color={"info"}
               fullWidth
               startIcon={<EditIcon />}
+              onClick={() =>
+                navigate(`/admin/video-management/edit/${videoId}`)
+              }
             >
               Edit
             </Button>
@@ -101,6 +158,7 @@ function VideoDetailsPage() {
               color={"error"}
               fullWidth
               startIcon={<DeleteIcon />}
+              onClick={handleDeleteClick}
             >
               Delete
             </Button>
@@ -121,8 +179,7 @@ function VideoDetailsPage() {
               {dayjs(data.updatedAt).fromNow()}
             </Typography>
             <Typography variant="body1" className="flex items-center gap-2">
-              <DurationIcon size={20} /> Duration:{" "}
-              {Math.floor(data.duration / 60)} min
+              <DurationIcon size={20} /> Duration: {data.duration} min
             </Typography>
           </div>
           <div className="space-y-2">
@@ -130,8 +187,8 @@ function VideoDetailsPage() {
               Genres
             </Typography>
             <div className="flex gap-2 flex-wrap">
-              {data.genre.map((genre) => (
-                <Chip key={genre} label={genre} />
+              {data.genre.split(",").map((genre) => (
+                <Chip key={genre} label={genre.trim()} />
               ))}
             </div>
           </div>
@@ -141,7 +198,7 @@ function VideoDetailsPage() {
 
             <VideoDescriptionItem
               title="Primary Lesson"
-              details={data.primaryLesson}
+              details={data.primary_lesson}
             />
 
             <VideoDescriptionItem title="Theme" details={data.theme} />

@@ -5,31 +5,32 @@ import {
 } from "react-icons/ri";
 import { Chip, Typography } from "@mui/material";
 
+import { VideoDto } from "@/dtos/video.dto";
 import dayjs from "dayjs";
-import { useState } from "react";
-import { videoData } from "@/data/dummyData";
 
-export default function VideoGridItem() {
-  const [data, setData] = useState(videoData);
+interface VideoGridItemProps {
+  data: VideoDto;
+}
 
+export default function VideoGridItem({ data }: VideoGridItemProps) {
   return (
     <div className="cursor-pointer [&:hover_.bg-gradient-to-t]:m-0 [&:hover_.bg-gradient-to-t]:pt-3">
       <div
         className="relative w-full h-56 rounded-xl overflow-clip drop-shadow-lg shadow-lg bg-cover bg-center"
-        style={{ backgroundImage: `url(${data.thumbnail})` }}
+        style={{ backgroundImage: `url(${data.thumbnail_url})` }}
       >
         <div className="absolute inset-0 p-3 pt-32 mt-16 flex flex-col gap-2 bg-gradient-to-t from-black transition-all duration-300">
           <Typography variant="body1" className="flex gap-2 text-white ">
             <ClockIcon size={20} />
-            {data.duration / 60} min
+            {data.duration} min
             <LockIcon size={22} className="ml-auto" />
           </Typography>
 
           <div className="flex gap-1 flex-wrap">
-            {data.genre.map((g) => (
+            {data.genre.split(",").map((genre) => (
               <Chip
-                key={g}
-                label={g}
+                key={genre}
+                label={genre.trim()}
                 size="small"
                 variant="outlined"
                 sx={{
@@ -41,9 +42,7 @@ export default function VideoGridItem() {
           </div>
 
           <Typography variant="body1" className="text-white line-clamp-5">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam
-            velit, vulputate eu pharetra nec, mattis ac neque. Lorem ipsum dolor
-            sit amet, consectetur adipiscing elit.
+            {data.short_desc}
           </Typography>
         </div>
       </div>

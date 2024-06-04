@@ -15,13 +15,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 import VideoGridItem from "@/components/videoItem/VideoGridItem";
-import { useNavigate } from "react-router-dom";
+import useVideoManagementActions from "@/hooks/useVideoManagementAction";
 import videoManagementImg from "@/assets/videoManagement.svg";
 
 function VideoManagementPage() {
   const navigate = useNavigate();
+  const { useVideoListQuery } = useVideoManagementActions();
+
+  const { data: videos = [] } = useVideoListQuery();
 
   return (
     <div className="flex flex-col gap-5">
@@ -119,9 +123,11 @@ function VideoManagementPage() {
           columnSpacing={3}
           columns={{ md: 2, lg: 3, xs: 1 }}
         >
-          {Array.from(Array(12)).map((_, index) => (
-            <Grid item xs={1} key={index}>
-              <VideoGridItem />
+          {videos.map((video) => (
+            <Grid item xs={1} key={video.id}>
+              <Link to={`/admin/video-management/${video.id}`}>
+                <VideoGridItem data={video} />
+              </Link>
             </Grid>
           ))}
         </Grid>

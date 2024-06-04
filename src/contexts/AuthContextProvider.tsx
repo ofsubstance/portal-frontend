@@ -18,9 +18,9 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     !!storageService.getAuthData()
   );
 
-  const { fetchCurrentUser } = useUserActions();
+  const { useCurrentUserQuery } = useUserActions();
 
-  const { data: user } = fetchCurrentUser(isAuthenticated);
+  const { data: user } = useCurrentUserQuery(isAuthenticated);
 
   useEffect(() => {
     if (!isAuthenticated) setAuthData(undefined);

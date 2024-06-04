@@ -1,3 +1,5 @@
+import { PlaylistTag } from "./enums";
+
 const APIUrl = {
   base: import.meta.env.VITE_API || "http://localhost:5000",
   auth: {
@@ -14,7 +16,20 @@ const APIUrl = {
     getUser: (userId: string) => "/user/" + userId,
   },
   videoManagement: {
+    getVideos: () => "/videos",
+    getVideoById: (videoId: string) => "/videos/" + videoId,
     uploadVideo: () => "/videos",
+    updateVideo: (videoId: string) => "/videos/" + videoId,
+    deleteVideo: (videoId: string) => "/videos/" + videoId,
+  },
+
+  playlistManagement: {
+    getPlaylists: () => "/playlists",
+    getPlaylistById: (playlistId: string) => "/playlists/" + playlistId,
+    getPlaylistByTag: (tag: PlaylistTag) => "/playlists/tag/" + tag,
+    createPlaylist: () => "/playlists",
+    updatePlaylist: (playlistId: string) => "/playlists/" + playlistId,
+    deletePlaylist: (playlistId: string) => "/playlists/" + playlistId,
   },
 };
 

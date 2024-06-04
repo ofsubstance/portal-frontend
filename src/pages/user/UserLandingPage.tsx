@@ -1,9 +1,9 @@
-import { Chip, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Chip, Divider, Paper, Typography } from "@mui/material";
 
 import HeroSlider from "@/components/user/home/HeroSlider";
 import Recommendation from "@/components/user/home/RecommendationSection";
+import TopPicksSection from "@/components/user/home/TopPicksSection";
 import UnlockVideoSection from "@/components/user/home/UnlockVideoSection";
-import VideoListItem from "@/components/videoItem/VideoListItem";
 
 export default function UserLandingPage() {
   return (
@@ -31,18 +31,7 @@ export default function UserLandingPage() {
             </div>
           </Paper>
 
-          <Paper variant="outlined">
-            <Typography variant="body1" fontWeight={600} p={2}>
-              Top Picks
-            </Typography>
-            <Divider />
-
-            <Stack spacing={2} divider={<Divider />} p={2}>
-              {Array.from(Array(4)).map((_, index) => (
-                <VideoListItem key={index} />
-              ))}
-            </Stack>
-          </Paper>
+          <TopPicksSection />
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ import {
   RiLockUnlockLine as UnlockIcon,
 } from "react-icons/ri";
 
-import { IVideo } from "@/data/dummyData";
+import { VideoDto } from "@/dtos/video.dto";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -50,7 +50,7 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
 }
 
 interface VideoDetailsHeroProps {
-  data: IVideo;
+  data: VideoDto;
   onPlay: () => void;
   onPlayTrailer: () => void;
   onUnlock: () => void;
@@ -67,7 +67,7 @@ export default function VideoDetailsHero({
       <div className="md:min-h-[calc(100vh-64px)] flex-[0.3] space-y-6 p-10 md:p-20 bg-white backdrop-filter backdrop-blur-md bg-opacity-15">
         <img
           className="rounded-md w-full object-cover"
-          src={data.thumbnail}
+          src={data.thumbnail_url}
           alt="thumbnail"
         />
 
@@ -106,7 +106,7 @@ export default function VideoDetailsHero({
         <div className="flex gap-4 items-center">
           <Typography variant="body1" className="flex gap-2">
             <CalendarIcon size={20} />
-            {data.createdAt.toDateString()}
+            {dayjs(data.createdAt).format("MMMM DD, YYYY")}
           </Typography>
 
           <Typography variant="body1" className="flex gap-2">
@@ -115,10 +115,10 @@ export default function VideoDetailsHero({
           </Typography>
         </div>
         <div className="flex gap-2">
-          {data.genre.map((genre) => (
+          {data.genre.split(",").map((genre) => (
             <Chip
               key={genre}
-              label={genre}
+              label={genre.trim()}
               variant="outlined"
               sx={{
                 borderColor: "white",
@@ -127,7 +127,7 @@ export default function VideoDetailsHero({
             />
           ))}
         </div>
-        <Typography variant="body1">{data.summary}</Typography>
+        <Typography variant="body1">{data.short_desc}</Typography>
       </div>
 
       <div className="p-10 md:p-20 mx-auto space-y-6 flex-1">
@@ -136,23 +136,23 @@ export default function VideoDetailsHero({
         </Typography>
 
         <div className="flex gap-2 flex-wrap">
-          {data.genre.map((genre) => (
+          {data.genre.split(",").map((genre) => (
             <Chip
               key={genre}
-              label={genre}
+              label={genre.trim()}
               variant="outlined"
               sx={{ color: "white", borderColor: "white" }}
             />
           ))}
         </div>
 
-        <Typography variant="body1">{data.summary}</Typography>
+        <Typography variant="body1">{data.short_desc}</Typography>
 
         <VideoDescriptionItem title="About" details={data.about} />
 
         <VideoDescriptionItem
           title="Primary Lesson"
-          details={data.primaryLesson}
+          details={data.primary_lesson}
         />
 
         <VideoDescriptionItem title="Theme" details={data.theme} />

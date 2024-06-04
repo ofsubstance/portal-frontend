@@ -1,8 +1,8 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import notFoundImg from "./assets/notFound.svg";
 import ContextProvider from "./contexts/ContextProvider";
 import ErrorPage from "./pages/ErrorPage";
+import notFoundImg from "./assets/notFound.svg";
 
 function Router() {
   const router = createBrowserRouter([
@@ -61,14 +61,14 @@ function Router() {
               }),
             },
             {
-              path: "video-management/edit/:id",
+              path: "video-management/edit/:videoId",
               lazy: async () => ({
                 Component: (await import("./pages/admin/VideoEditPage"))
                   .default,
               }),
             },
             {
-              path: "video-management/details/:id",
+              path: "video-management/:videoId",
               lazy: async () => ({
                 Component: (await import("./pages/admin/VideoDetailsPage"))
                   .default,
@@ -90,14 +90,14 @@ function Router() {
               }),
             },
             {
-              path: "playlist-management/edit/:id",
+              path: "playlist-management/edit/:playlistId",
               lazy: async () => ({
                 Component: (await import("./pages/admin/PlaylistEditPage"))
                   .default,
               }),
             },
             {
-              path: "playlist-management/:id",
+              path: "playlist-management/:playlistId",
               lazy: async () => ({
                 Component: (await import("./pages/admin/PlaylistDetailsPage"))
                   .default,
@@ -134,14 +134,14 @@ function Router() {
               }),
             },
             {
-              path: "video/:id",
+              path: "video/:videoId",
               lazy: async () => ({
                 Component: (await import("./pages/user/VideoDetailsPage"))
                   .default,
               }),
             },
             {
-              path: "profile/:id",
+              path: "profile/:userId",
               lazy: async () => ({
                 Component: (await import("./pages/common/ProfilePage")).default,
               }),
