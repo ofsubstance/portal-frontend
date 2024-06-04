@@ -10,9 +10,13 @@ import Vimeo from "@u-wave/react-vimeo";
 
 interface VideoPlayerSectionProps {
   data: IVideo;
+  onFeedback: () => any;
 }
 
-export default function VideoPlayerSection({ data }: VideoPlayerSectionProps) {
+export default function VideoPlayerSection({
+  data,
+  onFeedback,
+}: VideoPlayerSectionProps) {
   return (
     <div className="flex md:flex-row flex-col items-start gap-8 p-6">
       <div className="flex-1 w-full">
@@ -56,7 +60,12 @@ export default function VideoPlayerSection({ data }: VideoPlayerSectionProps) {
         </div>
         <Typography variant="body1">{data.summary}</Typography>
 
-        <Fab variant="extended" size="large" color="primary">
+        <Fab
+          variant="extended"
+          size="large"
+          color="primary"
+          onClick={onFeedback}
+        >
           <FeedbackIcon size={20} className="mr-2" />
           Leave A Feedback
         </Fab>

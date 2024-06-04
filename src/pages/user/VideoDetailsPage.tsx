@@ -1,19 +1,20 @@
 import { Toolbar, Typography } from "@mui/material";
 
-import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
-import GeneralFeedbackForm from "@/components/user/feedback/GeneralFeedbackForm";
 import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import FlimFeedbackForm from "@/components/user/feedback/FlimFeedbackForm";
+import GeneralFeedbackForm from "@/components/user/feedback/GeneralFeedbackForm";
 import VideoCommentItem from "@/components/user/video/VideoCommentItem";
 import VideoDetailsHero from "@/components/user/video/VideoDetailsHero";
-import VideoGridItem from "@/components/videoItem/VideoGridItem";
 import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
+import VideoGridItem from "@/components/videoItem/VideoGridItem";
+import { videoData } from "@/data/dummyData";
+import { useModal } from "@ebay/nice-modal-react";
 import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useModal } from "@ebay/nice-modal-react";
-import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import { videoData } from "@/data/dummyData";
+import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import { useSearchParams } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 
@@ -54,6 +55,20 @@ export default function VideoDetailsPage() {
     });
   };
 
+  const handleFeedbackClick = () => {
+    modal.show({
+      title: "Submit Feedback",
+      children: (
+        <FlimFeedbackForm
+          filmTitle={data.title}
+          onSubmit={(data) => {
+            console.log(data);
+          }}
+        />
+      ),
+    });
+  };
+
   return (
     <div className="space-y-10">
       <div
@@ -63,7 +78,7 @@ export default function VideoDetailsPage() {
         <div className="min-h-screen backdrop-filter backdrop-blur-md bg-black bg-opacity-20">
           <Toolbar />
           {searchParam.get("playing") == "true" ? (
-            <VideoPlayerSection data={data} />
+            <VideoPlayerSection data={data} onFeedback={handleFeedbackClick} />
           ) : (
             <VideoDetailsHero
               data={data}

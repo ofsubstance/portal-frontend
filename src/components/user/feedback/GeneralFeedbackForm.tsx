@@ -1,11 +1,11 @@
 import { Button, Rating, TextField, Typography } from "@mui/material";
 
-import { GenaralFeedbackSubmitDto } from "@/dtos/feedback.dto";
 import { genaralFeedbackQuestions } from "@/constants/labels";
+import { GenaralFeedbackSubmitDto } from "@/dtos/feedback.dto";
 import { genaralFeedbackValidation } from "@/validators/feedback.validator";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 interface GeneralFeedbackFormProps {
   onSubmit: (data: GenaralFeedbackSubmitDto) => void;
@@ -45,8 +45,7 @@ export default function GeneralFeedbackForm({
             component="legend"
             color={errors[question.key] ? "error" : "initial"}
           >
-            How would you rate the quality of engagement while using Of
-            Substance films?
+            {question.question}
           </Typography>
           <div className="flex items-center gap-2">
             <Rating
