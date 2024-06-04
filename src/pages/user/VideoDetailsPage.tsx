@@ -1,20 +1,20 @@
 import { Toolbar, Typography } from "@mui/material";
 
-import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
+import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
 import FlimFeedbackForm from "@/components/user/feedback/FlimFeedbackForm";
 import GeneralFeedbackForm from "@/components/user/feedback/GeneralFeedbackForm";
+import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
 import VideoCommentItem from "@/components/user/video/VideoCommentItem";
 import VideoDetailsHero from "@/components/user/video/VideoDetailsHero";
-import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
 import VideoGridItem from "@/components/videoItem/VideoGridItem";
-import { videoData } from "@/data/dummyData";
-import { useModal } from "@ebay/nice-modal-react";
+import VideoPlayerSection from "@/components/user/video/VideoPlayerSection";
 import Vimeo from "@u-wave/react-vimeo";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useState } from "react";
-import { RiArrowRightSLine as ArrowRightIcon } from "react-icons/ri";
+import { useModal } from "@ebay/nice-modal-react";
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { videoData } from "@/data/dummyData";
 
 dayjs.extend(relativeTime);
 
@@ -57,7 +57,7 @@ export default function VideoDetailsPage() {
 
   const handleFeedbackClick = () => {
     modal.show({
-      title: "Submit Feedback",
+      title: "Feedback on " + data.title,
       children: (
         <FlimFeedbackForm
           filmTitle={data.title}
