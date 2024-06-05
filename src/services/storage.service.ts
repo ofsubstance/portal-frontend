@@ -1,4 +1,5 @@
 import { SigninRes } from "@/dtos/auth.dto";
+import { UserDto } from "@/dtos/user.dto";
 
 class StorageService {
   getAuthData() {
@@ -24,7 +25,7 @@ class StorageService {
 
   getLocalRefreshToken() {
     const authData = this.getAuthData();
-    return authData?.refresh_token;
+    return authData?.refreshToken;
   }
 
   removeAuthData() {
@@ -32,7 +33,7 @@ class StorageService {
     localStorage.removeItem("auth");
   }
 
-  setCurrentUser(user: any) {
+  setCurrentUser(user: UserDto) {
     const authData = this.getAuthData();
 
     if (authData?.remember)

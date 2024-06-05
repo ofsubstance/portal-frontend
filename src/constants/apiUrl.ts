@@ -13,7 +13,7 @@ const APIUrl = {
     resetPassword: (token: string) => "/auth/reset-password/" + token,
   },
   user: {
-    getUser: (userId: string) => "/user/" + userId,
+    getUser: (userId: string) => "/users/" + userId,
   },
   videoManagement: {
     getVideos: () => "/videos",

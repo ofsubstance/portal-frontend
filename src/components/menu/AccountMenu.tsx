@@ -1,6 +1,7 @@
 import { Chip, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
+import { AuthContext } from "@/contexts/AuthContextProvider";
 import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -11,12 +12,11 @@ import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
 import UserGuide from "../user/guide/UserGuide";
 import useAuthAction from "@/hooks/useAuthAction";
 import { useModal } from "@ebay/nice-modal-react";
-import { useNavigate } from "react-router-dom";
 
 export default function AccountMenu() {
   const modal = useModal(ModalHookLayout);
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { authData } = useContext(AuthContext);
 
   const { signoutMutation } = useAuthAction();
 
@@ -30,7 +30,6 @@ export default function AccountMenu() {
 
   const handleLogout = () => {
     signoutMutation.mutate();
-    navigate("/signin");
   };
 
   const handleUserGuideClick = () => {
@@ -100,15 +99,15 @@ export default function AccountMenu() {
       >
         <MenuItem>
           <Avatar
-            alt="John Doe"
+            alt={authData?.name}
             src="https://uko-react.vercel.app/static/avatar/001-man.svg"
           />
 
           <div className="min-w-40">
             <Typography fontWeight={600} fontSize={14}>
-              John Doe
+              {authData?.name}
             </Typography>
-            <Typography fontSize={12}>john.doe@email.com</Typography>
+            <Typography fontSize={12}>{authData?.email}</Typography>
           </div>
         </MenuItem>
 

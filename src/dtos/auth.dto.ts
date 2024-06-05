@@ -14,8 +14,8 @@ export type ForgotPasswordReq = z.infer<typeof forgotPasswordValidation>;
 
 export type ResetPasswordReq = z.infer<typeof resetPasswordValidation>;
 export interface SigninRes {
-  access_token: string;
-  refresh_token: string;
+  accessToken: string;
+  refreshToken: string;
   user: {
     id: string;
     name: string;

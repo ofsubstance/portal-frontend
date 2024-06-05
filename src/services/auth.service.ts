@@ -43,6 +43,7 @@ class AuthService {
   async signout() {
     await httpClient.post(APIUrl.auth.signout());
     storageService.removeAuthData();
+    document.dispatchEvent(new Event("logout"));
   }
 
   async googleSignin(google_access_token: string) {
@@ -60,7 +61,7 @@ class AuthService {
       }
     );
 
-    storageService.setAuthData(res.data.body);
+    storageService.setAuthData(res.data.body, true);
 
     return res.data;
   }

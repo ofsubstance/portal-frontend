@@ -28,12 +28,18 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, user]);
 
   useEffect(() => {
-    document.addEventListener("logout", () => setIsAuthenticated(false));
+    document.addEventListener("logout", () => {
+      setIsAuthenticated(false);
+      setAuthData(undefined);
+    });
 
     authService.refreshAccessToken();
 
     return () => {
-      document.removeEventListener("logout", () => setIsAuthenticated(false));
+      document.removeEventListener("logout", () => {
+        setIsAuthenticated(false);
+        setAuthData(undefined);
+      });
     };
   }, []);
 
