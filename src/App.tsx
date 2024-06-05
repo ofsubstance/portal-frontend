@@ -1,64 +1,16 @@
-import {
-  MutationCache,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { Outlet } from "react-router-dom";
 
 import ContextProvider from "@/contexts/ContextProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ToastContainer } from "react-toastify";
 import LoadingOverlay from "./components/common/loader/LoadingOverlay";
 
-const onHttpError = (
-  error: any,
-  _variables: any,
-  _context: any,
-  mutation: any
-) => {
-  // If this has an onError defined, skip this
-  if (mutation?.options?.onError) return;
-
-  toast.error(error.response.data.message, {
-    toastId: error.response.data.message,
-  });
-};
-
-const queryClient = new QueryClient({
-  mutationCache: new MutationCache({
-    onError: onHttpError,
-  }),
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-      staleTime: 1000,
-    },
-  },
-});
-
 function App() {
-  const { pathname } = useLocation();
-  const scrollRef = useRef<HTMLDivElement>();
-
-  useEffect(() => {
-    if (!scrollRef.current) {
-      scrollRef.current = document.getElementsByTagName(
-        "main"
-      )[0] as HTMLDivElement;
-    }
-
-    scrollRef.current.scrollTo(0, 0);
-  }, [pathname]);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <ContextProvider>
-        <Outlet />
+    <ContextProvider>
+      <Outlet />
 
-        <LoadingOverlay />
-      </ContextProvider>
+      <LoadingOverlay />
 
       <ToastContainer
         position={"bottom-center"}
@@ -74,7 +26,7 @@ function App() {
       />
 
       <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </ContextProvider>
   );
 }
 

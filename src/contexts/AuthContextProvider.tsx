@@ -1,15 +1,21 @@
 import React, { createContext, useEffect, useState } from "react";
 
-import { SigninRes } from "@/dtos/auth.dto";
-import authService from "../services/auth.service";
-import storageService from "../services/storage.service";
+import { UserDto } from "@/dtos/user.dto";
 import useUserActions from "../hooks/useUserAction";
+import storageService from "../services/storage.service";
 
-const AuthContext = createContext({
-  authData: undefined as SigninRes["user"] | undefined,
-  setAuthData: (_data?: SigninRes["user"]) => {},
+interface AuthContextProps {
+  authData?: UserDto;
+  setAuthData: (data?: UserDto) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (data: boolean) => void;
+}
+
+const AuthContext = createContext<AuthContextProps>({
+  authData: undefined,
+  setAuthData: (_data) => {},
   isAuthenticated: false,
-  setIsAuthenticated: (_data: boolean) => {},
+  setIsAuthenticated: (_data) => {},
 });
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
@@ -32,8 +38,6 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(false);
       setAuthData(undefined);
     });
-
-    authService.refreshAccessToken();
 
     return () => {
       document.removeEventListener("logout", () => {

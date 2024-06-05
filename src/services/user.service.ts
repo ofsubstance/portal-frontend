@@ -9,9 +9,19 @@ class UserService {
     const authData = storageService.getAuthData();
     if (!authData) return null;
 
-    const res = await httpClient.get<IResponse<UserDto>>(APIUrl.user.getUser(authData?.user.id));
+    const res = await httpClient.get<IResponse<UserDto>>(
+      APIUrl.user.getUser(authData?.user.id)
+    );
 
     storageService.setCurrentUser(res.data.body);
+
+    return res.data.body;
+  }
+
+  async getUser(userId: string) {
+    const res = await httpClient.get<IResponse<UserDto>>(
+      APIUrl.user.getUser(userId)
+    );
 
     return res.data.body;
   }

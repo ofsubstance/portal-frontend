@@ -8,10 +8,17 @@ import {
   RiMailFill as MailIcon,
 } from "react-icons/ri";
 
+import { UserDto } from "@/dtos/user.dto";
+import dayjs from "dayjs";
 import { IconType } from "react-icons/lib";
-import { useNavigate } from "react-router-dom";
 
-function AboutItem({ Icon, text }: { Icon: IconType; text: string }) {
+function AboutItem({
+  Icon,
+  text = "Not Set",
+}: {
+  Icon: IconType;
+  text?: string;
+}) {
   return (
     <Typography variant="body1" className="flex gap-4 items-center">
       <Icon size={24} />
@@ -20,35 +27,34 @@ function AboutItem({ Icon, text }: { Icon: IconType; text: string }) {
   );
 }
 
-function ProfileAboutSection() {
-  const navigate = useNavigate();
+interface ProfileAboutSectionProps {
+  data: UserDto;
+  onEditClick: () => void;
+}
 
+function ProfileAboutSection({ data, onEditClick }: ProfileAboutSectionProps) {
   return (
     <div className="space-y-6">
       <Typography variant="h6" fontWeight={600}>
         About
       </Typography>
 
-      <AboutItem Icon={MailIcon} text="john.doe@email.com" />
+      <AboutItem Icon={MailIcon} text={data.email} />
 
-      <AboutItem Icon={ContactNumIcon} text="+91 1234567890" />
-
-      <AboutItem Icon={DobIcon} text="December 31, 2000" />
-
-      <AboutItem Icon={GenderIcon} text="Male" />
-
-      <AboutItem Icon={LanguageIcon} text="English" />
+      <AboutItem Icon={ContactNumIcon} text={data.phone} />
 
       <AboutItem
-        Icon={LocationIcon}
-        text="123/A, Lorem Ipsum, Dolor Sit, Amet"
+        Icon={DobIcon}
+        text={dayjs(data.birthDate).format("DD MMM YYYY")}
       />
 
-      <Button
-        variant="outlined"
-        fullWidth
-        onClick={() => navigate("/admin/profile/settings")}
-      >
+      <AboutItem Icon={GenderIcon} text={data.gender} />
+
+      <AboutItem Icon={LanguageIcon} text={data.language} />
+
+      <AboutItem Icon={LocationIcon} text={data.location} />
+
+      <Button variant="outlined" fullWidth onClick={onEditClick}>
         Edit Profile
       </Button>
     </div>

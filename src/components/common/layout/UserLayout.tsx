@@ -4,9 +4,11 @@ import {
   Button,
   Drawer,
   IconButton,
+  InputBase,
   List,
   ListItem,
   ListItemButton,
+  Paper,
   Toolbar,
   Typography,
   useTheme,
@@ -18,16 +20,17 @@ import {
   RiMoneyDollarCircleLine as PaymentsIcon,
   RiPlayList2Line as PlaylistManagementIcon,
   RiAccountCircleLine as ProfileIcon,
+  RiSearch2Line as SearchIcon,
   RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
 } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import AccountMenu from "@/components/menu/AccountMenu";
+import AccountMenu from "@/components/common/menu/AccountMenu";
 import useAuthAction from "@/hooks/useAuthAction";
 import { useState } from "react";
-import AppLogo from "../common/logo/AppLogo";
+import AppLogo from "../logo/AppLogo";
 
 const navItems = [
   {
@@ -170,7 +173,31 @@ function DrawerContent() {
   );
 }
 
-export default function AdminLayout({
+function SearchBar() {
+  return (
+    <Paper
+      sx={{
+        borderRadius: 100,
+        ml: 4,
+        display: "flex",
+        alignItems: "center",
+        bgcolor: "rgba(255, 255, 255, 0.2)",
+        width: 400,
+      }}
+    >
+      <InputBase
+        fullWidth
+        sx={{ pl: 2, color: "white" }}
+        placeholder="Search…"
+      />
+      <IconButton>
+        <SearchIcon className="text-gray-400" />
+      </IconButton>
+    </Paper>
+  );
+}
+
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -198,9 +225,7 @@ export default function AdminLayout({
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: "rgba(255, 255, 255, 0)",
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
           boxShadow: "none",
           backdropFilter: "blur(12px)",
         }}
@@ -208,8 +233,7 @@ export default function AdminLayout({
         <Toolbar
           sx={{
             width: "100%",
-            maxWidth: "1200px",
-            mx: "auto",
+            px: 4,
           }}
         >
           <IconButton
@@ -221,70 +245,55 @@ export default function AdminLayout({
             <MenuIcon />
           </IconButton>
 
-          <span className="sm:hidden">
-            <AppLogo />
-          </span>
+          <div className="hidden md:block">
+            <AppLogo color="white" />
+          </div>
+
+          <div className="block md:hidden">
+            <AppLogo color="white" type="compact" />
+          </div>
+
+          <SearchBar />
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <AccountMenu />
+          <div className="hidden md:block">
+            <AccountMenu />
+          </div>
         </Toolbar>
       </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+
+      <Drawer
+        container={window.document.body}
+        variant="temporary"
+        open={mobileOpen}
+        onTransitionEnd={handleDrawerTransitionEnd}
+        onClose={handleDrawerClose}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        sx={{
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+          },
+        }}
       >
-        <Drawer
-          container={window.document.body}
-          variant="temporary"
-          open={mobileOpen}
-          onTransitionEnd={handleDrawerTransitionEnd}
-          onClose={handleDrawerClose}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-        >
-          <DrawerContent />
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-              border: "none",
-            },
-          }}
-          open
-        >
-          <DrawerContent />
-        </Drawer>
-      </Box>
+        <DrawerContent />
+      </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: "100vh",
           overflow: "auto",
-          backgroundColor: "rgb(243, 244, 249)",
         }}
       >
-        <Toolbar />
         <Box
-          p={3}
           sx={{
             width: "100%",
-            maxWidth: "1200px",
-            mx: "auto",
           }}
         >
           {children}

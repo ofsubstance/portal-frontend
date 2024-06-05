@@ -1,12 +1,12 @@
-import { VideoDto, VideoUploadDto } from "@/dtos/video.dto";
-import { Paper, TextField, Typography } from "@mui/material";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { Paper, TextField, Typography } from "@mui/material";
+import { VideoDto, VideoUploadDto } from "@/dtos/video.dto";
 
-import Dropzone from "@/components/common/dropzone/Dropzone";
-import { videoUploadValidation } from "@/validators/video.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Dropzone from "../common/dropzone/Dropzone";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useIsMutating } from "@tanstack/react-query";
+import { videoUploadValidation } from "@/validators/video.validator";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface VideoUploadFormProps {
   onSubmit: (data: VideoUploadDto) => void;

@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Fab } from "@mui/material";
 import { Link } from "react-router-dom";
 import errorImg from "../assets/error.svg";
 
@@ -33,11 +33,15 @@ function ErrorPage({
       <h2 className="text-3xl my-5">{title}</h2>
       <p className="mb-8 opacity-70">{description}</p>
       {!hideLink && (
-        <Link to={linkTo}>
-          <Button variant="contained" color="primary">
-            {linkText}
-          </Button>
-        </Link>
+        <Fab
+          variant="extended"
+          color="primary"
+          LinkComponent={Link}
+          href={linkTo}
+          sx={{ width: "200px" }}
+        >
+          {linkText}
+        </Fab>
       )}
     </main>
   );

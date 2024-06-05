@@ -5,7 +5,7 @@ import {
   RiTwitterFill as TwitterIcon,
 } from "react-icons/ri";
 
-import AppLogo from "../common/logo/AppLogo";
+import AppLogo from "../logo/AppLogo";
 
 export default function Footer() {
   return (

@@ -19,7 +19,6 @@ function SigninPage() {
   const onSignin = (data: SigninReq) =>
     signinMutation.mutate(data, {
       onSuccess: () => {
-        console.log("Signed in successfully");
         setIsAuthenticated(true);
       },
     });
@@ -28,7 +27,6 @@ function SigninPage() {
     onSuccess: (data: TokenResponse) => {
       googleSigninMutation.mutate(data.access_token, {
         onSuccess: () => {
-          console.log("Signed in successfully");
           setIsAuthenticated(true);
         },
       });

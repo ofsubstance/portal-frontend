@@ -1,15 +1,15 @@
 import { Button, Divider, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
 import { useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
+import signupImage from "@/assets/signup.svg";
+import SignupForm from "@/components/auth/SignupForm";
 import AppLogo from "@/components/common/logo/AppLogo";
 import { AuthContext } from "@/contexts/AuthContextProvider";
-import { FcGoogle as GoogleIcon } from "react-icons/fc";
-import SignupForm from "@/components/auth/SignupForm";
 import { SignupReq } from "@/dtos/auth.dto";
-import signupImage from "@/assets/signup.svg";
 import useAuthAction from "@/hooks/useAuthAction";
+import { FcGoogle as GoogleIcon } from "react-icons/fc";
 
 function SignupPage() {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ function SignupPage() {
   const onSignup = (data: SignupReq) => {
     signupMutation.mutate(data, {
       onSuccess: () => {
-        console.log("Account created successfully");
         setIsAuthenticated(true);
       },
     });
@@ -29,7 +28,6 @@ function SignupPage() {
     onSuccess: (data: TokenResponse) => {
       googleSigninMutation.mutate(data.access_token, {
         onSuccess: () => {
-          console.log("Signed in successfully");
           setIsAuthenticated(true);
         },
       });

@@ -10,8 +10,17 @@ function useUserActions() {
       staleTime: 0,
     });
 
+  const useUserQuery = (userId?: string) =>
+    useQuery({
+      enabled: !!userId,
+      queryKey: ["getUser", userId],
+      queryFn: async () =>
+        userId ? await userService.getUser(userId) : undefined,
+    });
+
   return {
     useCurrentUserQuery,
+    useUserQuery,
   };
 }
 

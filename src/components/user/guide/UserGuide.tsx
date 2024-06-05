@@ -19,7 +19,7 @@ function GuideSection({ title, details }: GuideSectionProps) {
       >
         {title}
       </Typography>
-      <Typography variant="body1" fontWeight={500} fontSize={18}>
+      <Typography component="span" fontWeight={500} fontSize={18}>
         {details}
       </Typography>
     </div>

@@ -4,15 +4,14 @@ import {
   Button,
   Drawer,
   IconButton,
-  InputBase,
   List,
   ListItem,
   ListItemButton,
-  Paper,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
+import { useContext, useState } from "react";
 import {
   RiPieChart2Line as AnalyticsIcon,
   RiMenu2Line as MenuIcon,
@@ -20,19 +19,18 @@ import {
   RiMoneyDollarCircleLine as PaymentsIcon,
   RiPlayList2Line as PlaylistManagementIcon,
   RiAccountCircleLine as ProfileIcon,
-  RiSearch2Line as SearchIcon,
   RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
 } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import AccountMenu from "@/components/menu/AccountMenu";
+import AccountMenu from "@/components/common/menu/AccountMenu";
+import { AuthContext } from "@/contexts/AuthContextProvider";
 import useAuthAction from "@/hooks/useAuthAction";
-import { useState } from "react";
-import AppLogo from "../common/logo/AppLogo";
+import AppLogo from "../logo/AppLogo";
 
-const navItems = [
+const navItems = (userId?: string) => [
   {
     group: "Dashboard",
     items: [
@@ -73,12 +71,12 @@ const navItems = [
     group: "Account",
     items: [
       {
-        link: "/admin/profile/1",
+        link: `/admin/profile/${userId}`,
         text: "Profile Details",
         icon: ProfileIcon,
       },
       {
-        link: "/admin/profile/settings",
+        link: `/admin/profile/settings/${userId}`,
         text: "Settings",
         icon: SettingsIcon,
       },
@@ -90,6 +88,7 @@ const drawerWidth = 300;
 
 function DrawerContent() {
   const { signoutMutation } = useAuthAction();
+  const { authData } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -111,7 +110,7 @@ function DrawerContent() {
       <span className="pl-8 py-4">
         <AppLogo />
       </span>
-      {navItems.map((group) => (
+      {navItems(authData?.id).map((group) => (
         <div key={group.group} className="flex flex-col">
           <Typography
             variant="body2"
@@ -173,31 +172,7 @@ function DrawerContent() {
   );
 }
 
-function SearchBar() {
-  return (
-    <Paper
-      sx={{
-        borderRadius: 100,
-        ml: 4,
-        display: "flex",
-        alignItems: "center",
-        bgcolor: "rgba(255, 255, 255, 0.2)",
-        width: 400,
-      }}
-    >
-      <InputBase
-        fullWidth
-        sx={{ pl: 2, color: "white" }}
-        placeholder="Search…"
-      />
-      <IconButton>
-        <SearchIcon className="text-gray-400" />
-      </IconButton>
-    </Paper>
-  );
-}
-
-export default function UserLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -225,7 +200,9 @@ export default function UserLayout({
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          backgroundColor: "rgba(255, 255, 255, 0)",
           boxShadow: "none",
           backdropFilter: "blur(12px)",
         }}
@@ -233,7 +210,8 @@ export default function UserLayout({
         <Toolbar
           sx={{
             width: "100%",
-            px: 4,
+            maxWidth: "1200px",
+            mx: "auto",
           }}
         >
           <IconButton
@@ -245,55 +223,70 @@ export default function UserLayout({
             <MenuIcon />
           </IconButton>
 
-          <div className="hidden md:block">
-            <AppLogo color="white" />
-          </div>
-
-          <div className="block md:hidden">
-            <AppLogo color="white" type="compact" />
-          </div>
-
-          <SearchBar />
+          <span className="sm:hidden">
+            <AppLogo />
+          </span>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <div className="hidden md:block">
-            <AccountMenu />
-          </div>
+          <AccountMenu />
         </Toolbar>
       </AppBar>
-
-      <Drawer
-        container={window.document.body}
-        variant="temporary"
-        open={mobileOpen}
-        onTransitionEnd={handleDrawerTransitionEnd}
-        onClose={handleDrawerClose}
-        ModalProps={{
-          keepMounted: true,
-        }}
-        sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-          },
-        }}
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
       >
-        <DrawerContent />
-      </Drawer>
-
+        <Drawer
+          container={window.document.body}
+          variant="temporary"
+          open={mobileOpen}
+          onTransitionEnd={handleDrawerTransitionEnd}
+          onClose={handleDrawerClose}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+        >
+          <DrawerContent />
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+              border: "none",
+            },
+          }}
+          open
+        >
+          <DrawerContent />
+        </Drawer>
+      </Box>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: "100vh",
           overflow: "auto",
+          backgroundColor: "rgb(243, 244, 249)",
         }}
       >
+        <Toolbar />
         <Box
+          p={3}
           sx={{
             width: "100%",
+            maxWidth: "1200px",
+            mx: "auto",
           }}
         >
           {children}
