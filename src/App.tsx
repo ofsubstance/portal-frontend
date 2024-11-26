@@ -1,9 +1,8 @@
-import { Outlet } from "react-router-dom";
-
-import ContextProvider from "@/contexts/ContextProvider";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ToastContainer } from "react-toastify";
-import LoadingOverlay from "./components/common/loader/LoadingOverlay";
+import { Outlet } from 'react-router-dom';
+import ContextProvider from '@/contexts/ContextProvider';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ToastContainer } from 'react-toastify';
+import LoadingOverlay from './components/common/loader/LoadingOverlay';
 
 function App() {
   return (
@@ -13,7 +12,7 @@ function App() {
       <LoadingOverlay />
 
       <ToastContainer
-        position={"bottom-center"}
+        position={'bottom-center'}
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

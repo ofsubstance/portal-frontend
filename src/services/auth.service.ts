@@ -4,13 +4,13 @@ import {
   SigninReq,
   SigninRes,
   SignupReq,
-} from "@/dtos/auth.dto";
+} from '@/dtos/auth.dto';
 
-import APIUrl from "../constants/apiUrl";
-import { IResponse } from "@/dtos/response.dto";
-import axios from "axios";
-import httpClient from "../utils/httpClient";
-import storageService from "./storage.service";
+import { IResponse } from '@/dtos/response.dto';
+import axios from 'axios';
+import APIUrl from '../constants/apiUrl';
+import httpClient from '../utils/httpClient';
+import storageService from './storage.service';
 
 class AuthService {
   async signin(data: SigninReq) {
@@ -28,7 +28,6 @@ class AuthService {
 
   async signup(data: SignupReq) {
     data.email = data.email.trim();
-    data.name = data.name.trim();
 
     const res = await httpClient.post<IResponse<SigninRes>>(
       APIUrl.auth.signup(),
@@ -40,10 +39,29 @@ class AuthService {
     return res.data;
   }
 
+  async resendVerification(data: { email: string }) {
+    data.email = data.email.trim();
+
+    const res = await httpClient.post<IResponse<any>>(
+      APIUrl.auth.resendVerification(),
+      data
+    );
+
+    storageService.setAuthData(res.data.body);
+
+    return res.data;
+  }
+
+  async verifyEmail(token: string) {
+    const res = await httpClient.get(APIUrl.auth.verifyEmail(token));
+
+    return res.data.body;
+  }
+
   async signout() {
     await httpClient.post(APIUrl.auth.signout());
     storageService.removeAuthData();
-    document.dispatchEvent(new Event("logout"));
+    document.dispatchEvent(new Event('logout'));
   }
 
   async googleSignin(google_access_token: string) {
@@ -85,11 +103,11 @@ class AuthService {
       });
     } catch (error: any) {
       storageService.removeAuthData();
-      document.dispatchEvent(new Event("logout"));
+      document.dispatchEvent(new Event('logout'));
 
       if (error.response?.status === 401 && error.response.data) {
         error.response.data.message =
-          "Your session has expired. Please login again.";
+          'Your session has expired. Please login again.';
       }
 
       throw error;

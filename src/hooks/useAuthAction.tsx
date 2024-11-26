@@ -1,6 +1,6 @@
-import { ResetPasswordReq } from "@/dtos/auth.dto";
-import authService from "../services/auth.service";
-import { useMutation } from "@tanstack/react-query";
+import { ResetPasswordReq } from '@/dtos/auth.dto';
+import authService from '../services/auth.service';
+import { useMutation } from '@tanstack/react-query';
 
 function useAuthAction() {
   const signinMutation = useMutation({
@@ -9,6 +9,14 @@ function useAuthAction() {
 
   const signupMutation = useMutation({
     mutationFn: authService.signup,
+  });
+
+  const resendVerificationMutation = useMutation({
+    mutationFn: authService.resendVerification,
+  });
+
+  const verifyEmail = useMutation({
+    mutationFn: authService.verifyEmail,
   });
 
   const signoutMutation = useMutation({
@@ -36,6 +44,8 @@ function useAuthAction() {
   return {
     signinMutation,
     signupMutation,
+    resendVerificationMutation,
+    verifyEmail,
     googleSigninMutation,
     signoutMutation,
     resetPasswordMutation,
