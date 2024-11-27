@@ -1,8 +1,8 @@
-import React, { createContext, useEffect, useState } from "react";
-
-import { UserDto } from "@/dtos/user.dto";
-import useUserActions from "../hooks/useUserAction";
-import storageService from "../services/storage.service";
+import React, { createContext, useEffect, useState } from 'react';
+import { UserDto } from '@/dtos/user.dto';
+import useUserActions from '../hooks/useUserAction';
+import storageService from '../services/storage.service';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextProps {
   authData?: UserDto;
@@ -28,19 +28,26 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
   const { data: user } = useCurrentUserQuery(isAuthenticated);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!isAuthenticated) setAuthData(undefined);
-    else setAuthData(user ?? storageService.getCurrentUser());
+    else {
+      setAuthData(user ?? storageService.getCurrentUser());
+      authData?.role === 'admin'
+        ? navigate('/admin', { replace: true })
+        : navigate('/', { replace: true });
+    }
   }, [isAuthenticated, user]);
 
   useEffect(() => {
-    document.addEventListener("logout", () => {
+    document.addEventListener('logout', () => {
       setIsAuthenticated(false);
       setAuthData(undefined);
     });
 
     return () => {
-      document.removeEventListener("logout", () => {
+      document.removeEventListener('logout', () => {
         setIsAuthenticated(false);
         setAuthData(undefined);
       });

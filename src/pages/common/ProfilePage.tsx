@@ -1,14 +1,14 @@
-import { Avatar, Paper, Tab, Tabs, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { Avatar, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import coverImagePlaceholder from "@/assets/coverImagePlaceholder.svg";
-import BookmarkedVideoSection from "@/components/profile/BookmarkedVideoSection";
-import ProfileAboutSection from "@/components/profile/ProfileAboutSection";
-import SubmittedFeedbackSection from "@/components/profile/SubmittedFeedbackSection";
-import WatchedVideoSection from "@/components/profile/WatchedVideoSection";
-import { UserRole } from "@/constants/enums";
-import useUserActions from "@/hooks/useUserAction";
-import { useState } from "react";
+import coverImagePlaceholder from '@/assets/coverImagePlaceholder.svg';
+import BookmarkedVideoSection from '@/components/profile/BookmarkedVideoSection';
+import ProfileAboutSection from '@/components/profile/ProfileAboutSection';
+import SubmittedFeedbackSection from '@/components/profile/SubmittedFeedbackSection';
+import WatchedVideoSection from '@/components/profile/WatchedVideoSection';
+import { UserRole } from '@/constants/enums';
+import useUserActions from '@/hooks/useUserAction';
+import { useState } from 'react';
 
 function ProfilePage() {
   const { userId } = useParams();
@@ -46,9 +46,9 @@ function ProfilePage() {
 
         <div className="-mt-8 px-4 flex flex-col gap-6 items-center justify-center">
           <Typography variant="h6" fontWeight={600}>
-            {user?.name}
+            {user?.firstname + ' ' + user?.lastname}
           </Typography>
-          <Typography variant="subtitle1" color={"text.secondary"}>
+          <Typography variant="subtitle1" color={'text.secondary'}>
             {user?.bio}
           </Typography>
 

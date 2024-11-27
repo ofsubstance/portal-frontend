@@ -5,7 +5,7 @@ import {
   Button,
   Chip,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   RiCalendarLine as CalendarIcon,
   RiDeleteBinLine as DeleteIcon,
@@ -13,15 +13,15 @@ import {
   RiEdit2Line as EditIcon,
   RiArrowDownSLine as ExpandMoreIcon,
   RiPlayCircleLine as PlayIcon,
-} from "react-icons/ri";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+} from 'react-icons/ri';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
-import Vimeo from "@u-wave/react-vimeo";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { useModal } from "@ebay/nice-modal-react";
-import useVideoManagementActions from "@/hooks/useVideoManagementAction";
+import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
+import Vimeo from '@u-wave/react-vimeo';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useModal } from '@ebay/nice-modal-react';
+import useVideoManagementActions from '@/hooks/useVideoManagementAction';
 
 dayjs.extend(relativeTime);
 
@@ -36,8 +36,8 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
       defaultExpanded
       disableGutters
       sx={{
-        backgroundColor: "transparent",
-        boxShadow: "none",
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
       }}
     >
       <AccordionSummary
@@ -55,7 +55,7 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
 
 function VideoDetailsPage() {
   const { videoId } = useParams();
-  const [searchParam, setSearchParam] = useSearchParams();
+
   const navigate = useNavigate();
   const modal = useModal(ModalHookLayout);
   const { useVideoQuery, videoDeleteMutation } = useVideoManagementActions();
@@ -64,7 +64,7 @@ function VideoDetailsPage() {
 
   const handleDeleteClick = () => {
     modal.show({
-      title: "Delete Video!",
+      title: 'Delete Video!',
       children: (
         <Typography variant="h6">
           Are you sure you want to delete this video?
@@ -72,18 +72,18 @@ function VideoDetailsPage() {
       ),
       dialogActions: {
         confirmButtonProps: {
-          text: "Yes, Delete Video",
-          color: "error",
+          text: 'Yes, Delete Video',
+          color: 'error',
           onClick: () =>
             videoDeleteMutation.mutate(videoId!, {
               onSuccess: () => {
                 modal.hide();
-                navigate("/admin/video-management");
+                navigate('/admin/video-management');
               },
             }),
         },
         cancelButtonProps: {
-          text: "No, Cancel",
+          text: 'No, Cancel',
           onClick: () => {
             modal.hide();
           },
@@ -94,11 +94,35 @@ function VideoDetailsPage() {
 
   const handlePlayTrailerClick = () => {
     modal.show({
-      title: data?.title,
-      maxWidth: "lg",
+      title: `Trailer for ${data?.title}`,
+      maxWidth: 'lg',
       children: (
         <div className="w-full">
           {data && <Vimeo video={data.trailer_url} responsive={true} />}
+        </div>
+      ),
+    });
+  };
+
+  const handlePlayVideoClick = () => {
+    modal.show({
+      title: `Video - ${data?.title}`,
+      maxWidth: 'lg',
+      children: (
+        <div className="w-full">
+          {data && <Vimeo video={data.video_url} responsive={true} />}
+        </div>
+      ),
+    });
+  };
+
+  const handlePlayPrerollClick = () => {
+    modal.show({
+      title: `Pre-roll for ${data?.title}`,
+      maxWidth: 'lg',
+      children: (
+        <div className="w-full">
+          {data && <Vimeo video={data.preroll_url} responsive={true} />}
         </div>
       ),
     });
@@ -108,16 +132,10 @@ function VideoDetailsPage() {
 
   return (
     <div className="space-y-8 text-slate-600">
-      {searchParam.get("playing") === "true" && (
-        <div className="flex-1 w-full">
-          <Vimeo video={data.video_url} responsive={true} />
-        </div>
-      )}
-
       <div className="flex gap-10 flex-col lg:flex-row">
         <div className="space-y-4">
           <img
-            className="rounded-md w-[800px] object-cover"
+            className="rounded-md w-[600px] object-cover"
             src={data.thumbnail_url}
             alt="thumbnail"
           />
@@ -126,24 +144,37 @@ function VideoDetailsPage() {
             variant="contained"
             fullWidth
             startIcon={<PlayIcon />}
-            onClick={() => setSearchParam({ playing: "true" })}
+            onClick={() => handlePlayVideoClick()}
           >
             Watch Video
           </Button>
 
-          <Button
-            variant="outlined"
-            fullWidth
-            startIcon={<PlayIcon />}
-            onClick={handlePlayTrailerClick}
-          >
-            Watch Trailer
-          </Button>
+          {data.trailer_url && (
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<PlayIcon />}
+              onClick={handlePlayTrailerClick}
+            >
+              Watch Trailer
+            </Button>
+          )}
+
+          {data.preroll_url && (
+            <Button
+              variant="contained"
+              fullWidth
+              startIcon={<PlayIcon />}
+              onClick={() => handlePlayPrerollClick()}
+            >
+              Watch Pre-roll Video
+            </Button>
+          )}
 
           <div className="flex gap-2">
             <Button
               variant="contained"
-              color={"info"}
+              color={'info'}
               fullWidth
               startIcon={<EditIcon />}
               onClick={() =>
@@ -155,7 +186,7 @@ function VideoDetailsPage() {
 
             <Button
               variant="contained"
-              color={"error"}
+              color={'error'}
               fullWidth
               startIcon={<DeleteIcon />}
               onClick={handleDeleteClick}
@@ -171,11 +202,11 @@ function VideoDetailsPage() {
           </Typography>
           <div className="space-y-4">
             <Typography variant="body1" className="flex items-center gap-2">
-              <CalendarIcon size={20} /> Published on{" "}
-              {dayjs(data.createdAt).format("MMMM DD, YYYY h:mm A")}
+              <CalendarIcon size={20} /> Published on{' '}
+              {dayjs(data.createdAt).format('MMMM DD, YYYY h:mm A')}
             </Typography>
             <Typography variant="body1" className="flex items-center gap-2">
-              <CalendarIcon size={20} /> Last updated{" "}
+              <CalendarIcon size={20} /> Last updated{' '}
               {dayjs(data.updatedAt).fromNow()}
             </Typography>
             <Typography variant="body1" className="flex items-center gap-2">
@@ -187,13 +218,18 @@ function VideoDetailsPage() {
               Genres
             </Typography>
             <div className="flex gap-2 flex-wrap">
-              {data.genre.split(",").map((genre) => (
+              {data.genre.split(',').map((genre) => (
                 <Chip key={genre} label={genre.trim()} />
               ))}
             </div>
           </div>
 
           <div>
+            <VideoDescriptionItem
+              title="Description"
+              details={data.short_desc}
+            />
+
             <VideoDescriptionItem title="About" details={data.about} />
 
             <VideoDescriptionItem

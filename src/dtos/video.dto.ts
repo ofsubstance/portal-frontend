@@ -1,5 +1,5 @@
-import { videoUploadValidation } from "@/validators/video.validator";
-import { z } from "zod";
+import { videoUploadValidation } from '@/validators/video.validator';
+import { z } from 'zod';
 
 export type VideoUploadDto = z.infer<typeof videoUploadValidation>;
 
@@ -10,6 +10,7 @@ export interface VideoDto {
   isDeleted: boolean;
   video_url: string;
   trailer_url: string;
+  preroll_url: string;
   thumbnail_url: string;
   title: string;
   genre: string;
@@ -19,5 +20,4 @@ export interface VideoDto {
   primary_lesson: string;
   theme: string;
   impact: string;
-  cost: number;
 }

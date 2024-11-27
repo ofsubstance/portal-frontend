@@ -1,7 +1,8 @@
+import React, { useMemo, useState } from 'react';
 import {
   RiVideoAddLine as AddVideoIcon,
   RiSearchLine as SearchIcon,
-} from "react-icons/ri";
+} from 'react-icons/ri';
 import {
   Button,
   Grid,
@@ -14,21 +15,77 @@ import {
   Tabs,
   TextField,
   Typography,
-} from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
-import VideoGridItem from "@/components/videoItem/VideoGridItem";
-import useVideoManagementActions from "@/hooks/useVideoManagementAction";
-import videoManagementImg from "@/assets/videoManagement.svg";
+import VideoGridItem from '@/components/videoItem/VideoGridItem';
+import useVideoManagementActions from '@/hooks/useVideoManagementAction';
+import videoManagementImg from '@/assets/videoManagement.svg';
 
 function VideoManagementPage() {
   const navigate = useNavigate();
   const { useVideoListQuery } = useVideoManagementActions();
 
-  const { data: videos = [] } = useVideoListQuery();
+  const { data: videosList = [] } = useVideoListQuery();
+
+  // Search and filtering state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchType, setSearchType] = useState('title');
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [videosPerPage] = useState(9);
+
+  // Sorting state
+  const [sortBy, setSortBy] = useState('uploadDate');
+
+  // Memoized filtering and sorting
+  const processedVideos = useMemo(() => {
+    let filteredVideos = videosList;
+
+    // Filter videos based on search term and type
+    if (searchTerm) {
+      filteredVideos = filteredVideos.filter((video) => {
+        const searchValue = searchTerm.toLowerCase();
+        if (searchType === 'title') {
+          return video.title.toLowerCase().includes(searchValue);
+        } else if (searchType === 'genre') {
+          return video.genre.toLowerCase().includes(searchValue);
+        }
+        return true;
+      });
+    }
+
+    // Sort videos
+    filteredVideos.sort((a, b) => {
+      if (sortBy === 'title') {
+        return a.title.localeCompare(b.title);
+      }
+      // Default to upload date (assuming video objects have an uploadDate property)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    return filteredVideos;
+  }, [videosList, searchTerm, searchType, sortBy]);
+
+  // Pagination logic
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = processedVideos.slice(
+    indexOfFirstVideo,
+    indexOfLastVideo
+  );
+
+  const handlePageChange = (
+    event: any,
+    value: React.SetStateAction<number>
+  ) => {
+    setCurrentPage(value);
+  };
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Header Section */}
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
         <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
@@ -36,7 +93,7 @@ function VideoManagementPage() {
           </Typography>
 
           <Typography variant="subtitle1">
-            Manage your videos or upload new ones
+            Manage films or upload new ones
           </Typography>
 
           <Button
@@ -44,7 +101,7 @@ function VideoManagementPage() {
             startIcon={<AddVideoIcon />}
             size="large"
             fullWidth
-            onClick={() => navigate("/admin/video-management/upload")}
+            onClick={() => navigate('/admin/video-management/upload')}
           >
             Upload Video
           </Button>
@@ -57,22 +114,25 @@ function VideoManagementPage() {
         />
       </Paper>
 
+      {/* Video List Management Section */}
       <Paper className="px-8 py-4 space-y-6">
         <div className="flex gap-5 items-center md:flex-row flex-col">
           <Typography variant="h6" fontWeight={600}>
             Video List
           </Typography>
 
+          {/* Search and Filter Controls */}
           <div className="flex items-center justify-center">
             <Select
               variant="outlined"
               size="small"
+              value={searchType}
               autoWidth
-              defaultValue={"title"}
+              onChange={(e) => setSearchType(e.target.value)}
               sx={{
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
-                bgcolor: "action.hover",
+                bgcolor: 'action.hover',
               }}
             >
               <MenuItem value="title">Title</MenuItem>
@@ -84,6 +144,11 @@ function VideoManagementPage() {
               placeholder="Search for videos"
               size="small"
               sx={{ maxWidth: 300 }}
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // Reset to first page on new search
+              }}
               InputProps={{
                 endAdornment: (
                   <IconButton edge="end">
@@ -98,9 +163,10 @@ function VideoManagementPage() {
             />
           </div>
 
+          {/* Sorting Tabs */}
           <Tabs
-            value="1"
-            onChange={() => {}}
+            value={sortBy}
+            onChange={(e, newValue) => setSortBy(newValue)}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
@@ -108,41 +174,58 @@ function VideoManagementPage() {
             allowScrollButtonsMobile
             sx={{
               ml: {
-                lg: "auto",
+                lg: 'auto',
               },
             }}
           >
-            <Tab value="1" label="Upload Date" />
-            <Tab value="2" label="Title" />
+            <Tab value="uploadDate" label="Upload Date" />
+            <Tab value="title" label="Title" />
           </Tabs>
         </div>
 
-        <Grid
-          container
-          rowSpacing={5}
-          columnSpacing={3}
-          columns={{ md: 2, lg: 3, xs: 1 }}
-        >
-          {videos.map((video) => (
-            <Grid item xs={1} key={video.id}>
-              <Link to={`/admin/video-management/${video.id}`}>
-                <VideoGridItem data={video} />
-              </Link>
-            </Grid>
-          ))}
-        </Grid>
+        {/* Video Grid */}
+        {currentVideos.length > 0 ? (
+          <Grid
+            container
+            rowSpacing={5}
+            columnSpacing={3}
+            columns={{ md: 2, lg: 3, xs: 1 }}
+          >
+            {currentVideos.map((video) => (
+              <Grid item xs={1} key={video.id}>
+                <Link to={`/admin/video-management/${video.id}`}>
+                  <VideoGridItem data={video} />
+                </Link>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Typography
+            variant="body1"
+            align="center"
+            color="textSecondary"
+            className="py-8"
+          >
+            No videos found
+          </Typography>
+        )}
 
-        <Pagination
-          count={10}
-          variant="outlined"
-          shape="rounded"
-          color="primary"
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            py: 2,
-          }}
-        />
+        {/* Pagination */}
+        {processedVideos.length > 0 && (
+          <Pagination
+            count={Math.ceil(processedVideos.length / videosPerPage)}
+            page={currentPage}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+            color="primary"
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              py: 2,
+            }}
+          />
+        )}
       </Paper>
     </div>
   );

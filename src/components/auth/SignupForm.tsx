@@ -32,7 +32,6 @@ export const SignupForm = ({
     mode: 'onChange',
   });
 
-  console.log(getValues());
   const handleNext = async () => {
     let isStepValid = false;
 
@@ -82,7 +81,6 @@ export const SignupForm = ({
 
   const onSubmitHandler = (data: SignupFormData) => {
     try {
-      console.log('Form Submitted:', data);
       onSubmit(data);
     } catch (error) {
       toast.error('Submission failed. Please try again.');
@@ -144,8 +142,6 @@ export const SignupForm = ({
     'Personal Information',
     'Content Preferences',
   ];
-
-  console.log(steps.length);
 
   return (
     <Box sx={{ width: '100%', maxWidth: 600, margin: 'auto', padding: 2 }}>

@@ -1,7 +1,7 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { VideoUploadDto } from "@/dtos/video.dto";
-import videoManagementService from "@/services/video-management.service";
+import { VideoUploadDto } from '@/dtos/video.dto';
+import videoManagementService from '@/services/video-management.service';
 
 export default function useVideoManagementActions() {
   const videoCreateMutation = useMutation({
@@ -10,14 +10,14 @@ export default function useVideoManagementActions() {
 
   const useVideoListQuery = () =>
     useQuery({
-      queryKey: ["getVideoList"],
+      queryKey: ['getVideoList'],
       queryFn: videoManagementService.getVideos,
     });
 
   const useVideoQuery = (videoId?: string) =>
     useQuery({
       enabled: !!videoId,
-      queryKey: ["getVideo", videoId],
+      queryKey: ['getVideo', videoId],
       queryFn: async () =>
         videoId
           ? await videoManagementService.getVideoById(videoId)

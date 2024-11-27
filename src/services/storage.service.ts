@@ -1,9 +1,9 @@
-import { SigninRes } from "@/dtos/auth.dto";
-import { UserDto } from "@/dtos/user.dto";
+import { SigninRes } from '@/dtos/auth.dto';
+import { UserDto } from '@/dtos/user.dto';
 
 class StorageService {
   getAuthData() {
-    const data = sessionStorage.getItem("auth") || localStorage.getItem("auth");
+    const data = localStorage.getItem('auth') || localStorage.getItem('auth');
 
     if (!data) return null;
 
@@ -12,13 +12,13 @@ class StorageService {
 
   setAuthData(authData: SigninRes, remember = false) {
     if (!remember)
-      return sessionStorage.setItem(
-        "auth",
+      return localStorage.setItem(
+        'auth',
         JSON.stringify({ ...authData, remember })
       );
 
     return localStorage.setItem(
-      "auth",
+      'auth',
       JSON.stringify({ ...authData, remember })
     );
   }
@@ -29,8 +29,8 @@ class StorageService {
   }
 
   removeAuthData() {
-    sessionStorage.removeItem("auth");
-    localStorage.removeItem("auth");
+    localStorage.removeItem('auth');
+    localStorage.removeItem('auth');
   }
 
   setCurrentUser(user: UserDto) {
@@ -38,14 +38,11 @@ class StorageService {
 
     if (authData?.remember)
       return localStorage.setItem(
-        "auth",
+        'auth',
         JSON.stringify({ ...authData, user })
       );
 
-    return sessionStorage.setItem(
-      "auth",
-      JSON.stringify({ ...authData, user })
-    );
+    return localStorage.setItem('auth', JSON.stringify({ ...authData, user }));
   }
 
   getCurrentUser() {

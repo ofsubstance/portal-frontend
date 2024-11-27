@@ -1,12 +1,12 @@
-import { VideoDto, VideoUploadDto } from "@/dtos/video.dto";
-import { Paper, TextField, Typography } from "@mui/material";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { VideoDto, VideoUploadDto } from '@/dtos/video.dto';
+import { Paper, TextField, Typography } from '@mui/material';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import Dropzone from "@/components/common/dropzone/Dropzone";
-import { videoUploadValidation } from "@/validators/video.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { useIsMutating } from "@tanstack/react-query";
+import Dropzone from '@/components/common/dropzone/Dropzone';
+import { videoUploadValidation } from '@/validators/video.validator';
+import { zodResolver } from '@hookform/resolvers/zod';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { useIsMutating } from '@tanstack/react-query';
 
 interface VideoUploadFormProps {
   onSubmit: (data: VideoUploadDto) => void;
@@ -28,12 +28,12 @@ function MetaDataSection() {
       </Typography>
       <Dropzone
         variant="image"
-        defaultValue={getValues("thumbnail")}
-        onChange={(file) => setValue("thumbnail", file)}
+        defaultValue={getValues('thumbnail')}
+        onChange={(file) => file && setValue('thumbnail', file)}
         error={!!errors.thumbnail}
       />
       <TextField
-        {...register("title")}
+        {...register('title')}
         label="Title"
         variant="outlined"
         fullWidth
@@ -41,31 +41,22 @@ function MetaDataSection() {
         helperText={errors?.title?.message}
       />
       <TextField
-        {...register("genre")}
+        {...register('genre')}
         label="Genre"
         variant="outlined"
         fullWidth
         error={!!errors.genre}
         helperText={
-          errors?.genre?.message || "Separate multiple genres with a comma"
+          errors?.genre?.message || 'Separate multiple genres with a comma'
         }
       />
       <TextField
-        {...register("duration")}
+        {...register('duration')}
         label="Duration (Min:Sec)"
         variant="outlined"
         fullWidth
         error={!!errors.duration}
         helperText={errors?.duration?.message}
-      />
-      <TextField
-        {...register("cost", { setValueAs: (value) => Number(value) })}
-        label="Video Cost"
-        variant="outlined"
-        fullWidth
-        type="number"
-        error={!!errors.cost}
-        helperText={errors?.cost?.message}
       />
     </Paper>
   );
@@ -80,7 +71,7 @@ function DetailsSection() {
     <Paper className="w-full p-4 space-y-4">
       <Typography variant="h6">Details</Typography>
       <TextField
-        {...register("short_desc")}
+        {...register('short_desc')}
         label="Short Description"
         variant="outlined"
         fullWidth
@@ -90,7 +81,7 @@ function DetailsSection() {
         helperText={errors?.short_desc?.message}
       />
       <TextField
-        {...register("about")}
+        {...register('about')}
         label="About"
         variant="outlined"
         fullWidth
@@ -100,7 +91,7 @@ function DetailsSection() {
         helperText={errors?.about?.message}
       />
       <TextField
-        {...register("primary_lesson")}
+        {...register('primary_lesson')}
         label="Primary Lesson"
         variant="outlined"
         fullWidth
@@ -110,7 +101,7 @@ function DetailsSection() {
         helperText={errors?.primary_lesson?.message}
       />
       <TextField
-        {...register("theme")}
+        {...register('theme')}
         label="Theme"
         variant="outlined"
         fullWidth
@@ -120,7 +111,7 @@ function DetailsSection() {
         helperText={errors?.theme?.message}
       />
       <TextField
-        {...register("impact")}
+        {...register('impact')}
         label="Story Impact"
         variant="outlined"
         fullWidth
@@ -142,18 +133,18 @@ export default function VideoUploadForm({
   const formFields = useForm<VideoUploadDto>({
     resolver: zodResolver(videoUploadValidation),
     defaultValues: {
-      video_url: "",
-      trailer_url: "",
+      video_url: '',
+      trailer_url: '',
+      preroll_url: '',
       thumbnail: defaultValues?.thumbnail_url,
-      title: "",
-      genre: "",
-      duration: "",
-      cost: 0,
-      short_desc: "",
-      about: "",
-      primary_lesson: "",
-      theme: "",
-      impact: "",
+      title: '',
+      genre: '',
+      duration: '',
+      short_desc: '',
+      about: '',
+      primary_lesson: '',
+      theme: '',
+      impact: '',
       ...defaultValues,
     },
   });
@@ -171,7 +162,7 @@ export default function VideoUploadForm({
           <Typography variant="h6">URLs</Typography>
           <div className="flex gap-4">
             <TextField
-              {...register("video_url")}
+              {...register('video_url')}
               label="Video URL"
               variant="outlined"
               fullWidth
@@ -180,12 +171,20 @@ export default function VideoUploadForm({
             />
 
             <TextField
-              {...register("trailer_url")}
+              {...register('trailer_url')}
               label="Trailer URL"
               variant="outlined"
               fullWidth
               error={!!errors.trailer_url}
               helperText={errors?.trailer_url?.message}
+            />
+            <TextField
+              {...register('preroll_url')}
+              label="Pre-roll URL"
+              variant="outlined"
+              fullWidth
+              error={!!errors.preroll_url}
+              helperText={errors?.preroll_url?.message}
             />
           </div>
         </Paper>

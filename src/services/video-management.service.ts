@@ -1,8 +1,8 @@
-import { VideoDto, VideoUploadDto } from "@/dtos/video.dto";
+import { VideoDto, VideoUploadDto } from '@/dtos/video.dto';
 
-import APIUrl from "../constants/apiUrl";
-import { IResponse } from "@/dtos/response.dto";
-import httpClient from "../utils/httpClient";
+import { IResponse } from '@/dtos/response.dto';
+import APIUrl from '../constants/apiUrl';
+import httpClient from '../utils/httpClient';
 
 class VideoManagementService {
   async uploadVideo(data: VideoUploadDto) {
@@ -31,11 +31,10 @@ class VideoManagementService {
   }
 
   async updateVideo(videoId: string, data: VideoUploadDto) {
-    const res = await httpClient.patchForm<IResponse<VideoDto>>(
+    const res = await httpClient.patch<IResponse<VideoDto>>(
       APIUrl.videoManagement.updateVideo(videoId),
       data
     );
-
     return res.data.body;
   }
 

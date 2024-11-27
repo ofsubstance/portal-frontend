@@ -1,19 +1,19 @@
-import { Chip, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { Chip, Typography } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
 
-import { ModalHookLayout } from "@/components/common/modal/ModalLayout";
-import { UserRole } from "@/constants/enums";
-import { AuthContext } from "@/contexts/AuthContextProvider";
-import useAuthAction from "@/hooks/useAuthAction";
-import { useModal } from "@ebay/nice-modal-react";
-import Avatar from "@mui/material/Avatar";
-import Divider from "@mui/material/Divider";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { RiLogoutCircleRLine as LogoutIcon } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
-import UserGuide from "../../user/guide/UserGuide";
+import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
+import { UserRole } from '@/constants/enums';
+import { AuthContext } from '@/contexts/AuthContextProvider';
+import useAuthAction from '@/hooks/useAuthAction';
+import { useModal } from '@ebay/nice-modal-react';
+import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { RiLogoutCircleRLine as LogoutIcon } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
+import UserGuide from '../../user/guide/UserGuide';
 
 export default function AccountMenu() {
   const modal = useModal(ModalHookLayout);
@@ -51,18 +51,18 @@ export default function AccountMenu() {
 
   const handleUserGuideClick = () => {
     modal.show({
-      title: "Welcome User!",
+      title: 'Welcome User!',
       children: <UserGuide />,
     });
   };
 
   useEffect(() => {
     if (
-      !localStorage.getItem("userGuide") &&
+      !localStorage.getItem('userGuide') &&
       authData?.role === UserRole.User
     ) {
       handleUserGuideClick();
-      localStorage.setItem("userGuide", "true");
+      localStorage.setItem('userGuide', 'true');
     }
   }, []);
 
@@ -73,7 +73,7 @@ export default function AccountMenu() {
           <Avatar src="https://uko-react.vercel.app/static/avatar/001-man.svg" />
         }
         color="primary"
-        label={authData?.name}
+        label={authData?.firstname}
         clickable
         onClick={handleClick}
       />
@@ -86,31 +86,31 @@ export default function AccountMenu() {
         MenuListProps={{
           dense: true,
         }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         slotProps={{
           paper: {
             sx: {
-              overflow: "visible",
+              overflow: 'visible',
               mt: 1.5,
-              "& .MuiAvatar-root": {
+              '& .MuiAvatar-root': {
                 width: 32,
                 height: 32,
                 ml: -0.5,
                 mr: 1,
               },
-              "&::before": {
+              '&::before': {
                 content: '""',
-                display: "block",
-                position: "absolute",
+                display: 'block',
+                position: 'absolute',
                 top: 0,
                 right: 14,
                 width: 10,
                 height: 10,
-                borderColor: "divider",
-                borderWidth: "1px 0 0 1px",
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
+                borderColor: 'divider',
+                borderWidth: '1px 0 0 1px',
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,
               },
             },
@@ -119,13 +119,13 @@ export default function AccountMenu() {
       >
         <MenuItem>
           <Avatar
-            alt={authData?.name}
+            alt={authData?.firstname}
             src="https://uko-react.vercel.app/static/avatar/001-man.svg"
           />
 
           <div className="min-w-40">
             <Typography fontWeight={600} fontSize={14}>
-              {authData?.name}
+              {authData?.firstname}
             </Typography>
             <Typography fontSize={12}>{authData?.email}</Typography>
           </div>

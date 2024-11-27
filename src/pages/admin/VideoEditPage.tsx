@@ -1,11 +1,10 @@
-import { Typography, useTheme } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { RiVideoUploadFill as VideoIcon } from "react-icons/ri";
-import { VideoUploadDto } from "@/dtos/video.dto";
-import VideoUploadForm from "@/components/video-management/VideoUploadForm";
-import { toast } from "react-toastify";
-import useVideoManagementActions from "@/hooks/useVideoManagementAction";
+import { Typography, useTheme } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { RiVideoUploadFill as VideoIcon } from 'react-icons/ri';
+import { VideoUploadDto } from '@/dtos/video.dto';
+import VideoUploadForm from '@/components/video-management/VideoUploadForm';
+import { toast } from 'react-toastify';
+import useVideoManagementActions from '@/hooks/useVideoManagementAction';
 
 export default function VideoEditPage() {
   const theme = useTheme();
@@ -23,8 +22,8 @@ export default function VideoEditPage() {
       },
       {
         onSuccess: () => {
-          toast.success("Video updated successfully");
-          navigate("/admin/video-management");
+          toast.success('Video updated successfully');
+          navigate('/admin/video-management');
         },
       }
     );

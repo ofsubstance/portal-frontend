@@ -1,13 +1,14 @@
-import { UserRole } from "@/constants/enums";
-import { userUpdateValidation } from "@/validators/user.validator";
-import { z } from "zod";
+import { UserRole } from '@/constants/enums';
+import { userUpdateValidation } from '@/validators/user.validator';
+import { z } from 'zod';
 
 export type UserUpdateDto = z.infer<typeof userUpdateValidation>;
 
 export interface UserDto {
   id: string;
   email: string;
-  name: string;
+  firstname: string;
+  lastname: string;
   role: UserRole;
   avatar: string;
   createdAt: string;

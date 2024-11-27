@@ -1,12 +1,11 @@
 import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
-  RiLock2Fill as LockIcon,
-} from "react-icons/ri";
-import { Chip, Typography } from "@mui/material";
+} from 'react-icons/ri';
+import { Chip, Typography } from '@mui/material';
 
-import { VideoDto } from "@/dtos/video.dto";
-import dayjs from "dayjs";
+import { VideoDto } from '@/dtos/video.dto';
+import dayjs from 'dayjs';
 
 interface VideoGridItemProps {
   data: VideoDto;
@@ -23,19 +22,18 @@ export default function VideoGridItem({ data }: VideoGridItemProps) {
           <Typography variant="body1" className="flex gap-2 text-white ">
             <ClockIcon size={20} />
             {data.duration} min
-            <LockIcon size={22} className="ml-auto" />
           </Typography>
 
           <div className="flex gap-1 flex-wrap">
-            {data.genre.split(",").map((genre) => (
+            {data.genre.split(',').map((genre) => (
               <Chip
                 key={genre}
                 label={genre.trim()}
                 size="small"
                 variant="outlined"
                 sx={{
-                  borderColor: "white",
-                  color: "white",
+                  borderColor: 'white',
+                  color: 'white',
                 }}
               />
             ))}
@@ -61,7 +59,7 @@ export default function VideoGridItem({ data }: VideoGridItemProps) {
         className="flex gap-2 items-center"
       >
         <CalendarIcon size={20} />
-        {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+        {dayjs(data.createdAt).format('MMMM DD, YYYY')}
       </Typography>
     </div>
   );
