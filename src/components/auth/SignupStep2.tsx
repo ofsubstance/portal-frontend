@@ -1,19 +1,19 @@
-import { Grid, TextField } from '@mui/material';
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
-import { SignupFormData } from './SignupForm'; // Adjust import path
+import { Grid, TextField } from "@mui/material";
 
-export const Step2 = ({
-  register,
-  errors,
-}: {
-  register: UseFormRegister<SignupFormData>;
-  errors: FieldErrors<SignupFormData>;
-}) => {
+import { SignupReq } from "@/dtos/auth.dto";
+import { useFormContext } from "react-hook-form";
+
+export default function SignupStep2() {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<SignupReq>();
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
         <TextField
-          {...register('firstname')}
+          {...register("firstname")}
           fullWidth
           label="First Name*"
           variant="outlined"
@@ -23,7 +23,7 @@ export const Step2 = ({
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
-          {...register('lastname')}
+          {...register("lastname")}
           fullWidth
           label="Last Name*"
           variant="outlined"
@@ -31,9 +31,9 @@ export const Step2 = ({
           helperText={errors.lastname?.message}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12}>
         <TextField
-          {...register('profile.businessName')}
+          {...register("profile.businessName")}
           fullWidth
           label="Business Name*"
           variant="outlined"
@@ -41,9 +41,9 @@ export const Step2 = ({
           helperText={errors.profile?.businessName?.message}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12}>
         <TextField
-          {...register('profile.website')}
+          {...register("profile.website")}
           fullWidth
           label="Website*"
           variant="outlined"
@@ -53,7 +53,7 @@ export const Step2 = ({
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
-          {...register('profile.stateRegion')}
+          {...register("profile.stateRegion")}
           fullWidth
           label="State/Region*"
           variant="outlined"
@@ -63,7 +63,7 @@ export const Step2 = ({
       </Grid>
       <Grid item xs={12} md={6}>
         <TextField
-          {...register('profile.country')}
+          {...register("profile.country")}
           fullWidth
           label="Country*"
           variant="outlined"
@@ -73,4 +73,4 @@ export const Step2 = ({
       </Grid>
     </Grid>
   );
-};
+}

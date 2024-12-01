@@ -1,36 +1,34 @@
-import { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signupValidation } from '@/validators/auth.validator';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Step1 } from './SignupStep1';
-import { Step3 } from './SignupStep3';
-import { Step2 } from './SignupStep2';
+import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { FormProvider, useForm } from "react-hook-form";
 
-export type SignupFormData = z.infer<typeof signupValidation>;
+import { SignupReq } from "@/dtos/auth.dto";
+import SignupStep1 from "./SignupStep1";
+import SignupStep2 from "./SignupStep2";
+import SignupStep3 from "./SignupStep3";
+import { signupValidation } from "@/validators/auth.validator";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const SIGNUP_STEPS = [
+  "Account Details",
+  "Personal Information",
+  "Content Preferences",
+];
 
 export const SignupForm = ({
   onSubmit,
 }: {
-  onSubmit: (data: SignupFormData) => void;
+  onSubmit: (data: SignupReq) => void;
 }) => {
   const [activeStep, setActiveStep] = useState(0);
 
-  const {
-    register,
-    handleSubmit,
-    trigger,
-    setValue,
-    watch,
-    getValues,
-    formState: { errors },
-  } = useForm<SignupFormData>({
+  const formMethods = useForm<SignupReq>({
     resolver: zodResolver(signupValidation),
-    mode: 'onChange',
+    mode: "onChange",
   });
+
+  const { handleSubmit, trigger } = formMethods;
 
   const handleNext = async () => {
     let isStepValid = false;
@@ -38,26 +36,26 @@ export const SignupForm = ({
     switch (activeStep) {
       case 0:
         isStepValid = await trigger([
-          'email',
-          'password',
-          'smsConsent',
-          'emailTermsConsent',
+          "email",
+          "password",
+          "smsConsent",
+          "emailTermsConsent",
         ]);
         break;
       case 1:
         isStepValid = await trigger([
-          'firstname',
-          'lastname',
-          'profile.businessName',
-          'profile.website',
-          'profile.stateRegion',
-          'profile.country',
+          "firstname",
+          "lastname",
+          "profile.businessName",
+          "profile.website",
+          "profile.stateRegion",
+          "profile.country",
         ]);
         break;
       case 2:
         isStepValid = await trigger([
-          'profile.utilizationPurpose',
-          'profile.interests',
+          "profile.utilizationPurpose",
+          "profile.interests",
         ]);
         break;
       default:
@@ -66,25 +64,17 @@ export const SignupForm = ({
 
     // Proceed to the next step only if the current step is valid
     if (isStepValid) {
-      if (activeStep < steps.length - 1) {
+      if (activeStep < SIGNUP_STEPS.length - 1) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } else {
         // Trigger form submission for the last step
-        handleSubmit(onSubmitHandler, onSubmitError)();
+        handleSubmit(onSubmit, onSubmitError)();
       }
     }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const onSubmitHandler = (data: SignupFormData) => {
-    try {
-      onSubmit(data);
-    } catch (error) {
-      toast.error('Submission failed. Please try again.');
-    }
   };
 
   const onSubmitError = (errors: any) => {
@@ -112,77 +102,67 @@ export const SignupForm = ({
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return (
-          <Step1
-            register={register}
-            errors={errors}
-            watch={watch}
-            getValues={getValues}
-            setValue={setValue}
-          />
-        );
+        return <SignupStep1 />;
       case 1:
-        return <Step2 register={register} errors={errors} />;
+        return <SignupStep2 />;
       case 2:
-        return (
-          <Step3
-            register={register}
-            errors={errors}
-            getValues={getValues}
-            setValue={setValue}
-          />
-        );
+        return <SignupStep3 />;
       default:
         return <Typography>Confirmation</Typography>;
     }
   };
 
-  const steps = [
-    'Account Details',
-    'Personal Information',
-    'Content Preferences',
-  ];
-
   return (
-    <Box sx={{ width: '100%', maxWidth: 600, margin: 'auto', padding: 2 }}>
-      <Box display="flex" justifyContent="center" mb={2}>
-        {steps.map((label, index) => (
-          <Typography
-            key={label}
-            variant="subtitle1"
-            color={index === activeStep ? 'primary' : 'textSecondary'}
-            sx={{
-              marginX: 1,
-              cursor: 'pointer',
-              borderBottom: index === activeStep ? '2px solid' : 'none',
-            }}
-          >
-            {label}
-          </Typography>
+    <div className="w-full max-w-2xl m-auto p-2 flex flex-col gap-6">
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {SIGNUP_STEPS.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
         ))}
-      </Box>
+      </Stepper>
 
-      <form onSubmit={handleSubmit(onSubmitHandler, onSubmitError)}>
-        <Box sx={{ mt: 2, mb: 2 }}>{renderStepContent(activeStep)}</Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            variant="outlined"
-          >
-            Back
-          </Button>
-          {activeStep === steps.length - 1 ? (
-            <Button type="submit" variant="contained" color="primary">
+      <FormProvider {...formMethods}>
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(onSubmit, onSubmitError)}
+        >
+          {renderStepContent(activeStep)}
+          <div className="flex gap-2 justify-between">
+            <Button
+              disabled={activeStep === 0}
+              onClick={handleBack}
+              variant="outlined"
+            >
+              Back
+            </Button>
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                display:
+                  activeStep === SIGNUP_STEPS.length - 1 ? "block" : "none",
+              }}
+            >
               Submit
             </Button>
-          ) : (
-            <Button variant="contained" onClick={handleNext} color="primary">
+
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              color="primary"
+              sx={{
+                display:
+                  activeStep === SIGNUP_STEPS.length - 1 ? "none" : "block",
+              }}
+            >
               Next
             </Button>
-          )}
-        </Box>
-      </form>
-    </Box>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
 };

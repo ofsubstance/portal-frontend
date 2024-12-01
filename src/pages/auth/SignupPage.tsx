@@ -1,12 +1,13 @@
-import { Typography, Button } from '@mui/material';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { SignupForm } from '@/components/auth/SignupForm';
-import AppLogo from '@/components/common/logo/AppLogo';
-import { AuthContext } from '@/contexts/AuthContextProvider';
-import { SignupReq } from '@/dtos/auth.dto';
-import useAuthAction from '@/hooks/useAuthAction';
-import { toast } from 'react-toastify';
+import { Button, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+
+import AppLogo from "@/components/common/logo/AppLogo";
+import { AuthContext } from "@/contexts/AuthContextProvider";
+import { Link } from "react-router-dom";
+import { SignupForm } from "@/components/auth/SignupForm";
+import { SignupReq } from "@/dtos/auth.dto";
+import { toast } from "react-toastify";
+import useAuthAction from "@/hooks/useAuthAction";
 
 function SignupPage() {
   const { setIsAuthenticated } = useContext(AuthContext);
@@ -16,15 +17,18 @@ function SignupPage() {
   const onSignup = (data: SignupReq) => {
     signupMutation.mutate(data, {
       onSuccess: () => {
-        localStorage.setItem('email', data.email);
+        localStorage.setItem("email", data.email);
         setIsAuthenticated(true);
         setSignupSuccess(true);
+      },
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   };
 
   const onResendVerification = () => {
-    const email = localStorage.getItem('email');
+    const email = localStorage.getItem("email");
 
     if (!email) {
       return;
@@ -33,7 +37,7 @@ function SignupPage() {
       { email: email },
       {
         onSuccess: () => {
-          toast.success('Verification email sent successfully');
+          toast.success("Verification email sent successfully");
         },
       }
     );
@@ -75,11 +79,11 @@ function SignupPage() {
             >
               Resend Confirmation Email
             </Button>
-            <Typography textAlign={'center'}>
-              Start your journey with us{' '}
+            <Typography textAlign={"center"}>
+              Start your journey with us{" "}
               <Typography
                 fontWeight={600}
-                color={'primary'}
+                color={"primary"}
                 component={Link}
                 to="/signin"
               >
@@ -94,11 +98,11 @@ function SignupPage() {
             </h1>
             <SignupForm onSubmit={onSignup} />
 
-            <Typography textAlign={'center'}>
-              Already have an account?{' '}
+            <Typography textAlign={"center"}>
+              Already have an account?{" "}
               <Typography
                 fontWeight={600}
-                color={'primary'}
+                color={"primary"}
                 component={Link}
                 to="/signin"
               >

@@ -1,106 +1,100 @@
-import { Grid, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import {
-  UseFormRegister,
-  FieldErrors,
-  UseFormGetValues,
-  UseFormSetValue,
-} from 'react-hook-form';
-import { SignupFormData } from './SignupForm'; // Adjust import path
-import { Utilization, Interests } from '@/constants/enums';
-import { useState } from 'react';
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+} from "@mui/material";
+import { Interests, Utilization } from "@/constants/enums";
 
-export const Step3 = ({
-  errors,
-  getValues,
-  setValue,
-}: {
-  register: UseFormRegister<SignupFormData>;
-  errors: FieldErrors<SignupFormData>;
-  getValues: UseFormGetValues<SignupFormData>;
-  setValue: UseFormSetValue<SignupFormData>;
-}) => {
+import React from "react";
+import { SignupReq } from "@/dtos/auth.dto";
+import { useFormContext } from "react-hook-form";
+
+export default function SignupStep3() {
+  const {
+    getValues,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<SignupReq>();
+
   // Convert enums to arrays of strings
   const utilizationOptions = Object.values(Utilization);
   const interestsOptions = Object.values(Interests);
 
-  const [selectedUtilizationPurpose, setSelectedUtilizationPurpose] = useState(
-    getValues('profile.utilizationPurpose') || ''
-  );
-
-  const [selectedInterests, setSelectedInterests] = useState(
-    getValues('profile.interests') || []
-  );
-
   const handleUtilizationPurposeChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSelectedUtilizationPurpose(e.target.value);
-    setValue('profile.utilizationPurpose', e.target.value);
+    setValue("profile.utilizationPurpose", e.target.value);
   };
 
   const handleInterestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const currentInterests = selectedInterests;
+    const currentInterests = getValues("profile.interests") || [];
+
     const updatedInterests = e.target.checked
       ? [...currentInterests, e.target.value]
-      : currentInterests.filter((c) => c !== e.target.value);
-    setSelectedInterests(updatedInterests);
-    setValue('profile.interests', updatedInterests);
+      : currentInterests.filter((interest) => interest !== e.target.value);
+
+    setValue("profile.interests", updatedInterests);
   };
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Typography variant="subtitle1">
-          How will you utilize content on Of Substance?*
-        </Typography>
-        {utilizationOptions.map((option) => (
-          <Grid item xs={12} key={option}>
+    <div className="flex flex-col gap-6">
+      <FormControl error={!!errors.profile?.utilizationPurpose} required>
+        <FormLabel
+          sx={{
+            fontSize: "1.15rem",
+            fontWeight: 500,
+            color: "text.primary",
+          }}
+        >
+          How will you utilize content on Of Substance?
+        </FormLabel>
+        <FormGroup>
+          {utilizationOptions.map((option) => (
             <FormControlLabel
+              key={option}
+              label={option}
               control={
                 <Checkbox
-                  checked={selectedUtilizationPurpose === option}
+                  checked={watch("profile.utilizationPurpose") === option}
                   onChange={handleUtilizationPurposeChange}
                   value={option}
-                  color="primary"
                 />
               }
-              label={option}
             />
-          </Grid>
-        ))}
-        {errors.profile?.utilizationPurpose && (
-          <Typography color="error" variant="caption">
-            {errors.profile?.utilizationPurpose.message}
-          </Typography>
-        )}
-      </Grid>
+          ))}
+        </FormGroup>
+      </FormControl>
 
-      <Grid item xs={12}>
-        <Typography variant="subtitle1">
+      <FormControl error={!!errors.profile?.interests} required>
+        <FormLabel
+          sx={{
+            fontSize: "1.15rem",
+            fontWeight: 500,
+            color: "text.primary",
+          }}
+        >
           What content categories are you most interested in (select all that
-          apply)?*
-        </Typography>
-        {interestsOptions.map((category) => (
-          <Grid item xs={12} key={category}>
+          apply)?
+        </FormLabel>
+        <FormGroup>
+          {interestsOptions.map((category) => (
             <FormControlLabel
+              key={category}
+              label={category}
               control={
                 <Checkbox
-                  checked={selectedInterests.includes(category)}
+                  checked={watch("profile.interests", [])?.includes(category)}
                   onChange={handleInterestsChange}
                   value={category}
-                  color="primary"
                 />
               }
-              label={category}
             />
-          </Grid>
-        ))}
-        {errors.profile?.interests && (
-          <Typography color="error" variant="caption">
-            {errors.profile?.interests.message}
-          </Typography>
-        )}
-      </Grid>
-    </Grid>
+          ))}
+        </FormGroup>
+      </FormControl>
+    </div>
   );
-};
+}
