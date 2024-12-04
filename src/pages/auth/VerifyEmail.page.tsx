@@ -1,65 +1,70 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Typography, CircularProgress } from '@mui/material';
-import useAuthAction from '@/hooks/useAuthAction';
+import { CircularProgress, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import useAuthAction from "@/hooks/useAuthAction";
+import { useIsMutating } from "@tanstack/react-query";
 
 const VerifyEmailPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [verificationStatus, setVerificationStatus] = useState<string | null>(
-    null
-  );
-  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  const isMutating = useIsMutating();
+
+  const [verified, setVerified] = useState(false);
+
   const { verifyEmail } = useAuthAction();
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get('token');
-
     if (token) {
       verifyEmail.mutate(token, {
         onSuccess: () => {
-          setVerificationStatus(
-            'Email successfully verified! You can now log in.'
-          );
-          setIsLoading(false);
+          setVerified(true);
         },
         onError: () => {
-          setVerificationStatus(
-            'Verification failed. Please try again or request a new link.'
-          );
-          setIsLoading(false);
+          setVerified(false);
         },
       });
-    } else {
-      setVerificationStatus('Invalid verification link.');
-      setIsLoading(false);
     }
-  }, [location]);
+  }, [token]);
 
   useEffect(() => {
-    if (
-      verificationStatus === 'Email successfully verified! You can now log in.'
-    ) {
+    if (verified)
       setTimeout(() => {
-        window.location.href = '/signin';
+        navigate("/signin", { replace: true });
       }, 3000);
-    }
-  }, [verificationStatus]);
+  }, [verified]);
+
+  if (!token)
+    return (
+      <div className="p-5 h-screen flex flex-col gap-4 items-center justify-center">
+        <Typography variant="h5" color="textPrimary">
+          Invalid verification link.
+        </Typography>
+        <Typography variant="body1" color="textSecondary">
+          Please check the link and try again.
+        </Typography>
+      </div>
+    );
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      {isLoading ? (
-        <CircularProgress />
+    <div className="p-5 h-screen flex flex-col gap-4 items-center justify-center">
+      {isMutating ? (
+        <CircularProgress size={100} />
       ) : (
         <>
           <Typography variant="h5" color="textPrimary">
-            {verificationStatus}
+            {verified
+              ? "Email successfully verified! You can now log in."
+              : "Verification failed. Please try again or request a new link."}
           </Typography>
+
           <Typography variant="body1" color="textSecondary">
-            {verificationStatus ===
-            'Email successfully verified! You can now log in.'
-              ? 'You will be redirected to the login page in a few seconds.'
-              : 'Please contact support for further assistance.'}
+            {verified
+              ? "You will be redirected to the login page in a few seconds."
+              : "Please contact support for further assistance."}
           </Typography>
         </>
       )}
