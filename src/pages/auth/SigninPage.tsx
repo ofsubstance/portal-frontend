@@ -1,26 +1,25 @@
-import { Button, Divider, Typography } from '@mui/material';
-import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button, Divider, Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
+import { useContext, useEffect } from "react";
 
-import signinImage from '@/assets/signin.svg';
-import SigninForm from '@/components/auth/SigninForm';
-import AppLogo from '@/components/common/logo/AppLogo';
-import { AuthContext } from '@/contexts/AuthContextProvider';
-import { SigninReq } from '@/dtos/auth.dto';
-import useAuthAction from '@/hooks/useAuthAction';
-import { FcGoogle as GoogleIcon } from 'react-icons/fc';
+import AppLogo from "@/components/common/logo/AppLogo";
+import { AuthContext } from "@/contexts/AuthContextProvider";
+import { FcGoogle as GoogleIcon } from "react-icons/fc";
+import SigninForm from "@/components/auth/SigninForm";
+import { SigninReq } from "@/dtos/auth.dto";
+import signinImage from "@/assets/signin.svg";
+import useAuthAction from "@/hooks/useAuthAction";
 
 function SigninPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated, authData } =
-    useContext(AuthContext);
+  const { authenticated, setAuthenticated, authData } = useContext(AuthContext);
   const { signinMutation, googleSigninMutation } = useAuthAction();
 
   const onSignin = (data: SigninReq) =>
     signinMutation.mutate(data, {
       onSuccess: () => {
-        setIsAuthenticated(true);
+        setAuthenticated(true);
       },
     });
 
@@ -28,17 +27,17 @@ function SigninPage() {
     onSuccess: (data: TokenResponse) => {
       googleSigninMutation.mutate(data.access_token, {
         onSuccess: () => {
-          setIsAuthenticated(true);
+          setAuthenticated(true);
         },
       });
     },
   });
 
   useEffect(() => {
-    if (isAuthenticated) {
-      authData?.role === 'admin'
-        ? navigate('/admin', { replace: true })
-        : navigate('/', { replace: true });
+    if (authenticated) {
+      authData?.role === "admin"
+        ? navigate("/admin", { replace: true })
+        : navigate("/", { replace: true });
     }
   }, [navigate, authData]);
 
@@ -65,11 +64,11 @@ function SigninPage() {
 
           <SigninForm onSubmit={onSignin} />
 
-          <Typography textAlign={'center'}>
-            Don't have an account?{' '}
+          <Typography textAlign={"center"}>
+            Don't have an account?{" "}
             <Typography
               fontWeight={600}
-              color={'primary'}
+              color={"primary"}
               component={Link}
               to="/signup"
             >

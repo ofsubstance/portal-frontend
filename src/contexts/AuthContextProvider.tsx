@@ -1,54 +1,55 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { UserDto } from '@/dtos/user.dto';
-import useUserActions from '../hooks/useUserAction';
-import storageService from '../services/storage.service';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useEffect, useState } from "react";
+
+import { UserDto } from "@/dtos/user.dto";
+import storageService from "../services/storage.service";
+import { useNavigate } from "react-router-dom";
+import useUserActions from "../hooks/useUserAction";
 
 interface AuthContextProps {
   authData?: UserDto;
   setAuthData: (data?: UserDto) => void;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (data: boolean) => void;
+  authenticated: boolean;
+  setAuthenticated: (data: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   authData: undefined,
   setAuthData: (_data) => {},
-  isAuthenticated: false,
-  setIsAuthenticated: (_data) => {},
+  authenticated: false,
+  setAuthenticated: (_data) => {},
 });
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
   const [authData, setAuthData] = useState(storageService.getCurrentUser());
-  const [isAuthenticated, setIsAuthenticated] = useState(
+  const [authenticated, setAuthenticated] = useState(
     !!storageService.getAuthData()
   );
 
   const { useCurrentUserQuery } = useUserActions();
 
-  const { data: user } = useCurrentUserQuery(isAuthenticated);
+  const { data: user } = useCurrentUserQuery(authenticated);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) setAuthData(undefined);
+    if (!authenticated) setAuthData(undefined);
     else {
       setAuthData(user ?? storageService.getCurrentUser());
-      authData?.role === 'admin'
-        ? navigate('/admin', { replace: true })
-        : navigate('/', { replace: true });
+      authData?.role === "admin"
+        ? navigate("/admin", { replace: true })
+        : navigate("/", { replace: true });
     }
-  }, [isAuthenticated, user]);
+  }, [authenticated, user]);
 
   useEffect(() => {
-    document.addEventListener('logout', () => {
-      setIsAuthenticated(false);
+    document.addEventListener("logout", () => {
+      setAuthenticated(false);
       setAuthData(undefined);
     });
 
     return () => {
-      document.removeEventListener('logout', () => {
-        setIsAuthenticated(false);
+      document.removeEventListener("logout", () => {
+        setAuthenticated(false);
         setAuthData(undefined);
       });
     };
@@ -56,7 +57,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ authData, setAuthData, isAuthenticated, setIsAuthenticated }}
+      value={{ authData, setAuthData, authenticated, setAuthenticated }}
     >
       {children}
     </AuthContext.Provider>
