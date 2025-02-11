@@ -20,4 +20,5 @@ export interface VideoDto {
   primary_lesson: string;
   theme: string;
   impact: string;
+  slideshow: boolean;
 }

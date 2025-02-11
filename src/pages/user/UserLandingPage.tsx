@@ -1,39 +1,77 @@
-import { Chip, Divider, Paper, Typography } from "@mui/material";
-
-import HeroSlider from "@/components/user/home/HeroSlider";
-import Recommendation from "@/components/user/home/RecommendationSection";
-import TopPicksSection from "@/components/user/home/TopPicksSection";
-import UnlockVideoSection from "@/components/user/home/UnlockVideoSection";
+import { Chip, Divider, Paper, Typography } from '@mui/material';
+import HeroSlider from '@/components/user/home/HeroSlider';
+import VideoListSection from '@/components/user/home/VideoListSection';
+import useVideoManagementActions from '@/hooks/useVideoManagementAction';
+import { useEffect, useState } from 'react';
+import { VideoDto } from '@/dtos/video.dto';
 
 export default function UserLandingPage() {
+  const { useVideoListQuery } = useVideoManagementActions();
+
+  const { data: videos = [] } = useVideoListQuery();
+
+  const [videoList, setVideoList] = useState<VideoDto[]>([]);
+  const [selectedGenre, setSelectedGenre] = useState<string>('');
+
+  useEffect(() => {
+    setVideoList(videos);
+  }, [videos]);
+
+  const slideshowVideos = videos.filter((video) => video.slideshow);
+
+  const genres = Array.from(
+    new Set(videos.map((video) => video.genre.split(',')).flat())
+  );
+
+  const updateVideoList = (genre: string) => {
+    setSelectedGenre(genre);
+    const filteredVideos = videos.filter((video) =>
+      video.genre.toLowerCase().includes(genre.toLowerCase())
+    );
+    setVideoList(filteredVideos);
+  };
+
   return (
     <div>
-      <HeroSlider />
+      <HeroSlider videos={slideshowVideos} />
       <div className="flex gap-10 p-6 md:p-10 md:px-20">
         <div className="flex-1 space-y-14">
-          <Recommendation />
-
-          <Divider />
-
-          <UnlockVideoSection />
+          <VideoListSection videos={videoList} />
         </div>
         <div className="flex-[0.3] space-y-10 hidden md:block">
           <Paper variant="outlined">
-            <Typography variant="body1" fontWeight={600} p={2}>
-              Categories
-            </Typography>
+            <div className="flex justify-between items-center">
+              <Typography variant="body1" fontWeight={600} p={2}>
+                Genres
+              </Typography>
+              <div className="px-2">
+                <Chip
+                  label="Clear Filter"
+                  variant={selectedGenre === '' ? 'filled' : 'outlined'}
+                  onClick={() => {
+                    setSelectedGenre('');
+                    setVideoList(videos);
+                  }}
+                />
+              </div>
+            </div>
             <Divider />
-
             <div className="p-2">
-              {Array.from(Array(14)).map((_, index) => (
-                <Chip className="m-2" key={index} label={"Category " + index} />
+              {genres.map((genre) => (
+                <Chip
+                  sx={{ margin: 1 }}
+                  key={genre}
+                  label={genre}
+                  color={selectedGenre === genre ? 'primary' : 'default'}
+                  variant={selectedGenre === genre ? 'filled' : 'outlined'}
+                  onClick={() => updateVideoList(genre)}
+                />
               ))}
             </div>
           </Paper>
-
-          <TopPicksSection />
         </div>
       </div>
+      <Divider />
     </div>
   );
 }

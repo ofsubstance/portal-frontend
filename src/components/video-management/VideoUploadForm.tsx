@@ -1,5 +1,11 @@
 import { VideoDto, VideoUploadDto } from '@/dtos/video.dto';
-import { Paper, TextField, Typography } from '@mui/material';
+import {
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import Dropzone from '@/components/common/dropzone/Dropzone';
@@ -65,6 +71,7 @@ function MetaDataSection() {
 function DetailsSection() {
   const {
     register,
+    getValues,
     formState: { errors },
   } = useFormContext<VideoUploadDto>();
   return (
@@ -119,6 +126,15 @@ function DetailsSection() {
         rows={3}
         error={!!errors.impact}
         helperText={errors?.impact?.message}
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            {...register('slideshow')}
+            defaultChecked={getValues('slideshow')}
+          />
+        }
+        label="Show in slideshow"
       />
     </Paper>
   );

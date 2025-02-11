@@ -20,4 +20,5 @@ export interface UserDto {
   gender?: string;
   language?: string;
   location?: string;
+  sms_consent?: boolean;
 }

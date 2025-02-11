@@ -1,17 +1,17 @@
-import { Avatar, Chip, Paper, Typography } from "@mui/material";
+import { Avatar, Chip, Paper, Typography } from '@mui/material';
 
 import {
   RiEditLine as EditIcon,
   RiAdminLine as AdminIcon,
-} from "react-icons/ri";
-import userManagementImg from "@/assets/userManagement.svg";
-import { useNavigate } from "react-router-dom";
+} from 'react-icons/ri';
+import userManagementImg from '@/assets/userManagement.svg';
+import { useNavigate } from 'react-router-dom';
 import {
   MaterialReactTable,
   MRT_ActionMenuItem,
   type MRT_ColumnDef,
-} from "material-react-table";
-import { userList } from "@/data/dummyData";
+} from 'material-react-table';
+import { userList } from '@/data/dummyData';
 
 type Playlist = {
   id: string;
@@ -28,8 +28,8 @@ type Playlist = {
 
 const playlistColumns: MRT_ColumnDef<Playlist>[] = [
   {
-    accessorKey: "fullName",
-    header: "Full Name",
+    accessorKey: 'fullName',
+    header: 'Full Name',
 
     Cell: ({ row }) => (
       <div className="flex items-center gap-3">
@@ -41,33 +41,33 @@ const playlistColumns: MRT_ColumnDef<Playlist>[] = [
     ),
   },
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: 'id',
+    header: 'ID',
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: 'email',
+    header: 'Email',
   },
   {
-    accessorKey: "contactNumber",
-    header: "Contact Number",
+    accessorKey: 'contactNumber',
+    header: 'Contact Number',
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: 'role',
+    header: 'Role',
     Cell: ({ row }) => {
       const role =
-        row.original.role === "Admin"
-          ? "Admin"
-          : row.original.role === "User"
-          ? "User"
-          : "Guest";
+        row.original.role === 'Admin'
+          ? 'Admin'
+          : row.original.role === 'User'
+          ? 'User'
+          : 'Guest';
       return (
         <Chip
           label={role}
           variant="outlined"
           color={
-            role === "Admin" ? "error" : role === "User" ? "primary" : "default"
+            role === 'Admin' ? 'error' : role === 'User' ? 'primary' : 'default'
           }
           size="small"
         />
@@ -112,16 +112,16 @@ function UserManagementPage() {
             icon={<EditIcon />}
             key="edit"
             label="Edit User"
-            onClick={() => console.info("Edit")}
+            onClick={() => console.info('Edit')}
             table={table}
           />,
           <MRT_ActionMenuItem
             icon={<AdminIcon />}
             key="makeAdmin"
             label={
-              row.original.role === "admin" ? "Remove Admin" : "Make Admin"
+              row.original.role === 'admin' ? 'Remove Admin' : 'Make Admin'
             }
-            onClick={() => console.info("Delete")}
+            onClick={() => console.info('Delete')}
             table={table}
           />,
         ]}

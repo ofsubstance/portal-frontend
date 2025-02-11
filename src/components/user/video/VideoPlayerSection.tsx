@@ -2,12 +2,12 @@ import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiFeedbackLine as FeedbackIcon,
-} from "react-icons/ri";
-import { Chip, Fab, Typography } from "@mui/material";
+} from 'react-icons/ri';
+import { Chip, Fab, Typography } from '@mui/material';
 
-import { VideoDto } from "@/dtos/video.dto";
-import Vimeo from "@u-wave/react-vimeo";
-import dayjs from "dayjs";
+import { VideoDto } from '@/dtos/video.dto';
+import Vimeo from '@u-wave/react-vimeo';
+import dayjs from 'dayjs';
 
 interface VideoPlayerSectionProps {
   data: VideoDto;
@@ -35,7 +35,7 @@ export default function VideoPlayerSection({
         <div className="flex gap-4 items-center">
           <Typography variant="body1" className="flex gap-2">
             <CalendarIcon size={20} />
-            {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+            {dayjs(data.createdAt).format('MMMM DD, YYYY')}
           </Typography>
 
           <Typography variant="body1" className="flex gap-2">
@@ -44,14 +44,14 @@ export default function VideoPlayerSection({
           </Typography>
         </div>
         <div className="flex gap-2">
-          {data.genre.split(",").map((genre) => (
+          {data.genre.split(',').map((genre) => (
             <Chip
               key={genre}
               label={genre.trim()}
               variant="outlined"
               sx={{
-                borderColor: "white",
-                color: "white",
+                borderColor: 'white',
+                color: 'white',
               }}
             />
           ))}

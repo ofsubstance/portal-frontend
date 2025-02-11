@@ -21,4 +21,5 @@ export const videoUploadValidation = z.object({
   primary_lesson: z.string().min(1, { message: 'Primary lesson is required.' }),
   theme: z.string().min(1, { message: 'Theme is required.' }),
   impact: z.string().min(1, { message: 'Impact is required.' }),
+  slideshow: z.boolean().optional(),
 });

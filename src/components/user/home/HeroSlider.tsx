@@ -1,34 +1,29 @@
-import "swiper/css";
-import "swiper/css/effect-fade";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
-import { Chip, Fab, Typography } from "@mui/material";
+import { Chip, Fab, Typography } from '@mui/material';
 import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiPlayFill as PlayIcon,
-} from "react-icons/ri";
-import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+} from 'react-icons/ri';
+import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
+import { VideoDto } from '@/dtos/video.dto';
 
-import { PlaylistTag } from "@/constants/enums";
-import usePlaylistManagementActions from "@/hooks/usePlaylistManagementAction";
-import dayjs from "dayjs";
-import { Link } from "react-router-dom";
-
-export default function HeroSlider() {
-  const { usePlaylistTagQuery } = usePlaylistManagementActions();
-
-  const { data: playlist } = usePlaylistTagQuery(PlaylistTag.Carousel);
-
+export default function HeroSlider({ videos }: { videos: VideoDto[] }) {
   return (
     <Swiper
-      effect="fade"
-      loop={true}
+      effect="slide"
+      speed={2000}
+      loop={false}
       centeredSlides={true}
       autoplay={{
-        delay: 5000,
+        delay: 3000,
         disableOnInteraction: false,
       }}
       pagination={{ clickable: true }}
@@ -36,7 +31,7 @@ export default function HeroSlider() {
       modules={[Autoplay, Pagination, Navigation, EffectFade]}
       className="w-full h-screen"
     >
-      {playlist?.videos.map((slide, index) => (
+      {videos?.map((slide, index) => (
         <SwiperSlide key={index}>
           <div
             className="relative w-full h-full bg-cover bg-center"
@@ -53,7 +48,7 @@ export default function HeroSlider() {
               <div className="flex gap-4 items-center">
                 <Typography variant="body1" className="flex gap-2">
                   <CalendarIcon size={20} />
-                  {dayjs(slide.createdAt).format("MMMM DD, YYYY")}
+                  {dayjs(slide.createdAt).format('MMMM DD, YYYY')}
                 </Typography>
 
                 <Typography variant="body1" className="flex gap-2">
@@ -62,14 +57,14 @@ export default function HeroSlider() {
                 </Typography>
               </div>
               <div className="flex gap-2">
-                {slide.genre.split(",").map((genre) => (
+                {slide.genre.split(',').map((genre) => (
                   <Chip
                     key={genre}
                     label={genre.trim()}
                     variant="outlined"
                     sx={{
-                      borderColor: "white",
-                      color: "white",
+                      borderColor: 'white',
+                      color: 'white',
                     }}
                   />
                 ))}
@@ -81,7 +76,7 @@ export default function HeroSlider() {
                 size="large"
                 color="primary"
                 component={Link}
-                to={"/video/" + slide.id}
+                to={'/video/' + slide.id}
               >
                 <PlayIcon size={20} className="mr-2" />
                 Watch Now

@@ -108,7 +108,13 @@ function DrawerContent() {
   return (
     <Box className="flex flex-col gap-6 h-screen py-4">
       <span className="pl-8 py-4">
-        <AppLogo />
+        <Typography
+          fontSize={'2rem'}
+          color="black"
+          fontFamily={'Pistilli-Roman'}
+        >
+          Of Substance.
+        </Typography>
       </span>
       {navItems(authData?.id).map((group) => (
         <div key={group.group} className="flex flex-col">
