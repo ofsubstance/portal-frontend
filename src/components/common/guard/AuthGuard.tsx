@@ -26,7 +26,7 @@ export default function AuthGuard({
     if (!allowedRoles.includes(userRole)) {
       // Redirect to appropriate page based on role
       if (userRole === UserRole.Admin) {
-        return <Navigate to="/admin/dashboard" replace />;
+        return <Navigate to="/admin" replace />;
       } else {
         return <Navigate to="/" replace />;
       }

@@ -77,7 +77,7 @@ function VideoManagementPage() {
   );
 
   const handlePageChange = (
-    event: any,
+    event: React.ChangeEvent<unknown>,
     value: React.SetStateAction<number>
   ) => {
     setCurrentPage(value);
@@ -86,7 +86,7 @@ function VideoManagementPage() {
   return (
     <div className="flex flex-col gap-5">
       {/* Header Section */}
-      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
+      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
         <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
             Video Management
@@ -115,7 +115,7 @@ function VideoManagementPage() {
       </Paper>
 
       {/* Video List Management Section */}
-      <Paper className="px-8 py-4 space-y-6">
+      <Paper className="px-4 py-3 space-y-4">
         <div className="flex gap-5 items-center md:flex-row flex-col">
           <Typography variant="h6" fontWeight={600}>
             Video List

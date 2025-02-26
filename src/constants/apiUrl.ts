@@ -41,6 +41,15 @@ const APIUrl = {
     getByUser: () => '/comments/user/me',
     updateStatus: (commentId: string) => '/comments/' + commentId + '/status',
   },
+
+  sharelinks: {
+    create: () => '/sharelinks',
+    getByUser: () => '/sharelinks/user/me',
+    getById: (id: string) => '/sharelinks/' + id,
+    getByUniqueId: (uniqueId: string) => '/sharelinks/unique-id/' + uniqueId,
+    trackVisit: (uniqueId: string) => `/sharelinks/track-id/${uniqueId}`,
+    getComprehensiveAnalytics: () => '/sharelinks/analytics/comprehensive',
+  },
 };
 
 export default APIUrl;

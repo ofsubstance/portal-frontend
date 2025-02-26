@@ -1,139 +1,56 @@
+import { useState, useMemo } from 'react';
 import {
+  Box,
   Button,
   Chip,
   IconButton,
-  InputAdornment,
-  MenuItem,
   Paper,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TableSortLabel,
-  TextField,
   Tooltip,
   Typography,
+  CircularProgress,
 } from '@mui/material';
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+  type MRT_ColumnFiltersState,
+  type MRT_PaginationState,
+  type MRT_SortingState,
+} from 'material-react-table';
 import {
   RiCheckLine as ApproveIcon,
   RiCloseLine as RejectIcon,
   RiEyeLine as ViewIcon,
-  RiSearchLine as SearchIcon,
-  RiFilterLine as FilterIcon,
   RiMoreLine as MoreIcon,
+  RiUserLine as UserIcon,
+  RiVideoLine as VideoIcon,
+  RiTimeLine as TimeIcon,
 } from 'react-icons/ri';
-import { CommentStatus } from '@/dtos/comment.dto';
+import { CommentDto, CommentStatus } from '@/dtos/comment.dto';
 import { formatDistanceToNow } from 'date-fns';
 import { useCommentActions } from '@/hooks/useCommentActions';
-import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
-type SortDirection = 'asc' | 'desc';
-type SortField = 'user' | 'video' | 'text' | 'date' | 'status';
-
 export default function CommentManagementTable() {
-  const [expandedComment, setExpandedComment] = useState<string | null>(null);
-  const { allCommentsQuery, updateCommentStatusMutation } = useCommentActions();
-
-  // Pagination state
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  // Sorting state
-  const [sortBy, setSortBy] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-
-  // Filtering state
-  const [statusFilter, setStatusFilter] = useState<CommentStatus | 'all'>(
-    'all'
+  // Table state
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
+    []
   );
-  const [searchQuery, setSearchQuery] = useState('');
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [expandedComment, setExpandedComment] = useState<string | null>(null);
 
+  // Fetch data
+  const { allCommentsQuery, updateCommentStatusMutation } = useCommentActions();
   const comments = allCommentsQuery.data || [];
   const isLoading = allCommentsQuery.isLoading;
+  const isError = allCommentsQuery.isError;
 
-  // Handle sorting
-  const handleSort = (field: SortField) => {
-    if (sortBy === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortDirection('asc');
-    }
-  };
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    setPage(0);
-  }, [statusFilter, searchQuery]);
-
-  // Filter and sort comments
-  const filteredAndSortedComments = useMemo(() => {
-    let result = [...comments];
-
-    // Apply status filter
-    if (statusFilter !== 'all') {
-      result = result.filter((comment) => comment.status === statusFilter);
-    }
-
-    // Apply search filter (case insensitive)
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (comment) =>
-          comment.text.toLowerCase().includes(query) ||
-          comment.user?.firstname?.toLowerCase().includes(query) ||
-          comment.user?.lastname?.toLowerCase().includes(query) ||
-          comment.video?.title?.toLowerCase().includes(query)
-      );
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      let comparison = 0;
-
-      switch (sortBy) {
-        case 'user':
-          comparison = (a.user?.firstname || '').localeCompare(
-            b.user?.firstname || ''
-          );
-          break;
-        case 'video':
-          comparison = (a.video?.title || '').localeCompare(
-            b.video?.title || ''
-          );
-          break;
-        case 'text':
-          comparison = a.text.localeCompare(b.text);
-          break;
-        case 'date':
-          comparison =
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          break;
-        case 'status':
-          comparison = a.status.localeCompare(b.status);
-          break;
-      }
-
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-
-    return result;
-  }, [comments, statusFilter, searchQuery, sortBy, sortDirection]);
-
-  // Paginate comments
-  const paginatedComments = useMemo(() => {
-    const startIndex = page * rowsPerPage;
-    return filteredAndSortedComments.slice(
-      startIndex,
-      startIndex + rowsPerPage
-    );
-  }, [filteredAndSortedComments, page, rowsPerPage]);
-
+  // Handle status update
   const handleUpdateStatus = async (
     commentId: string,
     status: CommentStatus
@@ -164,6 +81,7 @@ export default function CommentManagementTable() {
     }
   };
 
+  // Get status chip
   const getStatusChip = (status: CommentStatus) => {
     switch (status) {
       case CommentStatus.PENDING:
@@ -185,7 +103,7 @@ export default function CommentManagementTable() {
     const { id, status } = comment;
 
     return (
-      <div className="flex flex-wrap gap-2">
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         {status !== CommentStatus.APPROVED && (
           <Button
             variant="contained"
@@ -221,178 +139,202 @@ export default function CommentManagementTable() {
             Mark Pending
           </Button>
         )}
-      </div>
+      </Box>
     );
   };
 
-  if (isLoading) {
-    return (
-      <Paper className="p-4">
-        <Typography>Loading comments...</Typography>
-      </Paper>
-    );
-  }
+  // Define columns
+  const columns = useMemo<MRT_ColumnDef<CommentDto>[]>(
+    () => [
+      {
+        accessorKey: 'user',
+        header: 'User',
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+        Cell: ({ row }) => (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <UserIcon size={16} />
+            <Typography variant="body2">
+              {row.original.user?.firstname} {row.original.user?.lastname}
+            </Typography>
+          </Box>
+        ),
+        filterFn: 'contains',
+      },
+      {
+        accessorKey: 'video',
+        header: 'Video',
+        size: 250,
+        minSize: 180,
+        maxSize: 300,
+        Cell: ({ row }) => (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <VideoIcon size={16} />
+            <Typography
+              variant="body2"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {row.original.video?.title || `Video ID: ${row.original.videoId}`}
+            </Typography>
+          </Box>
+        ),
+        filterFn: 'contains',
+      },
+      {
+        accessorKey: 'text',
+        header: 'Comment',
+        size: 350,
+        minSize: 250,
+        grow: true,
+        Cell: ({ row }) => {
+          const isExpanded = expandedComment === row.original.id;
+          const text = row.original.text;
+          const isTruncated = text.length > 50;
 
-  if (comments.length === 0) {
-    return (
-      <Paper className="p-4">
-        <Typography align="center">No comments found</Typography>
-      </Paper>
-    );
-  }
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+              <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
+                {isExpanded || !isTruncated
+                  ? text
+                  : `${text.substring(0, 50)}...`}
+              </Typography>
+              {isTruncated && (
+                <Tooltip title={isExpanded ? 'Collapse' : 'View full comment'}>
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      setExpandedComment(isExpanded ? null : row.original.id)
+                    }
+                  >
+                    <ViewIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          );
+        },
+        filterFn: 'contains',
+      },
+      {
+        accessorKey: 'createdAt',
+        header: 'Date',
+        size: 180,
+        minSize: 150,
+        maxSize: 200,
+        Cell: ({ row }) => (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <TimeIcon size={16} />
+            <Tooltip title={new Date(row.original.createdAt).toLocaleString()}>
+              <Typography variant="body2">
+                {formatDistanceToNow(new Date(row.original.createdAt), {
+                  addSuffix: true,
+                })}
+              </Typography>
+            </Tooltip>
+          </Box>
+        ),
+        filterFn: 'greaterThan',
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        size: 150,
+        minSize: 120,
+        maxSize: 180,
+        Cell: ({ row }) => getStatusChip(row.original.status),
+        filterFn: 'equals',
+        filterSelectOptions: [
+          { text: 'Pending', value: CommentStatus.PENDING },
+          { text: 'Approved', value: CommentStatus.APPROVED },
+          { text: 'Rejected', value: CommentStatus.REJECTED },
+        ],
+      },
+      {
+        accessorKey: 'actions',
+        header: 'Actions',
+        size: 300,
+        minSize: 250,
+        maxSize: 350,
+        Cell: ({ row }) => renderActionButtons(row.original),
+        enableSorting: false,
+        enableColumnFilter: false,
+      },
+    ],
+    [expandedComment]
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: comments,
+    initialState: {
+      showColumnFilters: false,
+      showGlobalFilter: true,
+      density: 'compact',
+    },
+    state: {
+      columnFilters,
+      globalFilter,
+      isLoading,
+      pagination,
+      sorting,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
+    enableFullScreenToggle: true,
+    enableColumnFilterModes: true,
+    enableDensityToggle: true,
+    positionGlobalFilter: 'left',
+    muiSearchTextFieldProps: {
+      placeholder: 'Search comments, users, or videos...',
+      sx: { minWidth: '300px' },
+      variant: 'outlined',
+      size: 'small',
+    },
+    renderEmptyRowsFallback: () => (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          p: 2,
+        }}
+      >
+        {isLoading ? (
+          <CircularProgress size={40} />
+        ) : isError ? (
+          <Typography>Error loading comments. Please try again.</Typography>
+        ) : (
+          <Typography>No comments found</Typography>
+        )}
+      </Box>
+    ),
+    muiTableContainerProps: {
+      sx: { maxWidth: '100%' },
+    },
+    muiTablePaperProps: {
+      sx: { margin: 0, padding: 0 },
+    },
+    layoutMode: 'grid',
+    displayColumnDefOptions: {
+      'mrt-row-expand': {
+        size: 50,
+      },
+    },
+  });
 
   return (
-    <Paper className="overflow-hidden">
-      <div className="p-4 flex flex-col md:flex-row gap-4 items-center justify-between bg-gray-50 border-b">
-        <TextField
-          placeholder="Search comments, users, or videos..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          size="small"
-          className="w-full md:w-1/3"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FilterIcon className="text-gray-500" />
-          <Typography variant="body2" className="whitespace-nowrap">
-            Filter by status:
-          </Typography>
-          <Select
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(e.target.value as CommentStatus | 'all')
-            }
-            size="small"
-            className="min-w-[120px]"
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value={CommentStatus.PENDING}>Pending</MenuItem>
-            <MenuItem value={CommentStatus.APPROVED}>Approved</MenuItem>
-            <MenuItem value={CommentStatus.REJECTED}>Rejected</MenuItem>
-          </Select>
-        </div>
-      </div>
-
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'user'}
-                  direction={sortBy === 'user' ? sortDirection : 'asc'}
-                  onClick={() => handleSort('user')}
-                >
-                  User
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'video'}
-                  direction={sortBy === 'video' ? sortDirection : 'asc'}
-                  onClick={() => handleSort('video')}
-                >
-                  Video
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'text'}
-                  direction={sortBy === 'text' ? sortDirection : 'asc'}
-                  onClick={() => handleSort('text')}
-                >
-                  Comment
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'date'}
-                  direction={sortBy === 'date' ? sortDirection : 'asc'}
-                  onClick={() => handleSort('date')}
-                >
-                  Date
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === 'status'}
-                  direction={sortBy === 'status' ? sortDirection : 'asc'}
-                  onClick={() => handleSort('status')}
-                >
-                  Status
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedComments.map((comment) => (
-              <TableRow key={comment.id}>
-                <TableCell>
-                  {comment.user?.firstname} {comment.user?.lastname}
-                </TableCell>
-                <TableCell>
-                  {comment.video?.title || `Video ID: ${comment.videoId}`}
-                </TableCell>
-                <TableCell>
-                  {expandedComment === comment.id ? (
-                    comment.text
-                  ) : (
-                    <div className="flex items-center">
-                      {comment.text.length > 50
-                        ? `${comment.text.substring(0, 50)}...`
-                        : comment.text}
-                      {comment.text.length > 50 && (
-                        <Tooltip title="View full comment">
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              setExpandedComment(
-                                expandedComment === comment.id
-                                  ? null
-                                  : comment.id
-                              )
-                            }
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {formatDistanceToNow(new Date(comment.createdAt), {
-                    addSuffix: true,
-                  })}
-                </TableCell>
-                <TableCell>{getStatusChip(comment.status)}</TableCell>
-                <TableCell>{renderActionButtons(comment)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={filteredAndSortedComments.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={(_, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-      />
+    <Paper sx={{ overflow: 'hidden' }}>
+      <MaterialReactTable table={table} />
     </Paper>
   );
 }

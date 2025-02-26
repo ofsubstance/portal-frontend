@@ -11,6 +11,7 @@ import {
   RiTimeLine as ClockIcon,
   RiArrowDownSLine as ExpandMoreIcon,
   RiPlayCircleLine as PlayIcon,
+  RiShareLine as ShareIcon,
 } from 'react-icons/ri';
 
 import { VideoDto } from '@/dtos/video.dto';
@@ -52,12 +53,14 @@ interface VideoDetailsHeroProps {
   data: VideoDto;
   onPlay: () => void;
   onPlayTrailer: (type: 'trailer' | 'preroll') => void;
+  onShare: () => void;
 }
 
 export default function VideoDetailsHero({
   data,
   onPlay,
   onPlayTrailer,
+  onShare,
 }: VideoDetailsHeroProps) {
   return (
     <div className="flex md:flex-row flex-col md:min-h-[calc(100vh-64px)]">
@@ -96,6 +99,16 @@ export default function VideoDetailsHero({
             onClick={onPlay}
           >
             Watch The Film
+          </Button>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<ShareIcon />}
+            onClick={onShare}
+            sx={{ mt: 1 }}
+          >
+            Share This Film
           </Button>
         </div>
 

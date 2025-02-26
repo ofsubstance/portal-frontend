@@ -80,7 +80,7 @@ function UserManagementPage() {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-5">
-      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-8 md:py-0 py-8">
+      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
         <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
             User Management

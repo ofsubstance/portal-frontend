@@ -21,6 +21,7 @@ import {
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
   RiChat1Line as CommentManagementIcon,
+  RiShareLine as ShareLinkIcon,
 } from 'react-icons/ri';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -53,6 +54,11 @@ const navItems = (userId?: string) => [
         link: '/admin/comment-management',
         text: 'Comment Management',
         icon: CommentManagementIcon,
+      },
+      {
+        link: '/admin/sharelink-analytics',
+        text: 'ShareLink Analytics',
+        icon: ShareLinkIcon,
       },
       // {
       //   link: "/admin/playlist-management",
@@ -220,7 +226,7 @@ export default function AdminLayout({
         <Toolbar
           sx={{
             width: '100%',
-            maxWidth: '1200px',
+            maxWidth: '100%',
             mx: 'auto',
           }}
         >
@@ -292,10 +298,10 @@ export default function AdminLayout({
       >
         <Toolbar />
         <Box
-          p={3}
+          p={2}
           sx={{
             width: '100%',
-            maxWidth: '1200px',
+            maxWidth: '100%',
             mx: 'auto',
           }}
         >

@@ -1,8 +1,8 @@
-import VideoListItem from "@/components/videoItem/VideoListItem";
-import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
+import VideoListItem from '@/components/videoItem/VideoListItem';
+import { Button, Divider, Paper, Stack, Typography } from '@mui/material';
 
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
 
@@ -11,9 +11,9 @@ function PlaylistDetailsPage() {
     <div className="flex flex-col md:flex-row gap-6">
       <div className="flex-1 relative">
         <Paper
-          className="flex flex-col gap-5 sticky top-20 p-6"
+          className="flex flex-col gap-5 sticky top-20 p-4"
           sx={{
-            height: { sm: "fit-content", md: "90vh" },
+            height: { sm: 'fit-content', md: '90vh' },
             borderRadius: 3,
           }}
         >
@@ -33,13 +33,13 @@ function PlaylistDetailsPage() {
           </Typography>
 
           <Stack
-            direction={"row"}
+            direction={'row'}
             spacing={1}
             divider={<Divider orientation="vertical" flexItem />}
           >
             <Typography variant="subtitle2">10 videos</Typography>
             <Typography variant="subtitle2">
-              Published on {dayjs().format("MMMM D, YYYY")}
+              Published on {dayjs().format('MMMM D, YYYY')}
             </Typography>
             <Typography variant="subtitle2">
               Updated {dayjs().fromNow()}

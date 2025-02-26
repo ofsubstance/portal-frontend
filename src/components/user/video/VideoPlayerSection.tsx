@@ -2,8 +2,9 @@ import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiFeedbackLine as FeedbackIcon,
+  RiShareLine as ShareIcon,
 } from 'react-icons/ri';
-import { Chip, Fab, Typography } from '@mui/material';
+import { Box, Chip, Fab, Typography } from '@mui/material';
 
 import { VideoDto } from '@/dtos/video.dto';
 import Vimeo from '@u-wave/react-vimeo';
@@ -11,12 +12,14 @@ import dayjs from 'dayjs';
 
 interface VideoPlayerSectionProps {
   data: VideoDto;
-  onFeedback: () => any;
+  onFeedback: () => void;
+  onShare?: () => void;
 }
 
 export default function VideoPlayerSection({
   data,
   onFeedback,
+  onShare,
 }: VideoPlayerSectionProps) {
   return (
     <div className="flex md:flex-row flex-col items-start gap-8 p-6">
@@ -58,15 +61,29 @@ export default function VideoPlayerSection({
         </div>
         <Typography variant="body1">{data.short_desc}</Typography>
 
-        <Fab
-          variant="extended"
-          size="large"
-          color="primary"
-          onClick={onFeedback}
-        >
-          <FeedbackIcon size={20} className="mr-2" />
-          Leave A Feedback
-        </Fab>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Fab
+            variant="extended"
+            size="large"
+            color="primary"
+            onClick={onFeedback}
+          >
+            <FeedbackIcon size={20} className="mr-2" />
+            Leave A Feedback
+          </Fab>
+
+          {onShare && (
+            <Fab
+              variant="extended"
+              size="large"
+              color="secondary"
+              onClick={onShare}
+            >
+              <ShareIcon size={20} className="mr-2" />
+              Share This Film
+            </Fab>
+          )}
+        </Box>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ interface RedirectPaths {
 
 // Default redirect paths based on user roles
 const DEFAULT_REDIRECT_PATHS: RedirectPaths = {
-  [UserRole.Admin]: '/admin/dashboard',
+  [UserRole.Admin]: '/admin',
   [UserRole.User]: '/',
   // Add other roles as needed
 };

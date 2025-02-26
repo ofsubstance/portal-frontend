@@ -12,7 +12,8 @@ import {
   Toolbar,
   Typography,
   useTheme,
-} from "@mui/material";
+  CssBaseline,
+} from '@mui/material';
 import {
   RiPieChart2Line as AnalyticsIcon,
   RiMenu2Line as MenuIcon,
@@ -24,62 +25,62 @@ import {
   RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
-} from "react-icons/ri";
-import { useLocation, useNavigate } from "react-router-dom";
+} from 'react-icons/ri';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import AccountMenu from "@/components/common/menu/AccountMenu";
-import useAuthAction from "@/hooks/useAuthAction";
-import { useState } from "react";
-import AppLogo from "../logo/AppLogo";
+import AccountMenu from '@/components/common/menu/AccountMenu';
+import useAuthAction from '@/hooks/useAuthAction';
+import { useState } from 'react';
+import AppLogo from '../logo/AppLogo';
 
 const navItems = [
   {
-    group: "Dashboard",
+    group: 'Dashboard',
     items: [
       {
-        link: "/admin",
-        text: "Overview",
+        link: '/admin',
+        text: 'Overview',
         icon: OverviewIcon,
       },
-      { link: "/admin/analytics", text: "Analytics", icon: AnalyticsIcon },
+      { link: '/admin/analytics', text: 'Analytics', icon: AnalyticsIcon },
     ],
   },
   {
-    group: "Management",
+    group: 'Management',
     items: [
       {
-        link: "/admin/video-management",
-        text: "Video Management",
+        link: '/admin/video-management',
+        text: 'Video Management',
         icon: VideoManagementIcon,
       },
       {
-        link: "/admin/playlist-management",
-        text: "Playlist Management",
+        link: '/admin/playlist-management',
+        text: 'Playlist Management',
         icon: PlaylistManagementIcon,
       },
       {
-        link: "/admin/user-management",
-        text: "User Management",
+        link: '/admin/user-management',
+        text: 'User Management',
         icon: UserManagementIcon,
       },
       {
-        link: "/admin/payments-subscriptions",
-        text: "Payments & Subscriptions",
+        link: '/admin/payments-subscriptions',
+        text: 'Payments & Subscriptions',
         icon: PaymentsIcon,
       },
     ],
   },
   {
-    group: "Account",
+    group: 'Account',
     items: [
       {
-        link: "/admin/profile/1",
-        text: "Profile Details",
+        link: '/admin/profile/1',
+        text: 'Profile Details',
         icon: ProfileIcon,
       },
       {
-        link: "/admin/profile/settings",
-        text: "Settings",
+        link: '/admin/profile/settings',
+        text: 'Settings',
         icon: SettingsIcon,
       },
     ],
@@ -97,13 +98,13 @@ function DrawerContent() {
   const isActiveLink = (itemLink: string) => {
     return (
       location.pathname === itemLink ||
-      (itemLink !== "/admin" && location.pathname.startsWith(itemLink))
+      (itemLink !== '/admin' && location.pathname.startsWith(itemLink))
     );
   };
 
   const handleLogout = () => {
     signoutMutation.mutate();
-    navigate("/signin");
+    navigate('/signin');
   };
 
   return (
@@ -117,7 +118,7 @@ function DrawerContent() {
             variant="body2"
             fontWeight={600}
             pl={4}
-            textTransform={"uppercase"}
+            textTransform={'uppercase'}
           >
             {group.group}
           </Typography>
@@ -130,8 +131,8 @@ function DrawerContent() {
                     borderRadius: 1,
                     paddingX: 2,
                     paddingY: 1.5,
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: 2,
                   }}
                 >
@@ -164,7 +165,7 @@ function DrawerContent() {
       <Button
         variant="contained"
         size="large"
-        sx={{ marginTop: "auto", mx: 2 }}
+        sx={{ marginTop: 'auto', mx: 2 }}
         onClick={handleLogout}
       >
         LOGOUT
@@ -179,19 +180,19 @@ function SearchBar() {
       sx={{
         borderRadius: 100,
         ml: 4,
-        display: "flex",
-        alignItems: "center",
-        bgcolor: "rgba(255, 255, 255, 0.2)",
+        display: 'flex',
+        alignItems: 'center',
+        bgcolor: 'rgba(255, 255, 255, 0.1)',
         width: 400,
       }}
     >
       <InputBase
         fullWidth
-        sx={{ pl: 2, color: "white" }}
+        sx={{ pl: 2, color: 'white' }}
         placeholder="Search…"
       />
-      <IconButton>
-        <SearchIcon className="text-gray-400" />
+      <IconButton sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+        <SearchIcon />
       </IconButton>
     </Paper>
   );
@@ -221,26 +222,30 @@ export default function UserLayout({
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          boxShadow: "none",
-          backdropFilter: "blur(12px)",
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          bgcolor: 'black',
+          color: 'white',
+          boxShadow: 0,
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
       >
         <Toolbar
           sx={{
-            width: "100%",
+            width: '100%',
             px: 4,
           }}
         >
           <IconButton
-            color="primary"
+            color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -273,9 +278,9 @@ export default function UserLayout({
           keepMounted: true,
         }}
         sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
           },
         }}
@@ -287,17 +292,14 @@ export default function UserLayout({
         component="main"
         sx={{
           flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
+          p: 0,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          bgcolor: 'white',
+          minHeight: '100vh',
         }}
       >
-        <Box
-          sx={{
-            width: "100%",
-          }}
-        >
-          {children}
-        </Box>
+        <Toolbar />
+        {children}
       </Box>
     </Box>
   );

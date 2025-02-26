@@ -1,18 +1,33 @@
-import { Chip, Divider, Paper, Typography } from '@mui/material';
+import {
+  Chip,
+  Divider,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Container,
+  Grid,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import HeroSlider from '@/components/user/home/HeroSlider';
 import VideoListSection from '@/components/user/home/VideoListSection';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
 import { useEffect, useState } from 'react';
 import { VideoDto } from '@/dtos/video.dto';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function UserLandingPage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { useVideoListQuery } = useVideoManagementActions();
-
+  const { user } = useAuth();
   const { data: videos = [] } = useVideoListQuery();
 
   const [videoList, setVideoList] = useState<VideoDto[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState<boolean>(!isMobile);
 
   useEffect(() => {
     setVideoList(videos);
@@ -75,87 +90,137 @@ export default function UserLandingPage() {
   return (
     <div>
       <HeroSlider videos={slideshowVideos} />
-      <div className="flex gap-10 p-6 md:p-10 md:px-20">
-        <div className="flex-1 space-y-14">
-          <VideoListSection videos={videoList} />
-        </div>
-        <div className="flex-[0.3] space-y-10 hidden md:block">
-          {/* Genres Filter */}
-          <Paper variant="outlined">
-            <div className="flex justify-between items-center">
-              <Typography variant="body1" fontWeight={600} p={2}>
-                Genres
-              </Typography>
-              <div className="px-2">
-                <Chip
-                  label="Clear Filter"
-                  variant={selectedGenre === '' ? 'filled' : 'outlined'}
-                  onClick={() => setSelectedGenre('')}
-                  size="small"
-                />
-              </div>
-            </div>
-            <Divider />
-            <div className="p-2">
-              {genres.map((genre) => (
-                <Chip
-                  sx={{ margin: 1 }}
-                  key={genre}
-                  label={genre}
-                  color={selectedGenre === genre ? 'primary' : 'default'}
-                  variant={selectedGenre === genre ? 'filled' : 'outlined'}
-                  onClick={() => handleGenreSelect(genre)}
-                />
-              ))}
-            </div>
-          </Paper>
 
-          {/* Tags Filter */}
-          {tags.length > 0 && (
-            <Paper variant="outlined">
-              <div className="flex justify-between items-center">
-                <Typography variant="body1" fontWeight={600} p={2}>
-                  Tags
+      {/* Welcome Section */}
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 2 }}>
+        <Box sx={{ py: 2 }}>
+          <Typography variant="h4" fontWeight={600} gutterBottom>
+            Welcome{user?.firstname ? `, ${user.firstname}` : ''}!
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Discover inspiring films and stories that matter.
+          </Typography>
+        </Box>
+      </Container>
+
+      {/* Main Content Area */}
+      <Container maxWidth="xl">
+        <Grid container spacing={3}>
+          {/* Video List */}
+          <Grid item xs={12} md={9}>
+            <Box sx={{ mb: 4 }}>
+              <VideoListSection videos={videoList} />
+            </Box>
+          </Grid>
+
+          {/* Filters Panel - Moved to the right */}
+          <Grid item xs={12} md={3}>
+            {(showFilters || !isMobile) && (
+              <Box className="space-y-6 sticky" sx={{ top: 20 }}>
+                <Typography variant="h6" fontWeight={600}>
+                  Refine Your Search
                 </Typography>
-                <div className="px-2">
-                  <Chip
-                    label="Clear Tags"
-                    variant={selectedTags.length === 0 ? 'filled' : 'outlined'}
-                    onClick={() => setSelectedTags([])}
-                    size="small"
-                  />
-                </div>
-              </div>
-              <Divider />
-              <div className="p-2">
-                {tags.map((tag) => (
-                  <Chip
-                    sx={{ margin: 1 }}
-                    key={tag}
-                    label={tag}
-                    color={selectedTags.includes(tag) ? 'primary' : 'default'}
-                    variant={selectedTags.includes(tag) ? 'filled' : 'outlined'}
-                    onClick={() => handleTagSelect(tag)}
-                  />
-                ))}
-              </div>
-            </Paper>
-          )}
 
-          {/* Clear All Filters Button */}
-          {(selectedGenre || selectedTags.length > 0) && (
-            <div className="flex justify-center mt-4">
-              <Chip
-                label="Clear All Filters"
-                color="primary"
-                onClick={clearAllFilters}
-                sx={{ fontWeight: 'bold' }}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-      <Divider />
+                {/* Genres Filter */}
+                <Paper variant="outlined" sx={{ mb: 3 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      p: 2,
+                    }}
+                  >
+                    <Typography variant="body1" fontWeight={600}>
+                      Genres
+                    </Typography>
+                    {selectedGenre && (
+                      <Chip
+                        label="Clear"
+                        variant="outlined"
+                        onClick={() => setSelectedGenre('')}
+                        size="small"
+                      />
+                    )}
+                  </Box>
+                  <Divider />
+                  <Box sx={{ p: 2 }}>
+                    {genres.map((genre) => (
+                      <Chip
+                        sx={{ margin: 0.5 }}
+                        key={genre}
+                        label={genre}
+                        color={selectedGenre === genre ? 'primary' : 'default'}
+                        variant={
+                          selectedGenre === genre ? 'filled' : 'outlined'
+                        }
+                        onClick={() => handleGenreSelect(genre)}
+                      />
+                    ))}
+                  </Box>
+                </Paper>
+
+                {/* Tags Filter */}
+                {tags.length > 0 && (
+                  <Paper variant="outlined" sx={{ mb: 3 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        p: 2,
+                      }}
+                    >
+                      <Typography variant="body1" fontWeight={600}>
+                        Tags
+                      </Typography>
+                      {selectedTags.length > 0 && (
+                        <Chip
+                          label="Clear"
+                          variant="outlined"
+                          onClick={() => setSelectedTags([])}
+                          size="small"
+                        />
+                      )}
+                    </Box>
+                    <Divider />
+                    <Box sx={{ p: 2 }}>
+                      {tags.map((tag) => (
+                        <Chip
+                          sx={{ margin: 0.5 }}
+                          key={tag}
+                          label={tag}
+                          color={
+                            selectedTags.includes(tag) ? 'primary' : 'default'
+                          }
+                          variant={
+                            selectedTags.includes(tag) ? 'filled' : 'outlined'
+                          }
+                          onClick={() => handleTagSelect(tag)}
+                        />
+                      ))}
+                    </Box>
+                  </Paper>
+                )}
+
+                {/* Clear All Filters Button */}
+                {(selectedGenre || selectedTags.length > 0) && (
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={clearAllFilters}
+                    sx={{ mb: 3 }}
+                  >
+                    Clear All Filters
+                  </Button>
+                )}
+              </Box>
+            )}
+          </Grid>
+        </Grid>
+      </Container>
+
+      <Divider sx={{ mt: 4 }} />
     </div>
   );
 }

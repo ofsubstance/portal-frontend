@@ -10,6 +10,7 @@ import ErrorPage from './pages/ErrorPage';
 
 const AdminLayoutPage = lazy(() => import('./pages/admin/AdminLayoutPage'));
 const UserLayoutPage = lazy(() => import('./pages/user/UserLayoutPage'));
+const SharedVideoPage = lazy(() => import('./pages/shared/SharedVideoPage'));
 
 const routes = createBrowserRouter([
   {
@@ -51,6 +52,13 @@ const routes = createBrowserRouter([
             path: 'analytics',
             lazy: async () => ({
               Component: (await import('./pages/admin/AnalyticsPage')).default,
+            }),
+          },
+          {
+            path: 'sharelink-analytics',
+            lazy: async () => ({
+              Component: (await import('./pages/admin/ShareLinkAnalyticsPage'))
+                .default,
             }),
           },
           {
@@ -170,6 +178,14 @@ const routes = createBrowserRouter([
             }),
           },
         ],
+      },
+      {
+        path: '/video/:videoId/:uniqueId',
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <SharedVideoPage />
+          </Suspense>
+        ),
       },
       {
         path: '/signup',

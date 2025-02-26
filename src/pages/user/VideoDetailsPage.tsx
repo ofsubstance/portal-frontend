@@ -7,6 +7,7 @@ import VideoCommentList from '@/components/user/video/VideoCommentList';
 import VideoDetailsHero from '@/components/user/video/VideoDetailsHero';
 import VideoPlayerSection from '@/components/user/video/VideoPlayerSection';
 import VideoListSection from '@/components/user/home/VideoListSection';
+import ShareLinkModal from '@/components/user/video/ShareLinkModal';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useModal } from '@ebay/nice-modal-react';
@@ -80,6 +81,17 @@ export default function VideoDetailsPage() {
     });
   };
 
+  const handleShareClick = () => {
+    if (!videoId) return;
+
+    modal.show({
+      title: 'Share ' + video?.title,
+      children: (
+        <ShareLinkModal videoId={videoId} onClose={() => modal.hide()} />
+      ),
+    });
+  };
+
   if (!video) return null;
 
   return (
@@ -92,13 +104,18 @@ export default function VideoDetailsPage() {
       >
         <div className="min-h-screen backdrop-filter backdrop-blur-md bg-black bg-opacity-20">
           <Toolbar />
-          {searchParam.get('playing') == 'true' ? (
-            <VideoPlayerSection data={video} onFeedback={handleFeedbackClick} />
+          {searchParam.get('playing') === 'true' ? (
+            <VideoPlayerSection
+              data={video}
+              onFeedback={handleFeedbackClick}
+              onShare={handleShareClick}
+            />
           ) : (
             <VideoDetailsHero
               data={video}
               onPlay={handlePlayClick}
               onPlayTrailer={handlePlayTrailerClick}
+              onShare={handleShareClick}
             />
           )}
         </div>
