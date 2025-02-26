@@ -1,62 +1,90 @@
 import {
-  Checkbox,
   FormControl,
   FormControlLabel,
-  FormHelperText,
-  TextField,
-} from "@mui/material";
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Paper,
+  Typography,
+} from '@mui/material';
 
-import { SignupReq } from "@/dtos/auth.dto";
-import { useFormContext } from "react-hook-form";
+import { SignupReq } from '@/dtos/auth.dto';
+import { Utilization } from '@/constants/enums';
+import { useFormContext } from 'react-hook-form';
 
 export default function SignupStep1() {
   const {
-    register,
+    setValue,
+    watch,
     formState: { errors },
   } = useFormContext<SignupReq>();
 
+  // Convert enum to array of strings
+  const utilizationOptions = Object.values(Utilization);
+
+  const handleUtilizationPurposeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setValue('profile.utilizationPurpose', e.target.value);
+  };
+
+  const selectedValue = watch('profile.utilizationPurpose') || '';
+
   return (
-    <div className="flex flex-col gap-4">
-      <TextField
-        {...register("email")}
+    <div className="flex flex-col gap-6">
+      <FormControl
+        error={!!errors.profile?.utilizationPurpose}
+        required
         fullWidth
-        label="Business Email*"
-        variant="outlined"
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
+      >
+        <FormLabel
+          sx={{
+            fontSize: '1.15rem',
+            fontWeight: 500,
+            color: 'text.primary',
+            marginBottom: '1rem',
+          }}
+        >
+          How will you use Of Substance?
+        </FormLabel>
 
-      <TextField
-        {...register("password")}
-        fullWidth
-        type="password"
-        label="Password*"
-        variant="outlined"
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
+        <RadioGroup
+          value={selectedValue}
+          onChange={handleUtilizationPurposeChange}
+          className="flex flex-col gap-3 mt-2"
+        >
+          {utilizationOptions.map((option) => (
+            <Paper
+              key={option}
+              elevation={selectedValue === option ? 3 : 1}
+              className={`transition-all duration-200 ${
+                selectedValue === option
+                  ? 'border-2 border-primary-500'
+                  : 'border border-gray-200 hover:border-primary-300'
+              }`}
+            >
+              <FormControlLabel
+                value={option}
+                control={<Radio />}
+                label={
+                  <Typography
+                    variant="body1"
+                    fontWeight={selectedValue === option ? 500 : 400}
+                  >
+                    {option}
+                  </Typography>
+                }
+                className="w-full p-2"
+                sx={{ margin: 0 }}
+              />
+            </Paper>
+          ))}
+        </RadioGroup>
 
-      <TextField
-        {...register("phone")}
-        fullWidth
-        label="Mobile Phone"
-        variant="outlined"
-      />
-
-      <FormControlLabel
-        control={<Checkbox {...register("smsConsent")} />}
-        label="I agree to receive occasional promotional messages from Of Substance via SMS. Message and data rates may apply. Reply STOP to opt out."
-      />
-
-      <FormControl error={!!errors.emailTermsConsent}>
-        <FormControlLabel
-          control={<Checkbox {...register("emailTermsConsent")} required />}
-          label="I agree to receive emails from Of Substance and accept the Terms of Use and Privacy Policy"
-        />
-        {errors.emailTermsConsent && (
-          <FormHelperText color="error">
-            {errors.emailTermsConsent.message}
-          </FormHelperText>
+        {errors.profile?.utilizationPurpose && (
+          <Typography color="error" variant="caption" className="mt-2">
+            {errors.profile.utilizationPurpose.message}
+          </Typography>
         )}
       </FormControl>
     </div>

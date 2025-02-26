@@ -109,6 +109,13 @@ const routes = createBrowserRouter([
             }),
           },
           {
+            path: 'comment-management',
+            lazy: async () => ({
+              Component: (await import('./pages/admin/CommentManagementPage'))
+                .default,
+            }),
+          },
+          {
             path: 'user-management',
             lazy: async () => ({
               Component: (await import('./pages/admin/UserManagementPage'))

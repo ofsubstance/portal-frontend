@@ -22,4 +22,5 @@ export const videoUploadValidation = z.object({
   theme: z.string().min(1, { message: 'Theme is required.' }),
   impact: z.string().min(1, { message: 'Impact is required.' }),
   slideshow: z.boolean().optional(),
+  tags: z.array(z.string()).optional().default([]),
 });

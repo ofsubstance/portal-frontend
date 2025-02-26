@@ -4,14 +4,16 @@ import {
   FormControlLabel,
   TextField,
   Typography,
-} from "@mui/material";
-import { SubmitHandler, useForm } from "react-hook-form";
+  InputAdornment,
+} from '@mui/material';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { Link } from "react-router-dom";
-import PasswordField from "@/components/common/input/PasswordField";
-import { SigninReq } from "@/dtos/auth.dto";
-import { signinValidation } from "@/validators/auth.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from 'react-router-dom';
+import PasswordField from '@/components/common/input/PasswordField';
+import { SigninReq } from '@/dtos/auth.dto';
+import { signinValidation } from '@/validators/auth.validator';
+import { zodResolver } from '@hookform/resolvers/zod';
+import EmailIcon from '@mui/icons-material/Email';
 
 interface SigninFormProps {
   onSubmit: SubmitHandler<SigninReq>;
@@ -27,45 +29,71 @@ function SigninForm({ onSubmit }: SigninFormProps) {
   return (
     <form
       data-testid="signin-form"
-      className="flex flex-col gap-5 w-full"
+      className="flex flex-col gap-4 w-full"
       onSubmit={handleSubmit(onSubmit)}
     >
       <TextField
-        {...register("email")}
+        {...register('email')}
         type="email"
         label="Email"
         variant="outlined"
         fullWidth
+        placeholder="your.email@example.com"
         error={!!errors.email}
         helperText={errors?.email?.message}
+        size="small"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <EmailIcon color="action" fontSize="small" />
+            </InputAdornment>
+          ),
+        }}
       />
 
       <PasswordField
-        {...register("password")}
+        {...register('password')}
         label="Password"
         variant="outlined"
         fullWidth
+        placeholder="Enter your password"
         error={!!errors.password}
         helperText={errors?.password?.message}
+        size="small"
       />
 
-      <div className="flex flex-col sm:items-center sm:flex-row justify-between gap-4">
+      <div className="flex items-center justify-between gap-2">
         <FormControlLabel
-          control={<Checkbox {...register("remember")} />}
-          label="Keep me signed in"
+          control={
+            <Checkbox {...register('remember')} color="primary" size="small" />
+          }
+          label={
+            <Typography variant="body2" fontSize="0.8rem">
+              Keep me signed in
+            </Typography>
+          }
         />
 
         <Typography
           fontWeight={600}
-          color={"primary"}
+          color="primary"
           component={Link}
           to="/forgot-password"
+          variant="body2"
+          fontSize="0.8rem"
+          className="hover:underline"
         >
           Forgot Password?
         </Typography>
       </div>
 
-      <Button type="submit" variant="contained" size="large">
+      <Button
+        type="submit"
+        variant="contained"
+        size="medium"
+        className="mt-2"
+        sx={{ py: 1 }}
+      >
         Sign In
       </Button>
     </form>

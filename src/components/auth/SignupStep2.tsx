@@ -1,7 +1,17 @@
-import { Grid, TextField } from "@mui/material";
-
-import { SignupReq } from "@/dtos/auth.dto";
-import { useFormContext } from "react-hook-form";
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  Typography,
+  Box,
+} from '@mui/material';
+import { SignupReq } from '@/dtos/auth.dto';
+import { useFormContext } from 'react-hook-form';
+import { useState } from 'react';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
 
 export default function SignupStep2() {
   const {
@@ -9,68 +19,69 @@ export default function SignupStep2() {
     formState: { errors },
   } = useFormContext<SignupReq>();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
-        <TextField
-          {...register("firstname")}
-          fullWidth
-          label="First Name*"
-          variant="outlined"
-          error={!!errors.firstname}
-          helperText={errors.firstname?.message}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          {...register("lastname")}
-          fullWidth
-          label="Last Name*"
-          variant="outlined"
-          error={!!errors.lastname}
-          helperText={errors.lastname?.message}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          {...register("profile.businessName")}
-          fullWidth
-          label="Business Name*"
-          variant="outlined"
-          error={!!errors.profile?.businessName}
-          helperText={errors.profile?.businessName?.message}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          {...register("profile.website")}
-          fullWidth
-          label="Website*"
-          variant="outlined"
-          error={!!errors.profile?.website}
-          helperText={errors.profile?.website?.message}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          {...register("profile.stateRegion")}
-          fullWidth
-          label="State/Region*"
-          variant="outlined"
-          error={!!errors.profile?.stateRegion}
-          helperText={errors.profile?.stateRegion?.message}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <TextField
-          {...register("profile.country")}
-          fullWidth
-          label="Country*"
-          variant="outlined"
-          error={!!errors.profile?.country}
-          helperText={errors.profile?.country?.message}
-        />
-      </Grid>
-    </Grid>
+    <Box className="flex flex-col gap-6 max-w-md mx-auto">
+      <div className="mb-2">
+        <Typography variant="body1" color="text.secondary" className="mb-6">
+          Your email will be used to log in and receive important account
+          notifications.
+        </Typography>
+      </div>
+
+      <TextField
+        {...register('email')}
+        fullWidth
+        label="Email"
+        variant="outlined"
+        placeholder="your.email@example.com"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <EmailIcon color="action" />
+            </InputAdornment>
+          ),
+        }}
+      />
+
+      <TextField
+        {...register('password')}
+        fullWidth
+        type={showPassword ? 'text' : 'password'}
+        label="Password"
+        variant="outlined"
+        placeholder="Create a strong password"
+        error={!!errors.password}
+        helperText={
+          errors.password?.message ||
+          'Must include uppercase, lowercase, number, and special character'
+        }
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <LockIcon color="action" />
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={togglePasswordVisibility}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Box>
   );
 }

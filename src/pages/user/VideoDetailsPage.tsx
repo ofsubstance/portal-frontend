@@ -1,12 +1,12 @@
-import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Toolbar, Typography } from '@mui/material';
-import { RiArrowRightSLine as ArrowRightIcon } from 'react-icons/ri';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { Toolbar } from '@mui/material';
 import FlimFeedbackForm from '@/components/user/feedback/FlimFeedbackForm';
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
-import VideoCommentItem from '@/components/user/video/VideoCommentItem';
+import VideoCommentInput from '@/components/user/video/VideoCommentInput';
+import VideoCommentList from '@/components/user/video/VideoCommentList';
 import VideoDetailsHero from '@/components/user/video/VideoDetailsHero';
-import VideoGridItem from '@/components/videoItem/VideoGridItem';
 import VideoPlayerSection from '@/components/user/video/VideoPlayerSection';
+import VideoListSection from '@/components/user/home/VideoListSection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useModal } from '@ebay/nice-modal-react';
@@ -104,32 +104,16 @@ export default function VideoDetailsPage() {
         </div>
       </div>
 
-      <div className="space-y-6 px-10 md:px-20">
-        <Typography
-          variant="h6"
-          fontWeight={600}
-          className="flex items-center gap-2 cursor-pointer hover:gap-4 transition-[gap]"
-        >
-          More Films <ArrowRightIcon size={30} />
-        </Typography>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {videos.slice(0, 4).map((video) => (
-            <Link key={video.id} to={'/video/' + video.id}>
-              <VideoGridItem data={video} />
-            </Link>
-          ))}
-        </div>
-      </div>
-
       <div className="px-10 md:px-20 space-y-4">
-        <Typography variant="h6" fontWeight={600}>
-          Comments
-        </Typography>
-        <div className="space-y-6">
-          {Array.from(Array(5)).map((_, index) => (
-            <VideoCommentItem key={index} />
-          ))}
-        </div>
+        {videoId && (
+          <>
+            <VideoCommentInput videoId={videoId} />
+            <VideoCommentList videoId={videoId} />
+          </>
+        )}
+      </div>
+      <div className="space-y-6 px-10 md:px-20">
+        <VideoListSection videos={videos} />
       </div>
     </div>
   );

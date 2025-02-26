@@ -224,6 +224,25 @@ function VideoDetailsPage() {
             </div>
           </div>
 
+          {/* Display tags if available */}
+          {data.tags && data.tags.length > 0 && (
+            <div className="space-y-2">
+              <Typography variant="h6" fontWeight={600}>
+                Tags
+              </Typography>
+              <div className="flex gap-2 flex-wrap">
+                {data.tags.map((tag) => (
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    variant="outlined"
+                    color="primary"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div>
             <VideoDescriptionItem
               title="Description"

@@ -1,15 +1,15 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import AppLogo from "@/components/common/logo/AppLogo";
-import { Button } from "@mui/material";
-import PasswordField from "@/components/common/input/PasswordField";
-import { ResetPasswordReq } from "@/dtos/auth.dto";
-import resetPasswordImage from "@/assets/resetPassword.svg";
-import { resetPasswordValidation } from "@/validators/auth.validator";
-import { toast } from "react-toastify";
-import useAuthAction from "@/hooks/useAuthAction";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import AppLogo from '@/components/common/logo/AppLogo';
+import { Button, Typography } from '@mui/material';
+import PasswordField from '@/components/common/input/PasswordField';
+import { ResetPasswordReq } from '@/dtos/auth.dto';
+import resetPasswordImage from '@/assets/resetPassword.svg';
+import { resetPasswordValidation } from '@/validators/auth.validator';
+import { toast } from 'react-toastify';
+import useAuthAction from '@/hooks/useAuthAction';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -29,12 +29,12 @@ function ResetPasswordPage() {
     resetPasswordMutation.mutate(
       {
         data,
-        resetToken: searchParams.get("token") || "",
+        resetToken: searchParams.get('token') || '',
       },
       {
         onSuccess: () => {
-          toast.success("Password reset successful");
-          navigate("/signin", { replace: true });
+          toast.success('Password reset successful');
+          navigate('/signin', { replace: true });
         },
       }
     );
@@ -58,22 +58,37 @@ function ResetPasswordPage() {
         className="flex flex-col gap-5 max-w-lg w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
+        <div className="mb-2">
+          <Typography variant="body2" color="text.secondary" className="mb-2">
+            Your password must include:
+          </Typography>
+          <ul className="list-disc pl-5 text-sm text-gray-600">
+            <li>At least 8 characters</li>
+            <li>At least one uppercase letter (A-Z)</li>
+            <li>At least one lowercase letter (a-z)</li>
+            <li>At least one number (0-9)</li>
+            <li>At least one special character (!@#$%^&*())</li>
+          </ul>
+        </div>
+
         <PasswordField
-          {...register("password")}
+          {...register('password')}
           label="New Password"
           variant="outlined"
           fullWidth
           error={!!errors.password}
           helperText={errors?.password?.message}
+          placeholder="Enter a strong password"
         />
 
         <PasswordField
-          {...register("confirmPassword")}
+          {...register('confirmPassword')}
           label="Confirm New Password"
           variant="outlined"
           fullWidth
           error={!!errors.confirmPassword}
           helperText={errors?.confirmPassword?.message}
+          placeholder="Re-enter your password"
         />
 
         <Button type="submit" variant="contained" size="large">

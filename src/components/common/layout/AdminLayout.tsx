@@ -16,12 +16,11 @@ import {
   RiPieChart2Line as AnalyticsIcon,
   RiMenu2Line as MenuIcon,
   RiDashboardLine as OverviewIcon,
-  RiMoneyDollarCircleLine as PaymentsIcon,
-  RiPlayList2Line as PlaylistManagementIcon,
   RiAccountCircleLine as ProfileIcon,
   RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
+  RiChat1Line as CommentManagementIcon,
 } from 'react-icons/ri';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -49,6 +48,11 @@ const navItems = (userId?: string) => [
         link: '/admin/video-management',
         text: 'Video Management',
         icon: VideoManagementIcon,
+      },
+      {
+        link: '/admin/comment-management',
+        text: 'Comment Management',
+        icon: CommentManagementIcon,
       },
       // {
       //   link: "/admin/playlist-management",

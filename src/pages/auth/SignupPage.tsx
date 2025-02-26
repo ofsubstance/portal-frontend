@@ -1,21 +1,25 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography } from '@mui/material';
 
-import AppLogo from "@/components/common/logo/AppLogo";
-import { Link } from "react-router-dom";
-import { SignupForm } from "@/components/auth/SignupForm";
-import { SignupReq } from "@/dtos/auth.dto";
-import { toast } from "react-toastify";
-import useAuthAction from "@/hooks/useAuthAction";
-import { useState } from "react";
+import AppLogo from '@/components/common/logo/AppLogo';
+import { Link } from 'react-router-dom';
+import { SignupForm } from '@/components/auth/SignupForm';
+import { SignupReq } from '@/dtos/auth.dto';
+import { toast } from 'react-toastify';
+import useAuthAction from '@/hooks/useAuthAction';
+import { useAuth } from '@/hooks/useAuth';
+import { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '@/contexts/AuthContextProvider';
 
 function SignupPage() {
   const { signupMutation, resendVerificationMutation } = useAuthAction();
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const { authenticated } = useContext(AuthContext);
+  const { redirectBasedOnRole } = useAuth();
 
   const onSignup = (data: SignupReq) => {
     signupMutation.mutate(data, {
       onSuccess: () => {
-        localStorage.setItem("email", data.email);
+        localStorage.setItem('email', data.email);
         setSignupSuccess(true);
       },
       onError: (error) => {
@@ -25,19 +29,25 @@ function SignupPage() {
   };
 
   const onResendVerification = () => {
-    const email = localStorage.getItem("email");
+    const email = localStorage.getItem('email');
 
-    if (!email) return toast.error("Email not found");
+    if (!email) return toast.error('Email not found');
 
     resendVerificationMutation.mutate(
       { email },
       {
         onSuccess: () => {
-          toast.success("Verification email sent successfully");
+          toast.success('Verification email sent successfully');
         },
       }
     );
   };
+
+  useEffect(() => {
+    if (authenticated) {
+      redirectBasedOnRole();
+    }
+  }, [authenticated, redirectBasedOnRole]);
 
   return (
     <main className="flex">
@@ -63,11 +73,11 @@ function SignupPage() {
             >
               Resend Confirmation Email
             </Button>
-            <Typography textAlign={"center"}>
-              Start your journey with us{" "}
+            <Typography textAlign={'center'}>
+              Start your journey with us{' '}
               <Typography
                 fontWeight={600}
-                color={"primary"}
+                color={'primary'}
                 component={Link}
                 to="/signin"
               >
@@ -82,11 +92,11 @@ function SignupPage() {
             </h1>
             <SignupForm onSubmit={onSignup} />
 
-            <Typography textAlign={"center"}>
-              Already have an account?{" "}
+            <Typography textAlign={'center'}>
+              Already have an account?{' '}
               <Typography
                 fontWeight={600}
-                color={"primary"}
+                color={'primary'}
                 component={Link}
                 to="/signin"
               >

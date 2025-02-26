@@ -1,20 +1,20 @@
-import { Button, Divider, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
-import { useContext, useEffect } from "react";
+import { Button, Divider, Typography, Paper } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
+import { useContext, useEffect } from 'react';
 
-import AppLogo from "@/components/common/logo/AppLogo";
-import { AuthContext } from "@/contexts/AuthContextProvider";
-import { FcGoogle as GoogleIcon } from "react-icons/fc";
-import SigninForm from "@/components/auth/SigninForm";
-import { SigninReq } from "@/dtos/auth.dto";
-import signinImage from "@/assets/signin.svg";
-import useAuthAction from "@/hooks/useAuthAction";
+import AppLogo from '@/components/common/logo/AppLogo';
+import { AuthContext } from '@/contexts/AuthContextProvider';
+import { FcGoogle as GoogleIcon } from 'react-icons/fc';
+import SigninForm from '@/components/auth/SigninForm';
+import { SigninReq } from '@/dtos/auth.dto';
+import useAuthAction from '@/hooks/useAuthAction';
+import { useAuth } from '@/hooks/useAuth';
 
 function SigninPage() {
-  const navigate = useNavigate();
-  const { authenticated, setAuthenticated, authData } = useContext(AuthContext);
+  const { authenticated, setAuthenticated } = useContext(AuthContext);
   const { signinMutation, googleSigninMutation } = useAuthAction();
+  const { redirectBasedOnRole } = useAuth();
 
   const onSignin = (data: SigninReq) =>
     signinMutation.mutate(data, {
@@ -35,52 +35,78 @@ function SigninPage() {
 
   useEffect(() => {
     if (authenticated) {
-      authData?.role === "admin"
-        ? navigate("/admin", { replace: true })
-        : navigate("/", { replace: true });
+      redirectBasedOnRole();
     }
-  }, [navigate, authData]);
+  }, [authenticated, redirectBasedOnRole]);
 
   return (
-    <main className="flex">
-      <section className="flex flex-col px-6 py-20 gap-10 items-center justify-center flex-1 min-h-screen ">
-        <AppLogo />
+    <div className="flex flex-col items-center justify-center min-h-screen p-3 bg-gray-50">
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center mb-3">
+          <div className="mb-1">
+            <AppLogo />
+          </div>
+          <Typography
+            variant="h5"
+            color="primary"
+            fontWeight={600}
+            className="text-center"
+          >
+            Welcome Back
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            className="text-center"
+          >
+            Sign in to continue to your account
+          </Typography>
+        </div>
 
-        <h1 className="text-4xl font-semibold">Hello! Welcome Back.</h1>
-
-        <div className="w-5/6 md:w-4/6 flex flex-col gap-5">
+        <Paper elevation={2} className="p-4 rounded-lg">
           <Button
             variant="outlined"
-            size="large"
-            color="ghost"
+            size="medium"
+            color="inherit"
             fullWidth
-            startIcon={<GoogleIcon />}
+            startIcon={<GoogleIcon size={20} />}
             onClick={() => onGoogleSignin()}
+            className="mb-3"
+            sx={{ py: 1 }}
           >
             Continue with Google
           </Button>
 
-          <Divider>OR</Divider>
+          <div className="relative my-2">
+            <Divider>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                className="px-2 bg-white"
+              >
+                OR
+              </Typography>
+            </Divider>
+          </div>
 
           <SigninForm onSubmit={onSignin} />
+        </Paper>
 
-          <Typography textAlign={"center"}>
-            Don't have an account?{" "}
-            <Typography
-              fontWeight={600}
-              color={"primary"}
-              component={Link}
-              to="/signup"
-            >
-              Sign Up
-            </Typography>
+        <Typography variant="body2" className="text-center mt-2">
+          Don't have an account?{' '}
+          <Typography
+            component={Link}
+            to="/signup"
+            color="primary"
+            fontWeight={600}
+            variant="body2"
+            className="hover:underline"
+          >
+            Sign Up
           </Typography>
-        </div>
-      </section>
-      <section className="flex-[1.5] p-4 min-h-screen bg-slate-50 border-x border-slate-200 lg:flex items-center justify-center hidden ">
-        <object type="image/svg+xml" data={signinImage} className="w-3/4" />
-      </section>
-    </main>
+        </Typography>
+      </div>
+    </div>
   );
 }
 

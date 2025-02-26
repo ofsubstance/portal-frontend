@@ -1,11 +1,17 @@
-import { IconButton, TextField, TextFieldProps } from "@mui/material";
-import { forwardRef, useState } from "react";
+import {
+  IconButton,
+  TextField,
+  TextFieldProps,
+  InputAdornment,
+} from '@mui/material';
+import { forwardRef, useState } from 'react';
 
-import InvisibleIcon from "@mui/icons-material/VisibilityOffOutlined";
-import VisibleIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import LockIcon from '@mui/icons-material/Lock';
 
 const PasswordField = forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ type = "password", ...props }, ref) => {
+  (props, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleTogglePassword = () => {
@@ -14,12 +20,23 @@ const PasswordField = forwardRef<HTMLInputElement, TextFieldProps>(
 
     return (
       <TextField
-        type={showPassword ? "text" : "password"}
+        type={showPassword ? 'text' : 'password'}
         InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <LockIcon color="action" />
+            </InputAdornment>
+          ),
           endAdornment: (
-            <IconButton onClick={handleTogglePassword} edge="end">
-              {showPassword ? <VisibleIcon /> : <InvisibleIcon />}
-            </IconButton>
+            <InputAdornment position="end">
+              <IconButton
+                onClick={handleTogglePassword}
+                edge="end"
+                aria-label="toggle password visibility"
+              >
+                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+              </IconButton>
+            </InputAdornment>
           ),
         }}
         {...props}

@@ -21,4 +21,5 @@ export interface VideoDto {
   theme: string;
   impact: string;
   slideshow: boolean;
+  tags?: string[];
 }

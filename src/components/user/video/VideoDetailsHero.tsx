@@ -127,6 +127,30 @@ export default function VideoDetailsHero({
             />
           ))}
         </div>
+
+        {/* Display tags if available */}
+        {data.tags && data.tags.length > 0 && (
+          <div className="mt-2">
+            <Typography variant="subtitle2" className="mb-1">
+              Tags:
+            </Typography>
+            <div className="flex flex-wrap gap-2">
+              {data.tags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    borderColor: 'rgba(255, 255, 255, 0.7)',
+                    color: 'white',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         <Typography variant="body1">{data.short_desc}</Typography>
       </div>
 

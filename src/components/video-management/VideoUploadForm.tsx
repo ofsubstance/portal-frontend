@@ -1,6 +1,7 @@
 import { VideoDto, VideoUploadDto } from '@/dtos/video.dto';
 import {
   Checkbox,
+  Chip,
   FormControlLabel,
   Paper,
   TextField,
@@ -13,6 +14,7 @@ import { videoUploadValidation } from '@/validators/video.validator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useIsMutating } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface VideoUploadFormProps {
   onSubmit: (data: VideoUploadDto) => void;
@@ -25,7 +27,26 @@ function MetaDataSection() {
     register,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext<VideoUploadDto>();
+
+  const [tagInput, setTagInput] = useState('');
+  const tags = watch('tags') || [];
+
+  const handleAddTag = (newTag: string) => {
+    if (newTag && !tags.includes(newTag)) {
+      setValue('tags', [...tags, newTag]);
+      setTagInput('');
+    }
+  };
+
+  const handleDeleteTag = (tagToDelete: string) => {
+    setValue(
+      'tags',
+      tags.filter((tag) => tag !== tagToDelete)
+    );
+  };
+
   return (
     <Paper className="w-full p-4 space-y-4">
       <Typography variant="h6">Meta Data</Typography>
@@ -64,6 +85,41 @@ function MetaDataSection() {
         error={!!errors.duration}
         helperText={errors?.duration?.message}
       />
+
+      <div>
+        <Typography variant="body2" color="text.secondary" className="mb-2">
+          Tags (Optional)
+        </Typography>
+        <div className="flex flex-wrap gap-1 mb-2">
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              onDelete={() => handleDeleteTag(tag)}
+              color="primary"
+              variant="outlined"
+              size="small"
+            />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <TextField
+            label="Add Tag"
+            variant="outlined"
+            size="small"
+            fullWidth
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddTag(tagInput);
+              }
+            }}
+            placeholder="Type and press Enter to add tags"
+          />
+        </div>
+      </div>
     </Paper>
   );
 }
@@ -161,6 +217,8 @@ export default function VideoUploadForm({
       primary_lesson: '',
       theme: '',
       impact: '',
+      tags: defaultValues?.tags || [],
+      slideshow: false,
       ...defaultValues,
     },
   });

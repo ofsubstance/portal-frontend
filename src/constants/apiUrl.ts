@@ -33,6 +33,14 @@ const APIUrl = {
     updatePlaylist: (playlistId: string) => '/playlists/' + playlistId,
     deletePlaylist: (playlistId: string) => '/playlists/' + playlistId,
   },
+
+  comments: {
+    create: () => '/comments',
+    getAll: () => '/comments',
+    getByVideo: (videoId: string) => '/comments/video/' + videoId,
+    getByUser: () => '/comments/user/me',
+    updateStatus: (commentId: string) => '/comments/' + commentId + '/status',
+  },
 };
 
 export default APIUrl;

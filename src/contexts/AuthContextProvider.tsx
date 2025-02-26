@@ -1,9 +1,8 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from 'react';
 
-import { UserDto } from "@/dtos/user.dto";
-import storageService from "../services/storage.service";
-import { useNavigate } from "react-router-dom";
-import useUserActions from "../hooks/useUserAction";
+import { UserDto } from '@/dtos/user.dto';
+import storageService from '../services/storage.service';
+import useUserActions from '../hooks/useUserAction';
 
 interface AuthContextProps {
   authData?: UserDto;
@@ -14,9 +13,9 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({
   authData: undefined,
-  setAuthData: (_data) => {},
+  setAuthData: () => {},
   authenticated: false,
-  setAuthenticated: (_data) => {},
+  setAuthenticated: () => {},
 });
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
@@ -29,26 +28,23 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
   const { data: user } = useCurrentUserQuery(authenticated);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (!authenticated) setAuthData(undefined);
-    else {
+    if (!authenticated) {
+      setAuthData(undefined);
+    } else {
       setAuthData(user ?? storageService.getCurrentUser());
-      authData?.role === "admin"
-        ? navigate("/admin", { replace: true })
-        : navigate("/", { replace: true });
+      // Removed direct navigation - this will be handled by useAuth hook
     }
   }, [authenticated, user]);
 
   useEffect(() => {
-    document.addEventListener("logout", () => {
+    document.addEventListener('logout', () => {
       setAuthenticated(false);
       setAuthData(undefined);
     });
 
     return () => {
-      document.removeEventListener("logout", () => {
+      document.removeEventListener('logout', () => {
         setAuthenticated(false);
         setAuthData(undefined);
       });

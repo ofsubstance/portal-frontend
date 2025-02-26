@@ -1,7 +1,6 @@
-import { UserRole } from "@/constants/enums";
-import { AuthContext } from "@/contexts/AuthContextProvider";
-import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { UserRole } from '@/constants/enums';
+import { useAuth } from '@/hooks/useAuth';
+import { Navigate, useLocation } from 'react-router-dom';
 
 interface AuthGuardProps {
   allowedRoles?: UserRole[];
@@ -12,15 +11,27 @@ export default function AuthGuard({
   allowedRoles = Object.values(UserRole),
   children,
 }: AuthGuardProps) {
-  const { authData } = useContext(AuthContext);
+  const { user, isAuthenticated, saveIntendedPath } = useAuth();
+  const location = useLocation();
 
-  if (!authData) {
+  if (!isAuthenticated) {
+    saveIntendedPath(location.pathname);
     return <Navigate to="/signin" replace />;
   }
 
-  if (!allowedRoles.includes(authData.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  if (user) {
+    // The role is already normalized in the useAuth hook
+    const userRole = user.role as UserRole;
+
+    if (!allowedRoles.includes(userRole)) {
+      // Redirect to appropriate page based on role
+      if (userRole === UserRole.Admin) {
+        return <Navigate to="/admin/dashboard" replace />;
+      } else {
+        return <Navigate to="/" replace />;
+      }
+    }
   }
 
-  return children;
+  return <>{children}</>;
 }
