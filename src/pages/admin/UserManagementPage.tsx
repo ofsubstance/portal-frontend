@@ -1,83 +1,122 @@
-import { Avatar, Chip, Paper, Typography } from '@mui/material';
-
-import {
-  RiEditLine as EditIcon,
-  RiAdminLine as AdminIcon,
-} from 'react-icons/ri';
+import { Chip, Paper, Typography } from '@mui/material';
 import userManagementImg from '@/assets/userManagement.svg';
-import { useNavigate } from 'react-router-dom';
-import {
-  MaterialReactTable,
-  MRT_ActionMenuItem,
-  type MRT_ColumnDef,
-} from 'material-react-table';
-import { userList } from '@/data/dummyData';
+import { MaterialReactTable, type MRT_ColumnDef } from 'material-react-table';
+import { adminUsers, AdminUser } from '@/data/adminUserData';
+import { format } from 'date-fns';
 
-type Playlist = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  email: string;
-  contactNumber: string;
-  gender: string;
-  createdAt: string;
-  updatedAt: string;
-  role: string;
-};
-
-const playlistColumns: MRT_ColumnDef<Playlist>[] = [
+const userColumns: MRT_ColumnDef<AdminUser>[] = [
   {
-    accessorKey: 'fullName',
-    header: 'Full Name',
-
+    accessorKey: 'index',
+    header: '#',
+    size: 60,
+    Cell: ({ row }) => <span>{row.index + 1}</span>,
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
+  {
+    accessorKey: 'firstName',
+    header: 'First Name',
+  },
+  {
+    accessorKey: 'lastName',
+    header: 'Last Name',
+  },
+  {
+    accessorKey: 'businessEmail',
+    header: 'Business Email',
+  },
+  {
+    accessorKey: 'mobilePhone',
+    header: 'Mobile Phone',
+  },
+  {
+    accessorKey: 'businessName',
+    header: 'Business Name',
+  },
+  {
+    accessorKey: 'website',
+    header: 'Website',
     Cell: ({ row }) => (
-      <div className="flex items-center gap-3">
-        <Avatar src={row.original.avatar} variant="rounded" />
-        <Typography variant="body2">
-          {row.original.firstName} {row.original.lastName}
-        </Typography>
-      </div>
+      <a
+        href={row.original.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {row.original.website}
+      </a>
     ),
   },
   {
-    accessorKey: 'id',
-    header: 'ID',
+    accessorKey: 'stateRegion',
+    header: 'State/Region',
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
+    accessorKey: 'country',
+    header: 'Country',
   },
   {
-    accessorKey: 'contactNumber',
-    header: 'Contact Number',
+    accessorKey: 'smsOptIn',
+    header: 'SMS Opt In',
+    Cell: ({ row }) => (
+      <Chip
+        label={row.original.smsOptIn ? 'Yes' : 'No'}
+        color={row.original.smsOptIn ? 'success' : 'default'}
+        variant="outlined"
+        size="small"
+      />
+    ),
   },
   {
-    accessorKey: 'role',
-    header: 'Role',
-    Cell: ({ row }) => {
-      const role =
-        row.original.role === 'Admin'
-          ? 'Admin'
-          : row.original.role === 'User'
-          ? 'User'
-          : 'Guest';
-      return (
-        <Chip
-          label={role}
-          variant="outlined"
-          color={
-            role === 'Admin' ? 'error' : role === 'User' ? 'primary' : 'default'
-          }
-          size="small"
-        />
-      );
-    },
+    accessorKey: 'emailOptIn',
+    header: 'Email Opt In',
+    Cell: ({ row }) => (
+      <Chip
+        label={row.original.emailOptIn ? 'Yes' : 'No'}
+        color={row.original.emailOptIn ? 'success' : 'default'}
+        variant="outlined"
+        size="small"
+      />
+    ),
+  },
+  {
+    accessorKey: 'usageIntent',
+    header: 'Usage Of Substance',
+  },
+  {
+    accessorKey: 'latestLoginDate',
+    header: 'Last Login Date',
+    Cell: ({ row }) => (
+      <span>{format(row.original.latestLoginDate, 'MMM dd, yyyy')}</span>
+    ),
+  },
+  {
+    accessorKey: 'accountCreationDate',
+    header: 'Account Creation Date',
+    Cell: ({ row }) => (
+      <span>{format(row.original.accountCreationDate, 'MMM dd, yyyy')}</span>
+    ),
+  },
+  {
+    accessorKey: 'contentEngagements30Days',
+    header: 'Content Engagements (30 Days)',
+    Cell: ({ row }) => (
+      <span className="font-medium">
+        {row.original.contentEngagements30Days}
+      </span>
+    ),
+  },
+  {
+    accessorKey: 'linkShares30Days',
+    header: 'Link Shares (30 Days)',
+    Cell: ({ row }) => (
+      <span className="font-medium">{row.original.linkShares30Days}</span>
+    ),
   },
 ];
 
 function UserManagementPage() {
-  const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-5">
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
@@ -99,32 +138,28 @@ function UserManagementPage() {
       </Paper>
 
       <MaterialReactTable
-        data={userList}
-        columns={playlistColumns}
-        enableFullScreenToggle={false}
-        enableRowActions
-        positionActionsColumn="last"
-        muiTableBodyRowProps={({ row }) => ({
-          onClick: () => navigate(`/admin/profile/${row.original.id}`),
-        })}
-        renderRowActionMenuItems={({ row, table }) => [
-          <MRT_ActionMenuItem //or just use a normal MUI MenuItem component
-            icon={<EditIcon />}
-            key="edit"
-            label="Edit User"
-            onClick={() => console.info('Edit')}
-            table={table}
-          />,
-          <MRT_ActionMenuItem
-            icon={<AdminIcon />}
-            key="makeAdmin"
-            label={
-              row.original.role === 'admin' ? 'Remove Admin' : 'Make Admin'
-            }
-            onClick={() => console.info('Delete')}
-            table={table}
-          />,
-        ]}
+        data={adminUsers}
+        columns={userColumns}
+        enableFullScreenToggle={true}
+        enableColumnResizing
+        enablePinning
+        enableColumnFilters
+        enableGlobalFilter
+        enablePagination
+        enableStickyHeader
+        muiTableContainerProps={{ sx: { maxHeight: '800px' } }}
+        initialState={{
+          density: 'compact',
+          columnVisibility: {
+            website: false,
+            stateRegion: false,
+            country: false,
+          },
+          pagination: {
+            pageSize: 10,
+            pageIndex: 0,
+          },
+        }}
       />
     </div>
   );

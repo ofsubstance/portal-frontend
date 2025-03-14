@@ -2,6 +2,7 @@ import {
   AppBar,
   Box,
   Button,
+  Collapse,
   Drawer,
   IconButton,
   List,
@@ -22,15 +23,40 @@ import {
   RiFolderVideoLine as VideoManagementIcon,
   RiChat1Line as CommentManagementIcon,
   RiShareLine as ShareLinkIcon,
+  RiArrowDownSLine as ExpandMoreIcon,
+  RiArrowRightSLine as ExpandLessIcon,
+  RiLineChartLine as PerformanceIcon,
+  RiUserHeartLine as EngagementIcon,
+  RiBarChartBoxLine as MacroMetricsIcon,
+  RiBarChartGroupedLine as ContentMetricsIcon,
 } from 'react-icons/ri';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { IconType } from 'react-icons';
 
 import AccountMenu from '@/components/common/menu/AccountMenu';
 import { AuthContext } from '@/contexts/AuthContextProvider';
 import useAuthAction from '@/hooks/useAuthAction';
 import AppLogo from '../logo/AppLogo';
 
-const navItems = (userId?: string) => [
+interface SubNavItem {
+  link: string;
+  text: string;
+  icon: IconType;
+}
+
+interface NavItem {
+  link?: string;
+  text: string;
+  icon: IconType;
+  subItems?: SubNavItem[];
+}
+
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
+const navItems = (userId?: string): NavGroup[] => [
   {
     group: 'Dashboard',
     items: [
@@ -39,7 +65,32 @@ const navItems = (userId?: string) => [
         text: 'Overview',
         icon: OverviewIcon,
       },
-      { link: '/admin/analytics', text: 'Analytics', icon: AnalyticsIcon },
+      {
+        text: 'Analytics',
+        icon: AnalyticsIcon,
+        subItems: [
+          {
+            link: '/admin/analytics/performance',
+            text: 'App Performance Metrics',
+            icon: PerformanceIcon,
+          },
+          {
+            link: '/admin/analytics/engagement',
+            text: 'User Engagement Metrics',
+            icon: EngagementIcon,
+          },
+          {
+            link: '/admin/analytics/macro-content',
+            text: 'Macro Content Engagement Metrics',
+            icon: MacroMetricsIcon,
+          },
+          {
+            link: '/admin/analytics/content-performance',
+            text: 'Content Performance Metrics',
+            icon: ContentMetricsIcon,
+          },
+        ],
+      },
     ],
   },
   {
@@ -102,12 +153,28 @@ function DrawerContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
+    Analytics: false,
+  });
 
-  const isActiveLink = (itemLink: string) => {
+  const isActiveLink = (itemLink?: string) => {
+    if (!itemLink) return false;
     return (
       location.pathname === itemLink ||
       (itemLink !== '/admin' && location.pathname.startsWith(itemLink))
     );
+  };
+
+  const isActiveParent = (item: NavItem) => {
+    if (!item.subItems) return false;
+    return item.subItems.some((subItem) => isActiveLink(subItem.link));
+  };
+
+  const handleToggleExpand = (itemText: string) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [itemText]: !prev[itemText],
+    }));
   };
 
   const handleLogout = () => {
@@ -138,39 +205,118 @@ function DrawerContent() {
           </Typography>
           <List dense component="nav">
             {group.items.map((item) => (
-              <ListItem key={item.text} onClick={() => navigate(item.link)}>
-                <ListItemButton
-                  selected={isActiveLink(item.link)}
-                  sx={{
-                    borderRadius: 1,
-                    paddingX: 2,
-                    paddingY: 1.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
+              <div key={item.text}>
+                <ListItem
+                  disablePadding
+                  onClick={() => {
+                    if (item.subItems) {
+                      handleToggleExpand(item.text);
+                    } else if (item.link) {
+                      navigate(item.link);
+                    }
                   }}
                 >
-                  <item.icon
-                    size={20}
-                    color={
-                      isActiveLink(item.link)
-                        ? theme.palette.primary.main
-                        : theme.palette.text.primary
+                  <ListItemButton
+                    selected={
+                      item.link ? isActiveLink(item.link) : isActiveParent(item)
                     }
-                  />
-                  <Typography
-                    variant="body2"
-                    fontWeight={500}
-                    color={
-                      isActiveLink(item.link)
-                        ? theme.palette.primary.main
-                        : theme.palette.text.primary
-                    }
+                    sx={{
+                      borderRadius: 1,
+                      paddingX: 2,
+                      paddingY: 1.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                    }}
                   >
-                    {item.text}
-                  </Typography>
-                </ListItemButton>
-              </ListItem>
+                    <item.icon
+                      size={20}
+                      color={
+                        (
+                          item.link
+                            ? isActiveLink(item.link)
+                            : isActiveParent(item)
+                        )
+                          ? theme.palette.primary.main
+                          : theme.palette.text.primary
+                      }
+                    />
+                    <Typography
+                      variant="body2"
+                      fontWeight={500}
+                      color={
+                        (
+                          item.link
+                            ? isActiveLink(item.link)
+                            : isActiveParent(item)
+                        )
+                          ? theme.palette.primary.main
+                          : theme.palette.text.primary
+                      }
+                      sx={{ flexGrow: 1 }}
+                    >
+                      {item.text}
+                    </Typography>
+                    {item.subItems &&
+                      (expandedItems[item.text] ? (
+                        <ExpandMoreIcon size={18} />
+                      ) : (
+                        <ExpandLessIcon size={18} />
+                      ))}
+                  </ListItemButton>
+                </ListItem>
+
+                {item.subItems && (
+                  <Collapse
+                    in={expandedItems[item.text]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List component="div" disablePadding>
+                      {item.subItems.map((subItem) => (
+                        <ListItem
+                          key={subItem.text}
+                          disablePadding
+                          onClick={() => navigate(subItem.link)}
+                        >
+                          <ListItemButton
+                            selected={isActiveLink(subItem.link)}
+                            sx={{
+                              pl: 6,
+                              py: 1,
+                              borderRadius: 1,
+                              ml: 2,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2,
+                            }}
+                          >
+                            <subItem.icon
+                              size={18}
+                              color={
+                                isActiveLink(subItem.link)
+                                  ? theme.palette.primary.main
+                                  : theme.palette.text.secondary
+                              }
+                            />
+                            <Typography
+                              variant="body2"
+                              fontWeight={400}
+                              color={
+                                isActiveLink(subItem.link)
+                                  ? theme.palette.primary.main
+                                  : theme.palette.text.secondary
+                              }
+                            >
+                              {subItem.text}
+                            </Typography>
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+              </div>
             ))}
           </List>
         </div>
@@ -216,7 +362,7 @@ export default function AdminLayout({
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
           ml: { sm: `${drawerWidth}px` },
           backgroundColor: 'rgba(255, 255, 255, 0)',
           boxShadow: 'none',

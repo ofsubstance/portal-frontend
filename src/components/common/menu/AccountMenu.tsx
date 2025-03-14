@@ -14,6 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import {
   RiLogoutCircleRLine as LogoutIcon,
   RiDashboardLine as DashboardIcon,
+  RiUser3Line as ProfileIcon,
+  RiSettings4Line as SettingsIcon,
+  RiQuestionLine as GuideIcon,
 } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import UserGuide from '../../user/guide/UserGuide';
@@ -144,12 +147,27 @@ export default function AccountMenu() {
           </MenuItem>
         )}
 
-        <MenuItem onClick={handleProfileClick}>Profile & Account</MenuItem>
+        <MenuItem onClick={handleProfileClick}>
+          <ListItemIcon>
+            <ProfileIcon size={18} className="text-slate-600" />
+          </ListItemIcon>
+          Profile & Account
+        </MenuItem>
+
         <MenuItem onClick={handleAccountSettingsClick}>
+          <ListItemIcon>
+            <SettingsIcon size={18} className="text-slate-600" />
+          </ListItemIcon>
           Account Settings
         </MenuItem>
+
         {user?.role === UserRole.User && (
-          <MenuItem onClick={handleUserGuideClick}>User Guide</MenuItem>
+          <MenuItem onClick={handleUserGuideClick}>
+            <ListItemIcon>
+              <GuideIcon size={18} className="text-slate-600" />
+            </ListItemIcon>
+            User Guide
+          </MenuItem>
         )}
 
         <Divider />

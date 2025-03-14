@@ -53,6 +53,58 @@ const routes = createBrowserRouter([
             lazy: async () => ({
               Component: (await import('./pages/admin/AnalyticsPage')).default,
             }),
+            children: [
+              {
+                index: true,
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      './pages/admin/analytics/PerformanceMetricsPage'
+                    )
+                  ).default,
+                }),
+              },
+              {
+                path: 'performance',
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      './pages/admin/analytics/PerformanceMetricsPage'
+                    )
+                  ).default,
+                }),
+              },
+              {
+                path: 'engagement',
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      './pages/admin/analytics/EngagementMetricsPage'
+                    )
+                  ).default,
+                }),
+              },
+              {
+                path: 'macro-content',
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      './pages/admin/analytics/MacroContentMetricsPage'
+                    )
+                  ).default,
+                }),
+              },
+              {
+                path: 'content-performance',
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      './pages/admin/analytics/ContentPerformanceMetricsPage'
+                    )
+                  ).default,
+                }),
+              },
+            ],
           },
           {
             path: 'sharelink-analytics',

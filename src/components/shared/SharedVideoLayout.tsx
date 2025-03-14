@@ -33,6 +33,7 @@ export default function SharedVideoLayout({
         sx={{
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           bgcolor: 'black',
+          width: '100%',
         }}
       >
         <Toolbar>

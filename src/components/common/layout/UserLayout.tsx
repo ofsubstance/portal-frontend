@@ -227,7 +227,7 @@ export default function UserLayout({
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { xs: '100%' },
           ml: { sm: `${drawerWidth}px` },
           bgcolor: 'black',
           color: 'white',
