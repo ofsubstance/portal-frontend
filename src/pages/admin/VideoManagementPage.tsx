@@ -77,7 +77,7 @@ function VideoManagementPage() {
   );
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: React.SetStateAction<number>
   ) => {
     setCurrentPage(value);
@@ -166,7 +166,7 @@ function VideoManagementPage() {
           {/* Sorting Tabs */}
           <Tabs
             value={sortBy}
-            onChange={(e, newValue) => setSortBy(newValue)}
+            onChange={(_e, newValue) => setSortBy(newValue)}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"

@@ -1,7 +1,5 @@
 import { Pagination, Typography } from '@mui/material';
 
-import VideoListItem from '@/components/videoItem/VideoListItem';
-
 function BookmarkedVideoSection() {
   return (
     <div className="flex flex-col gap-6">

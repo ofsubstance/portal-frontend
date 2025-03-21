@@ -1,7 +1,5 @@
 import { Grid, Pagination, Typography } from '@mui/material';
 
-import VideoGridItem from '@/components/videoItem/VideoGridItem';
-
 function WatchedVideoSection() {
   return (
     <div className="flex flex-col gap-6">

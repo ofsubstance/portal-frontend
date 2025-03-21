@@ -141,34 +141,6 @@ const routes = createBrowserRouter([
             }),
           },
           {
-            path: 'playlist-management',
-            lazy: async () => ({
-              Component: (await import('./pages/admin/PlaylistManagementPage'))
-                .default,
-            }),
-          },
-          {
-            path: 'playlist-management/create',
-            lazy: async () => ({
-              Component: (await import('./pages/admin/PlaylistCreatePage'))
-                .default,
-            }),
-          },
-          {
-            path: 'playlist-management/edit/:playlistId',
-            lazy: async () => ({
-              Component: (await import('./pages/admin/PlaylistEditPage'))
-                .default,
-            }),
-          },
-          {
-            path: 'playlist-management/:playlistId',
-            lazy: async () => ({
-              Component: (await import('./pages/admin/PlaylistDetailsPage'))
-                .default,
-            }),
-          },
-          {
             path: 'comment-management',
             lazy: async () => ({
               Component: (await import('./pages/admin/CommentManagementPage'))
@@ -180,14 +152,6 @@ const routes = createBrowserRouter([
             lazy: async () => ({
               Component: (await import('./pages/admin/UserManagementPage'))
                 .default,
-            }),
-          },
-          {
-            path: 'payments-subscriptions',
-            lazy: async () => ({
-              Component: (
-                await import('./pages/admin/PaymentsSubscriptionsPage')
-              ).default,
             }),
           },
         ],

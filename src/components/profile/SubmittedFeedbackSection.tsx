@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 
 import { RiArrowDownSLine as ExpandMoreIcon } from 'react-icons/ri';
-import VideoListItem from '@/components/videoItem/VideoListItem';
 import { useState } from 'react';
 
 function SubmittedFeedbackSection() {

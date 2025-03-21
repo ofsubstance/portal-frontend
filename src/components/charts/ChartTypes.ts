@@ -130,7 +130,7 @@ export const generateChartOptions = (chartData: ChartData): EChartsOption => {
     xAxis: xAxis
       ? {
           type: xAxis.type || 'category',
-          data: xAxis.data,
+          ...(xAxis.data ? { data: xAxis.data } : {}),
           name: xAxis.name,
           nameLocation: 'middle',
           nameGap: 30,

@@ -27,7 +27,7 @@ export default function UserLandingPage() {
   const [videoList, setVideoList] = useState<VideoDto[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState<boolean>(!isMobile);
+  const [showFilters] = useState<boolean>(!isMobile);
 
   useEffect(() => {
     setVideoList(videos);
