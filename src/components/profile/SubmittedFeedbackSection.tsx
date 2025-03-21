@@ -6,11 +6,11 @@ import {
   Pagination,
   Stack,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
-import { RiArrowDownSLine as ExpandMoreIcon } from "react-icons/ri";
-import VideoListItem from "@/components/videoItem/VideoListItem";
-import { useState } from "react";
+import { RiArrowDownSLine as ExpandMoreIcon } from 'react-icons/ri';
+import VideoListItem from '@/components/videoItem/VideoListItem';
+import { useState } from 'react';
 
 function SubmittedFeedbackSection() {
   const [expanded, setExpanded] = useState<number | false>(false);
@@ -29,32 +29,32 @@ function SubmittedFeedbackSection() {
       <Stack spacing={2} divider={<Divider />} flex={2}>
         {Array.from(Array(12)).map((_, index) => (
           <div key={index} className="space-y-2">
-            <VideoListItem />
+            {/* <VideoListItem /> */}
 
             <Accordion
               expanded={expanded === index}
               onChange={handleChange(index)}
               disableGutters
               sx={{
-                "&::before": {
-                  display: "none",
+                '&::before': {
+                  display: 'none',
                 },
               }}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon size={24} />}
                 sx={{
-                  backgroundColor: "rgba(0, 0, 0, .03)",
+                  backgroundColor: 'rgba(0, 0, 0, .03)',
                 }}
               >
                 <Stack
-                  direction={{ xs: "column", sm: "row" }}
+                  direction={{ xs: 'column', sm: 'row' }}
                   spacing={2}
-                  width={"100%"}
+                  width={'100%'}
                 >
                   <Typography
                     fontWeight={600}
-                    sx={{ width: "33%", flexShrink: 0 }}
+                    sx={{ width: '33%', flexShrink: 0 }}
                   >
                     Feedback
                   </Typography>
@@ -78,8 +78,8 @@ function SubmittedFeedbackSection() {
         shape="rounded"
         color="primary"
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
           py: 2,
         }}
       />

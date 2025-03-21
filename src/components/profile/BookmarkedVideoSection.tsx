@@ -1,6 +1,6 @@
-import { Pagination, Typography } from "@mui/material";
+import { Pagination, Typography } from '@mui/material';
 
-import VideoListItem from "@/components/videoItem/VideoListItem";
+import VideoListItem from '@/components/videoItem/VideoListItem';
 
 function BookmarkedVideoSection() {
   return (
@@ -9,9 +9,9 @@ function BookmarkedVideoSection() {
         Bookmarked Videos
       </Typography>
 
-      {Array.from(Array(12)).map((_, index) => (
+      {/* {Array.from(Array(12)).map((_, index) => (
         <VideoListItem key={index} />
-      ))}
+      ))} */}
 
       <Pagination
         count={10}
@@ -19,8 +19,8 @@ function BookmarkedVideoSection() {
         shape="rounded"
         color="primary"
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
           py: 2,
         }}
       />

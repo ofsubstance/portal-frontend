@@ -1,12 +1,12 @@
 import {
   RiCalendar2Line as CalendarIcon,
   RiPlayFill as PlayIcon,
-} from "react-icons/ri";
-import { Chip, Theme, Typography, useMediaQuery } from "@mui/material";
+} from 'react-icons/ri';
+import { Chip, Theme, Typography, useMediaQuery } from '@mui/material';
 
-import { VideoDto } from "@/dtos/video.dto";
-import VideoGridItem from "./VideoGridItem";
-import dayjs from "dayjs";
+import { VideoDto } from '@/dtos/video.dto';
+import VideoGridItem from './VideoGridItem';
+import dayjs from 'dayjs';
 
 interface VideoListItemProps {
   data: VideoDto;
@@ -14,7 +14,7 @@ interface VideoListItemProps {
 
 function VideoListItem({ data }: VideoListItemProps) {
   const smallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("md")
+    theme.breakpoints.down('md')
   );
 
   if (smallScreen) {
@@ -40,7 +40,7 @@ function VideoListItem({ data }: VideoListItemProps) {
         <Chip
           size="small"
           className="absolute bottom-2 right-2"
-          sx={{ backgroundColor: "rgba(0, 0, 0, 0.6)", color: "white" }}
+          sx={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white' }}
           label={`${data.duration} min`}
         />
       </div>
@@ -56,7 +56,7 @@ function VideoListItem({ data }: VideoListItemProps) {
 
         <Typography variant="subtitle2" className="inline-flex gap-2">
           <CalendarIcon size={20} />
-          {dayjs(data.createdAt).format("MMMM DD, YYYY")}
+          {dayjs(data.createdAt).format('MMMM DD, YYYY')}
         </Typography>
       </div>
     </div>

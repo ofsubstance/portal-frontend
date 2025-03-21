@@ -1,6 +1,7 @@
 import { getRedirectPath } from '@/utils/authRedirect';
 import { useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContextProvider';
 
 interface AuthContextType {
   isLoading: boolean;

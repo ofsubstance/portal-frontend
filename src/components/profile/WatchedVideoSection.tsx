@@ -1,6 +1,6 @@
-import { Grid, Pagination, Typography } from "@mui/material";
+import { Grid, Pagination, Typography } from '@mui/material';
 
-import VideoGridItem from "@/components/videoItem/VideoGridItem";
+import VideoGridItem from '@/components/videoItem/VideoGridItem';
 
 function WatchedVideoSection() {
   return (
@@ -15,11 +15,11 @@ function WatchedVideoSection() {
         columnSpacing={3}
         columns={{ md: 2, xs: 1 }}
       >
-        {Array.from(Array(12)).map((_, index) => (
+        {/* {Array.from(Array(12)).map((_, index) => (
           <Grid item xs={1} key={index}>
             <VideoGridItem />
           </Grid>
-        ))}
+        ))} */}
       </Grid>
 
       <Pagination
@@ -28,8 +28,8 @@ function WatchedVideoSection() {
         shape="rounded"
         color="primary"
         sx={{
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
           py: 2,
         }}
       />

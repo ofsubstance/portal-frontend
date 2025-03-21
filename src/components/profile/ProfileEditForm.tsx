@@ -1,4 +1,4 @@
-import { UserDto, UserUpdateDto } from "@/dtos/user.dto";
+import { UserDto, UserUpdateDto } from '@/dtos/user.dto';
 import {
   Avatar,
   Button,
@@ -7,13 +7,13 @@ import {
   Paper,
   TextField,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
-import { userUpdateValidation } from "@/validators/user.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { DatePicker } from "@mui/x-date-pickers";
-import { useForm } from "react-hook-form";
-import { RiCameraLine as CameraIcon } from "react-icons/ri";
+import { userUpdateValidation } from '@/validators/user.validator';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { DatePicker } from '@mui/x-date-pickers';
+import { useForm } from 'react-hook-form';
+import { RiCameraLine as CameraIcon } from 'react-icons/ri';
 
 interface ProfileEditFormProps {
   defaultValues?: UserDto;
@@ -28,7 +28,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
   } = useForm<UserUpdateDto>({
     resolver: zodResolver(userUpdateValidation),
     defaultValues: {
-      name: defaultValues?.name,
+      name: defaultValues?.firstname,
       email: defaultValues?.email,
       phone: defaultValues?.phone,
       birthDate: defaultValues?.birthDate,
@@ -63,7 +63,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
               color="primary"
               size="small"
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 bottom: 0,
                 right: 0,
               }}
@@ -99,7 +99,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TextField
-            {...register("name")}
+            {...register('name')}
             label="Name"
             variant="outlined"
             fullWidth
@@ -108,7 +108,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
             helperText={errors?.name?.message}
           />
           <TextField
-            {...register("email")}
+            {...register('email')}
             label="Email"
             variant="outlined"
             fullWidth
@@ -116,7 +116,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
             helperText={errors?.email?.message}
           />
           <TextField
-            {...register("phone")}
+            {...register('phone')}
             label="Phone"
             variant="outlined"
             fullWidth
@@ -124,12 +124,12 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
             helperText={errors?.phone?.message}
           />
           <DatePicker
-            {...register("birthDate")}
+            {...register('birthDate')}
             label="Date of Birth"
-            onChange={(date: Date | null) => setValue("birthDate", date as any)}
+            onChange={(date: Date | null) => setValue('birthDate', date as any)}
           />
           <TextField
-            {...register("gender")}
+            {...register('gender')}
             label="Gender"
             variant="outlined"
             fullWidth
@@ -137,7 +137,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
             helperText={errors?.gender?.message}
           />
           <TextField
-            {...register("language")}
+            {...register('language')}
             label="Language"
             variant="outlined"
             fullWidth
@@ -145,7 +145,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
             helperText={errors?.language?.message}
           />
           <TextField
-            {...register("location")}
+            {...register('location')}
             label="Address"
             variant="outlined"
             fullWidth
@@ -154,7 +154,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
           />
 
           <TextField
-            {...register("bio")}
+            {...register('bio')}
             label="About you / Bio"
             variant="outlined"
             fullWidth
@@ -172,7 +172,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
           size="large"
           fullWidth
           sx={{
-            display: { xs: "block", md: "none" },
+            display: { xs: 'block', md: 'none' },
           }}
         >
           Cancel
@@ -184,7 +184,7 @@ function ProfileEditForm({ defaultValues }: ProfileEditFormProps) {
           size="large"
           fullWidth
           sx={{
-            display: { xs: "block", md: "none" },
+            display: { xs: 'block', md: 'none' },
           }}
         >
           Save
