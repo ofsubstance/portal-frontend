@@ -1,7 +1,7 @@
 import { PlaylistTag } from './enums';
 
 const APIUrl = {
-  base: import.meta.env.VITE_API || 'http://localhost:5000',
+  base: import.meta.env.VITE_API || 'https://of-substance-backend.onrender.com',
   auth: {
     signin: () => '/auth/login',
     signup: () => '/auth/signup',
