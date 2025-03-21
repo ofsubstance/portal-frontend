@@ -1,196 +1,127 @@
-import { Paper, Typography, Grid, Box } from '@mui/material';
-import { RiLineChartLine as PerformanceIcon } from 'react-icons/ri';
+import React, { useState } from 'react';
+import { Box, Grid, Typography, Paper, Stack } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { ChartCard } from '../../../components/charts';
+import MetricCard from '../../../components/metrics/MetricCard';
+import {
+  mauData,
+  dauData,
+  userGrowthRateData,
+  userEngagementRateData,
+  userRetentionRateData,
+  avgSessionDurationData,
+  summaryMetrics,
+} from '../../../data/appPerformanceData';
 
-// Metric Card Component
-interface MetricCardProps {
-  title: string;
-  value: string;
-  unit: string;
-  change: number;
-  icon: React.ComponentType<{ size: number; color: string }>;
-}
+const AppPerformanceMetrics: React.FC = () => {
+  const [startDate, setStartDate] = useState<Date | null>(
+    new Date(new Date().setMonth(new Date().getMonth() - 1))
+  );
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
 
-function MetricCard({
-  title,
-  value,
-  unit,
-  change,
-  icon: Icon,
-}: MetricCardProps) {
-  const isPositive = change >= 0;
+  // In a real app, this would trigger API calls to fetch data for the selected date range
+  const handleDateChange = () => {
+    console.log('Date range changed:', { startDate, endDate });
+    // Here you would call APIs to fetch data for the selected date range
+  };
 
   return (
-    <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
-      <Box display="flex" alignItems="center" mb={2}>
+    <Box sx={{ p: 3 }}>
+      <Paper sx={{ p: 3, mb: 4 }}>
         <Box
           sx={{
-            backgroundColor: 'primary.light',
-            borderRadius: '50%',
-            width: 40,
-            height: 40,
             display: 'flex',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            justifyContent: 'center',
-            mr: 2,
+            mb: 2,
           }}
         >
-          <Icon size={20} color="#fff" />
+          <Typography variant="h4">App Performance Metrics</Typography>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Stack direction="row" spacing={2}>
+              <DatePicker
+                label="Start Date"
+                value={startDate}
+                onChange={(newValue) => {
+                  setStartDate(newValue);
+                  handleDateChange();
+                }}
+              />
+              <DatePicker
+                label="End Date"
+                value={endDate}
+                onChange={(newValue) => {
+                  setEndDate(newValue);
+                  handleDateChange();
+                }}
+              />
+            </Stack>
+          </LocalizationProvider>
         </Box>
-        <Typography variant="h6" fontWeight={500}>
-          {title}
+        <Typography variant="body1">
+          View key performance metrics for your application. Select a date range
+          to filter the data.
         </Typography>
-      </Box>
-
-      <Typography variant="h4" fontWeight={600} mb={1}>
-        {value}{' '}
-        <Typography component="span" variant="body2" color="text.secondary">
-          {unit}
-        </Typography>
-      </Typography>
-
-      <Typography
-        variant="body2"
-        color={isPositive ? 'success.main' : 'error.main'}
-        display="flex"
-        alignItems="center"
-      >
-        {isPositive ? '↑' : '↓'} {Math.abs(change)}% from last month
-      </Typography>
-    </Paper>
-  );
-}
-
-// Chart Component Placeholder
-function ChartPlaceholder({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
-      <Typography variant="h6" fontWeight={500} mb={1}>
-        {title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mb={2}>
-        {description}
-      </Typography>
-      <Box
-        sx={{
-          height: 250,
-          backgroundColor: 'rgba(0,0,0,0.03)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 1,
-        }}
-      >
-        <Typography color="text.secondary">
-          Chart visualization would appear here
-        </Typography>
-      </Box>
-    </Paper>
-  );
-}
-
-function PerformanceMetricsPage() {
-  return (
-    <div className="flex flex-col gap-5">
-      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
-        <div className="space-y-4">
-          <Typography variant="h5" fontWeight={600}>
-            App Performance Metrics
-          </Typography>
-
-          <Typography variant="subtitle1">
-            Monitor and analyze application performance metrics
-          </Typography>
-        </div>
-        <Box
-          sx={{
-            backgroundColor: 'primary.light',
-            borderRadius: '50%',
-            width: 60,
-            height: 60,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <PerformanceIcon size={30} color="#fff" />
-        </Box>
       </Paper>
 
-      {/* Key Metrics */}
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Avg. Response Time"
-            value="380"
-            unit="ms"
-            change={-5.2}
-            icon={PerformanceIcon}
-          />
+      {/* Summary Metrics */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {summaryMetrics.map((metric, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={2} key={index}>
+            <MetricCard
+              title={metric.title}
+              value={metric.value}
+              change={metric.change}
+              changeType={
+                metric.changeType as 'positive' | 'negative' | 'neutral'
+              }
+            />
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* User Activity Charts */}
+      <Typography variant="h5" gutterBottom sx={{ mt: 4, mb: 2 }}>
+        User Activity
+      </Typography>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <ChartCard chartData={mauData} height={300} />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Error Rate"
-            value="0.9"
-            unit="%"
-            change={-25}
-            icon={PerformanceIcon}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="API Calls"
-            value="17.5k"
-            unit="/day"
-            change={8.0}
-            icon={PerformanceIcon}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Avg. Load Time"
-            value="1.8"
-            unit="sec"
-            change={-5.3}
-            icon={PerformanceIcon}
-          />
+        <Grid item xs={12} md={6}>
+          <ChartCard chartData={dauData} height={300} />
         </Grid>
       </Grid>
 
-      {/* Charts */}
+      {/* User Growth and Engagement Charts */}
+      <Typography variant="h5" gutterBottom sx={{ mt: 4, mb: 2 }}>
+        User Growth & Engagement
+      </Typography>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <ChartCard chartData={userGrowthRateData} height={300} />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <ChartCard chartData={userEngagementRateData} height={300} />
+        </Grid>
+      </Grid>
+
+      {/* User Retention and Session Duration Charts */}
+      <Typography variant="h5" gutterBottom sx={{ mt: 4, mb: 2 }}>
+        User Retention & Session Duration
+      </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Server Response Time Trend"
-            description="Average server response time in milliseconds over the past 6 months"
-          />
+          <ChartCard chartData={userRetentionRateData} height={300} />
         </Grid>
         <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Error Rate Trend"
-            description="Application error rate percentage over the past 6 months"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="API Calls Volume"
-            description="Daily API call volume over the past 6 months"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Page Load Time"
-            description="Average page load time in seconds over the past 6 months"
-          />
+          <ChartCard chartData={avgSessionDurationData} height={300} />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
-}
+};
 
-export default PerformanceMetricsPage;
+export default AppPerformanceMetrics;

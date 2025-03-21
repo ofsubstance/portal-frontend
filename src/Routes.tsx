@@ -59,7 +59,7 @@ const routes = createBrowserRouter([
                 lazy: async () => ({
                   Component: (
                     await import(
-                      './pages/admin/analytics/PerformanceMetricsPage'
+                      './pages/admin/analytics/AppPerformanceMetrics'
                     )
                   ).default,
                 }),
@@ -69,7 +69,7 @@ const routes = createBrowserRouter([
                 lazy: async () => ({
                   Component: (
                     await import(
-                      './pages/admin/analytics/PerformanceMetricsPage'
+                      './pages/admin/analytics/AppPerformanceMetrics'
                     )
                   ).default,
                 }),

@@ -4,6 +4,11 @@ import {
   IconButton,
   Typography,
   Box,
+  FormControlLabel,
+  Checkbox,
+  Link,
+  FormHelperText,
+  FormControl,
 } from '@mui/material';
 import { SignupReq } from '@/dtos/auth.dto';
 import { useFormContext } from 'react-hook-form';
@@ -82,6 +87,45 @@ export default function SignupStep2() {
           ),
         }}
       />
+
+      <div className="mt-4">
+        <FormControl error={!!errors.emailTermsConsent} fullWidth>
+          <FormControlLabel
+            control={
+              <Checkbox {...register('emailTermsConsent')} color="primary" />
+            }
+            label={
+              <Typography variant="body2">
+                I agree to the{' '}
+                <Link href="/terms" target="_blank">
+                  Terms of Use
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" target="_blank">
+                  Privacy Policy
+                </Link>
+              </Typography>
+            }
+          />
+          {errors.emailTermsConsent && (
+            <FormHelperText error>
+              {errors.emailTermsConsent.message}
+            </FormHelperText>
+          )}
+        </FormControl>
+      </div>
+
+      <div>
+        <FormControlLabel
+          control={<Checkbox {...register('smsConsent')} color="primary" />}
+          label={
+            <Typography variant="body2">
+              I agree to receive SMS notifications about my account, updates,
+              and promotions
+            </Typography>
+          }
+        />
+      </div>
     </Box>
   );
 }

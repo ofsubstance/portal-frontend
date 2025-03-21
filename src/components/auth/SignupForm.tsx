@@ -39,7 +39,10 @@ export const SignupForm = ({
 
   const { handleSubmit, trigger } = formMethods;
 
-  const handleNext = async () => {
+  const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent any default form submission
+    e.preventDefault();
+
     let isStepValid = false;
 
     switch (activeStep) {
@@ -47,7 +50,7 @@ export const SignupForm = ({
         isStepValid = await trigger(['profile.utilizationPurpose']);
         break;
       case 1:
-        isStepValid = await trigger(['email', 'password']);
+        isStepValid = await trigger(['email', 'password', 'emailTermsConsent']);
         break;
       case 2:
         isStepValid = await trigger([
@@ -70,16 +73,17 @@ export const SignupForm = ({
 
     // Proceed to the next step only if the current step is valid
     if (isStepValid) {
-      if (activeStep < SIGNUP_STEPS.length - 1) {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      } else {
-        // Trigger form submission for the last step
-        handleSubmit(onSubmit, onSubmitError)();
-      }
+      // Always just move to the next step, don't submit automatically
+      setActiveStep((prevActiveStep) =>
+        prevActiveStep < SIGNUP_STEPS.length - 1
+          ? prevActiveStep + 1
+          : prevActiveStep
+      );
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -162,7 +166,8 @@ export const SignupForm = ({
               color="text.secondary"
               className="mt-2 italic"
             >
-              Please select your content preferences to complete signup.
+              This step is optional. Click "Complete Sign Up" when you're ready
+              to finish.
             </Typography>
           )}
         </div>
@@ -179,6 +184,7 @@ export const SignupForm = ({
           <form
             className="space-y-8"
             onSubmit={handleSubmit(onSubmit, onSubmitError)}
+            noValidate
           >
             <div className="min-h-[280px] py-4">
               {renderStepContent(activeStep)}
@@ -186,6 +192,7 @@ export const SignupForm = ({
 
             <div className="flex gap-4 justify-between pt-4 border-t border-gray-200">
               <Button
+                type="button"
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 variant="outlined"
@@ -207,6 +214,7 @@ export const SignupForm = ({
                 </Button>
               ) : (
                 <Button
+                  type="button"
                   variant="contained"
                   onClick={handleNext}
                   color="primary"
