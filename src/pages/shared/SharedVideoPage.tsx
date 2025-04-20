@@ -23,7 +23,7 @@ import {
   RiInformationLine,
   RiMessage2Line,
 } from 'react-icons/ri';
-import Vimeo from '@u-wave/react-vimeo';
+import ReactPlayer from 'react-player';
 import dayjs from 'dayjs';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
 import { VideoDto } from '@/dtos/video.dto';
@@ -32,16 +32,21 @@ import useSharedLink from '@/hooks/useSharedLink';
 import { useCommentActions } from '@/hooks/useCommentActions';
 import { Avatar } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
-import sessionService from '@/services/session.service';
-import storageService from '@/services/storage.service';
+
 import videoWatchService from '@/services/videoWatch.service';
+import { UserEvent } from '@/dtos/watchSession.dto';
 
 export default function SharedVideoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const { isLoading, isExpired, error, shareLink } = useSharedLink();
   const { useVideoListQuery } = useVideoManagementActions();
+  const playerRef = useRef<ReactPlayer | null>(null);
   const [videoStarted, setVideoStarted] = useState(false);
-  const playerRef = useRef<any>(null);
+  const [totalPlayedSeconds, setTotalPlayedSeconds] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [userEvents, setUserEvents] = useState<UserEvent[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isPlayer, setIsPlayer] = useState(false);
 
   const { data: videos = [] } = useVideoListQuery();
 
@@ -49,96 +54,101 @@ export default function SharedVideoPage() {
   const previewVideos = videos.slice(0, 4);
 
   useEffect(() => {
-    // Initialize guest session for shared video access
-    const isAuthenticated = !!storageService.getAuthData();
-
-    if (!isAuthenticated) {
-      // Start guest session and heartbeat
-      sessionService.startGuestHeartbeat();
-    }
-
     return () => {
-      // Clean up if component unmounts and user is not authenticated
-      if (!isAuthenticated) {
-        sessionService.stopHeartbeat();
-      }
-
-      // Complete the watch session if it exists when component unmounts
-      if (videoWatchService.getWatchSession()) {
-        const currentPosition = playerRef.current?.getCurrentTime() || 0;
-        videoWatchService.completeWatchSession(currentPosition, false);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  // Track content engagement when user starts playing the video
   useEffect(() => {
-    if (isPlaying && shareLink?.video) {
-      sessionService.trackContentEngagement();
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        setTotalPlayedSeconds((prev) => {
+          const updated = prev + 1;
+          console.log(`⏱️ Watched: ${updated}s`);
+          return updated;
+        });
+      }, 1000);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
-  }, [isPlaying, shareLink]);
 
-  const handlePlayClick = () => {
-    setIsPlaying(true);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying]);
+
+  const updateWatchSession = (eventType?: string, eventTime?: number) => {
+    if (!videoStarted) return;
+
+    if (eventType) {
+      const currentTime =
+        eventTime ?? playerRef.current?.getCurrentTime() ?? totalPlayedSeconds;
+      const userEvent = {
+        event: eventType,
+        eventTime: new Date(),
+        videoTime: currentTime,
+      };
+      setUserEvents((prev) => [...prev, userEvent]);
+    }
+
+    const watchProgressData = {
+      actualTimeWatched: totalPlayedSeconds,
+      percentageWatched: parseFloat(
+        ((totalPlayedSeconds / duration) * 100).toFixed(2)
+      ),
+      userEvent: userEvents,
+    };
+
+    videoWatchService.updateWatchSession(watchProgressData);
   };
 
-  // Handle video player events
-  const handlePlayerReady = (player: any) => {
-    playerRef.current = player.player;
+  const handlePlayerReady = (player: ReactPlayer) => {
+    playerRef.current = player;
   };
 
-  // Start watch session when video actually starts playing
   const handleVideoStart = () => {
     if (!videoStarted && shareLink?.video) {
       setVideoStarted(true);
-
-      // Start a new watch session
-      videoWatchService
-        .startWatchSession(shareLink.video.id)
-        .then((session) => {
-          if (session) {
-            // Start periodic updates with a function that gets the current time
-            videoWatchService.startPeriodicUpdates(
-              () => playerRef.current?.getCurrentTime() || 0
-            );
-          }
-        });
-
-      // Track the play action
-      videoWatchService.handleUserAction('play', 0);
-    }
-  };
-
-  const handleVideoPause = () => {
-    if (videoStarted && playerRef.current) {
-      const currentTime = playerRef.current.getCurrentTime();
-      videoWatchService.handleUserAction('pause', currentTime);
+      const session = videoWatchService.startWatchSession(shareLink?.video?.id);
+      console.log('🔄 Session:', session);
     }
   };
 
   const handleVideoPlay = () => {
-    if (videoStarted && playerRef.current) {
-      const currentTime = playerRef.current.getCurrentTime();
-      videoWatchService.handleUserAction('play', currentTime);
-    }
+    setIsPlaying(true);
+    updateWatchSession('play');
   };
 
-  const handleVideoSeek = (event: any) => {
-    if (videoStarted && playerRef.current) {
-      const currentTime = event.seconds;
-      videoWatchService.handleUserAction('seek', currentTime);
-    }
+  const handleVideoPause = () => {
+    setIsPlaying(false);
+    updateWatchSession('pause');
+  };
+
+  const handleVideoSeek = (seconds: number) => {
+    console.log(`🔄 Seeking to: ${seconds}s`);
+    updateWatchSession('seek', seconds);
   };
 
   const handleVideoEnd = () => {
-    if (videoStarted && playerRef.current) {
-      const currentTime = playerRef.current.getCurrentTime();
-      videoWatchService.completeWatchSession(currentTime, true);
+    setIsPlaying(false);
+    if (videoStarted) {
+      videoWatchService.completeWatchSession();
     }
   };
 
-  // Initialize comments hook outside of conditional rendering
-  // It will only be used if shareLink is valid
+  const handleProgress = () => {
+    updateWatchSession();
+  };
+
+  const handleDuration = (d: number) => {
+    setDuration(d);
+    console.log(`⏳ Duration: ${d}s`);
+  };
+
+  const handlePlayClick = () => {
+    setIsPlayer(true);
+  };
+
   const { videoCommentsQuery, getApprovedComments } = useCommentActions(
     shareLink?.video?.id || ''
   );
@@ -219,7 +229,7 @@ export default function SharedVideoPage() {
         }}
       >
         <Container maxWidth="xl">
-          {!isPlaying ? (
+          {!isPlayer ? (
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
                 <Box
@@ -345,16 +355,24 @@ export default function SharedVideoPage() {
             </Grid>
           ) : (
             <Box sx={{ width: '100%', maxWidth: '1000px', mx: 'auto' }}>
-              <Vimeo
-                video={videoData.video_url}
-                responsive={true}
-                onReady={handlePlayerReady}
-                onPlay={handleVideoPlay}
-                onPlaying={handleVideoStart}
-                onPause={handleVideoPause}
-                onSeeked={handleVideoSeek}
-                onEnd={handleVideoEnd}
-              />
+              <div className="player-wrapper" style={{ height: '700px' }}>
+                <ReactPlayer
+                  url={videoData.video_url}
+                  width="100%"
+                  height="100%"
+                  controls={true}
+                  onReady={handlePlayerReady}
+                  onPlay={handleVideoPlay}
+                  onStart={handleVideoStart}
+                  onPause={handleVideoPause}
+                  onSeek={(seconds) => handleVideoSeek(seconds)}
+                  onEnded={handleVideoEnd}
+                  onProgress={handleProgress}
+                  onDuration={handleDuration}
+                  stopOnUnmount={true}
+                  progressInterval={10000}
+                />
+              </div>
 
               <Box sx={{ mt: 3 }}>
                 <Typography variant="h4" gutterBottom color="white">

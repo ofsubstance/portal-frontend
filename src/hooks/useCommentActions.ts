@@ -23,10 +23,6 @@ export const useCommentActions = (videoId?: string) => {
   });
 
   // Get comments for the current user
-  const userCommentsQuery = useQuery({
-    queryKey: ['comments', 'user'],
-    queryFn: () => commentService.getUserComments(),
-  });
 
   // Create a new comment
   const createCommentMutation = useMutation({
@@ -74,7 +70,6 @@ export const useCommentActions = (videoId?: string) => {
   return {
     allCommentsQuery,
     videoCommentsQuery,
-    userCommentsQuery,
     createCommentMutation,
     updateCommentStatusMutation,
     getApprovedComments,

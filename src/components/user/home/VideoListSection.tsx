@@ -7,7 +7,7 @@ import { useState, useMemo } from 'react';
 
 export default function VideoListSection({ videos }: { videos: VideoDto[] }) {
   const [page, setPage] = useState(1);
-  const videosPerPage = 3;
+  const videosPerPage = 6;
 
   // Calculate total pages
   const totalPages = Math.ceil(videos.length / videosPerPage);

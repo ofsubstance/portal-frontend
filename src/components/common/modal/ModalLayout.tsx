@@ -7,11 +7,11 @@ import {
   DialogTitle,
   IconButton,
   Typography,
-} from "@mui/material";
-import NiceModal, { useModal } from "@ebay/nice-modal-react";
-import React, { useEffect, useState } from "react";
+} from '@mui/material';
+import NiceModal, { useModal } from '@ebay/nice-modal-react';
+import React, { useEffect, useState } from 'react';
 
-import CloseIcon from "@mui/icons-material/Close";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface ModalLayoutProps {
   title: React.ReactNode;
@@ -22,13 +22,13 @@ interface ModalLayoutProps {
     confirmButtonProps?: {
       text: string;
       color?:
-        | "primary"
-        | "secondary"
-        | "inherit"
-        | "success"
-        | "error"
-        | "info"
-        | "warning";
+        | 'primary'
+        | 'secondary'
+        | 'inherit'
+        | 'success'
+        | 'error'
+        | 'info'
+        | 'warning';
       error?: boolean;
       onClick: () => any;
       disabled?: boolean;
@@ -40,6 +40,7 @@ interface ModalLayoutProps {
   };
   externalControl?: { open: boolean; onClose: () => any };
   targetComponent?: React.ReactElement<React.HTMLAttributes<HTMLElement>, any>;
+  darkMode?: boolean;
 }
 
 export default function ModalLayout({
@@ -50,6 +51,7 @@ export default function ModalLayout({
   children,
   dialogActions,
   targetComponent: TargetComponent,
+  darkMode = false,
 }: ModalLayoutProps) {
   const [openModal, setOpenModal] = useState(false);
 
@@ -103,18 +105,36 @@ export default function ModalLayout({
         scroll="paper"
         open={openModal}
         onClose={handleClose}
+        PaperProps={{
+          sx: darkMode
+            ? {
+                backgroundColor: '#121212',
+                color: 'white',
+              }
+            : {},
+        }}
       >
-        <DialogTitle>
+        <DialogTitle
+          sx={darkMode ? { backgroundColor: '#1e1e1e', color: 'white' } : {}}
+        >
           <div className="flex w-full items-center justify-between">
             <Typography variant="h6">{title}</Typography>
-            <IconButton onClick={handleClose}>
+            <IconButton
+              onClick={handleClose}
+              sx={darkMode ? { color: 'white' } : {}}
+            >
               <CloseIcon />
             </IconButton>
           </div>
         </DialogTitle>
-        <DialogContent dividers>{children}</DialogContent>
+        <DialogContent
+          dividers
+          sx={darkMode ? { backgroundColor: '#121212', color: 'white' } : {}}
+        >
+          {children}
+        </DialogContent>
         {dialogActions && (
-          <DialogActions>
+          <DialogActions sx={darkMode ? { backgroundColor: '#1e1e1e' } : {}}>
             {dialogActions.cancelButtonProps && (
               <Button
                 fullWidth

@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
-import Vimeo from '@u-wave/react-vimeo';
+import ReactPlayer from 'react-player';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useModal } from '@ebay/nice-modal-react';
@@ -115,8 +115,15 @@ function VideoDetailsPage() {
       title: `Trailer for ${data?.title}`,
       maxWidth: 'lg',
       children: (
-        <div className="w-full">
-          {data && <Vimeo video={data.trailer_url} responsive={true} />}
+        <div className="w-full" style={{ height: '500px' }}>
+          {data && (
+            <ReactPlayer
+              url={data.trailer_url}
+              width="100%"
+              height="100%"
+              controls={true}
+            />
+          )}
         </div>
       ),
     });
@@ -127,8 +134,15 @@ function VideoDetailsPage() {
       title: `Video - ${data?.title}`,
       maxWidth: 'lg',
       children: (
-        <div className="w-full">
-          {data && <Vimeo video={data.video_url} responsive={true} />}
+        <div className="w-full" style={{ height: '500px' }}>
+          {data && (
+            <ReactPlayer
+              url={data.video_url}
+              width="100%"
+              height="100%"
+              controls={true}
+            />
+          )}
         </div>
       ),
     });
@@ -139,8 +153,15 @@ function VideoDetailsPage() {
       title: `Pre-roll for ${data?.title}`,
       maxWidth: 'lg',
       children: (
-        <div className="w-full">
-          {data && <Vimeo video={data.preroll_url} responsive={true} />}
+        <div className="w-full" style={{ height: '500px' }}>
+          {data && (
+            <ReactPlayer
+              url={data.preroll_url}
+              width="100%"
+              height="100%"
+              controls={true}
+            />
+          )}
         </div>
       ),
     });

@@ -1,201 +1,210 @@
 import APIUrl from '@/constants/apiUrl';
+import {
+  UserEvent,
+  UserMetadata,
+  WatchSessionResponseDto,
+} from '@/dtos/watchSession.dto';
 import httpClient from '../utils/httpClient';
 import storageService from './storage.service';
 
 export interface VideoWatchSession {
-  watchId: string;
-  startTime: string;
-}
-
-export interface VideoWatchUpdatePayload {
-  lastPosition: number;
-  additionalMinutesWatched: number;
-  completedView: boolean;
-  additionalPauseCount: number;
-  additionalSeekCount: number;
-  action: 'play' | 'pause' | 'seek' | 'periodic' | 'complete';
-  newEngagementMarkers?: Array<{
-    timepoint: number;
-    action: string;
-    details?: string;
-  }>;
-}
-
-export interface VideoWatchUpdateResponse {
-  watchId: string;
-  minutesWatched: number;
+  watchSessionId: string;
+  videoId: string;
+  startTime: Date;
+  endTime?: Date;
+  actualTimeWatched: number;
   percentageWatched: number;
-  completedView: boolean;
+  userEvent?: UserEvent[];
+  userMetadata?: UserMetadata;
+}
+
+export interface WatchProgressData {
+  actualTimeWatched?: number;
+  percentageWatched?: number;
+  endTime?: Date;
+  userEvent?: UserEvent[];
+  userMetadata?: UserMetadata;
 }
 
 class VideoWatchService {
   private watchSession: VideoWatchSession | null = null;
-  private updateInterval: number | undefined;
-  private lastPosition: number = 0;
-  private pauseCount: number = 0;
-  private seekCount: number = 0;
-  private lastUpdateTime: number = 0;
+  private userEvents: UserEvent[] = [];
 
-  /**
-   * Start a video watch session
-   * @param videoId The ID of the video being watched
-   * @returns Promise with the watch session data
-   */
+  constructor() {
+    const storedWatchSessionId = storageService.getWatchSessionId();
+    if (storedWatchSessionId) {
+      console.log('Found existing watch session:', storedWatchSessionId);
+    }
+    const sessionId = storageService.getSessionId();
+    if (sessionId) {
+      console.log('Found existing session:', sessionId);
+    }
+  }
+
   async startWatchSession(videoId: string): Promise<VideoWatchSession | null> {
     try {
-      const sessionId = storageService.getSessionId();
-      const currentUser = storageService.getCurrentUser();
-      const isAuthenticated = !!currentUser;
+      storageService.removeWatchSessionId();
+      console.log('Creating new watch session for video:', videoId);
 
-      if (!sessionId && !isAuthenticated) {
-        console.warn('No session ID or user ID available for watch tracking');
-        return null;
-      }
+      // Determine if this is a guest session
+      const userSessionId = storageService.getSessionId();
+      const isGuest = !storageService.getAuthData();
+      const userMetadata = this.getUserMetadata();
 
-      // Get browser and device info
-      const userAgent = navigator.userAgent;
-      const isMobile =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          userAgent
-        );
-      const deviceType = isMobile ? 'mobile' : 'desktop';
-      const browserInfo = userAgent;
-
+      // Create payload
       const payload = {
         videoId,
-        isGuestView: !isAuthenticated,
-        sessionId: sessionId,
-        userId: currentUser?.id,
-        deviceType,
-        browserInfo,
+        startTime: new Date(),
+        actualTimeWatched: '0',
+        percentageWatched: 0,
+        isGuestWatchSession: isGuest,
+        userSessionId: userSessionId || null,
+        userMetadata,
       };
 
-      const response = await httpClient.post(
-        APIUrl.videoWatches.create(),
+      // Make API request to create session
+      const response = await httpClient.post<WatchSessionResponseDto>(
+        APIUrl.watchSessions.create(),
         payload
       );
+      const data = response.data;
 
-      if (response.status === 200 || response.status === 201) {
-        this.watchSession = response.data.data;
-        this.lastUpdateTime = Date.now();
-        return this.watchSession;
-      }
+      // Store the session
+      this.watchSession = {
+        watchSessionId: data.id,
+        videoId: data.videoId,
+        startTime: new Date(data.startTime),
+        actualTimeWatched: data.actualTimeWatched,
+        percentageWatched: data.percentageWatched,
+        userEvent: data.userEvent,
+        userMetadata: data.userMetadata,
+      };
+      this.userEvents = [];
 
-      return null;
+      // Store session ID in localStorage for persistence
+      storageService.setWatchSessionId(data.id);
+      console.log('Watch session created:', data);
+
+      return this.watchSession;
     } catch (error) {
-      console.error('Failed to start video watch session:', error);
+      console.error('Failed to create watch session:', error);
       return null;
     }
   }
 
-  /**
-   * Update a watch session with the latest playback state
-   * @param action The action that triggered the update
-   * @param currentPosition The current playback position in seconds
-   * @param completedView Whether the view is completed
-   * @returns Promise with the updated watch data
-   */
   async updateWatchSession(
-    action: 'play' | 'pause' | 'seek' | 'periodic' | 'complete',
-    currentPosition: number,
-    completedView: boolean = false
-  ): Promise<VideoWatchUpdateResponse | null> {
-    if (!this.watchSession) {
-      console.warn('No active watch session to update');
-      return null;
+    watchProgressData: WatchProgressData
+  ): Promise<void> {
+    const watchSessionId = storageService.getWatchSessionId();
+    if (!watchSessionId) {
+      console.warn('Cannot update: No active watch session');
+      return;
     }
 
     try {
-      const now = Date.now();
-      const timeElapsedSeconds = (now - this.lastUpdateTime) / 1000;
-      const additionalMinutesWatched =
-        action === 'pause' || action === 'seek' || action === 'complete'
-          ? timeElapsedSeconds / 60
-          : 0;
+      if (watchProgressData.userEvent) {
+        this.userEvents.push(...watchProgressData.userEvent);
+      }
+      // Make API request to update session
+      const response = await httpClient.patch<WatchSessionResponseDto>(
+        APIUrl.watchSessions.update(watchSessionId),
+        watchProgressData
+      );
+      const data = response.data;
 
-      // Calculate additional pause and seek counts
-      const additionalPauseCount = action === 'pause' ? 1 : 0;
-      const additionalSeekCount = action === 'seek' ? 1 : 0;
-
-      const payload: VideoWatchUpdatePayload = {
-        lastPosition: currentPosition,
-        additionalMinutesWatched,
-        completedView,
-        additionalPauseCount,
-        additionalSeekCount,
-        action,
+      // Update local session data
+      this.watchSession = {
+        watchSessionId: data.id,
+        videoId: data.videoId,
+        startTime: new Date(data.startTime),
+        actualTimeWatched: data.actualTimeWatched,
+        percentageWatched: parseFloat(data.percentageWatched.toFixed(2)),
+        userEvent: data.userEvent,
+        userMetadata: data.userMetadata,
       };
 
-      const response = await httpClient.put(
-        APIUrl.videoWatches.update(this.watchSession.watchId),
-        payload
-      );
-
-      if (response.status === 200) {
-        this.lastPosition = currentPosition;
-        this.pauseCount += additionalPauseCount;
-        this.seekCount += additionalSeekCount;
-        this.lastUpdateTime = now;
-        return response.data.data;
-      }
-
-      return null;
+      console.log('Watch session updated:', data);
     } catch (error) {
-      console.error('Failed to update video watch session:', error);
-      return null;
+      console.error('Failed to update watch session:', error);
     }
   }
 
   /**
-   * Start periodic updates for the watch session
-   * @param getPosition Function that returns the current playback position
-   */
-  startPeriodicUpdates(getPosition: () => number): void {
-    if (this.updateInterval) {
-      this.stopPeriodicUpdates();
-    }
-
-    this.updateInterval = window.setInterval(() => {
-      const currentPosition = getPosition();
-      this.updateWatchSession('periodic', currentPosition);
-    }, 10000); // Update every 10 seconds
-  }
-
-  /**
-   * Stop periodic updates
-   */
-  stopPeriodicUpdates(): void {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-      this.updateInterval = undefined;
-    }
-  }
-
-  /**
-   * Handle a user interaction with the video player
-   * @param action The action performed (play, pause, seek)
-   * @param position The current playback position
-   */
-  handleUserAction(action: 'play' | 'pause' | 'seek', position: number): void {
-    this.updateWatchSession(action, position);
-  }
-
-  /**
-   * Complete the watch session when the user finishes or leaves the video
+   * Complete the watch session
    * @param position The final playback position
    * @param completed Whether the user completed watching the video
    */
-  completeWatchSession(position: number, completed: boolean): void {
-    this.stopPeriodicUpdates();
-    this.updateWatchSession('complete', position, completed);
-    this.watchSession = null;
+  async completeWatchSession(): Promise<void> {
+    const watchSessionId = storageService.getWatchSessionId();
+    if (!watchSessionId) {
+      console.warn('Cannot complete: No active watch session');
+      return;
+    }
+
+    try {
+      const response = await httpClient.patch<WatchSessionResponseDto>(
+        APIUrl.watchSessions.update(watchSessionId),
+        { endTime: new Date() }
+      );
+      const data = response.data;
+
+      // Update local session data
+      this.watchSession = {
+        watchSessionId: data.id,
+        videoId: data.videoId,
+        startTime: new Date(data.startTime),
+        endTime: data.endTime ? new Date(data.endTime) : undefined,
+        actualTimeWatched: data.actualTimeWatched,
+        percentageWatched: data.percentageWatched,
+        userEvent: data.userEvent,
+        userMetadata: data.userMetadata,
+      };
+
+      console.log('Watch session completed:', data);
+    } catch (error) {
+      console.error('Failed to complete watch session:', error);
+    }
   }
 
   /**
-   * Get the current watch session
+   * Get browser and device metadata
    */
-  getWatchSession(): VideoWatchSession | null {
-    return this.watchSession;
+  private getUserMetadata(): UserMetadata {
+    const userAgent = navigator.userAgent;
+
+    // Basic device detection - this could be improved with a dedicated library
+    const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(userAgent);
+    const isTablet = /Tablet|iPad/i.test(userAgent);
+    const deviceType = isTablet ? 'tablet' : isMobile ? 'mobile' : 'desktop';
+
+    // Very basic browser detection
+    let browser = 'unknown';
+    if (userAgent.indexOf('Chrome') > -1) browser = 'Chrome';
+    else if (userAgent.indexOf('Safari') > -1) browser = 'Safari';
+    else if (userAgent.indexOf('Firefox') > -1) browser = 'Firefox';
+    else if (
+      userAgent.indexOf('MSIE') > -1 ||
+      userAgent.indexOf('Trident') > -1
+    )
+      browser = 'IE';
+    else if (userAgent.indexOf('Edge') > -1) browser = 'Edge';
+
+    // Basic OS detection
+    let os = 'unknown';
+    if (userAgent.indexOf('Windows') > -1) os = 'Windows';
+    else if (userAgent.indexOf('Mac') > -1) os = 'MacOS';
+    else if (userAgent.indexOf('Linux') > -1) os = 'Linux';
+    else if (userAgent.indexOf('Android') > -1) os = 'Android';
+    else if (userAgent.indexOf('iOS') > -1) os = 'iOS';
+
+    return {
+      userAgent,
+      ipAddress: '', // This would be determined server-side
+      device: isMobile ? 'mobile' : 'desktop',
+      browser,
+      os,
+      deviceType,
+    };
   }
 }
 

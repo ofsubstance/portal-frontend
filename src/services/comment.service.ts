@@ -22,13 +22,6 @@ class CommentService {
     return response.data.body;
   }
 
-  async getUserComments() {
-    const response = await httpClient.get<IResponse<CommentDto[]>>(
-      APIUrl.comments.getByUser()
-    );
-    return response.data.body;
-  }
-
   async createComment(data: CreateCommentDto) {
     const response = await httpClient.post<IResponse<CommentDto>>(
       APIUrl.comments.create(),

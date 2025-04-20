@@ -58,6 +58,7 @@ export default function VideoDetailsPage() {
     modal.show({
       title: `${video?.title} ${type === 'trailer' ? 'Trailer' : 'Preroll'}`,
       maxWidth: 'lg',
+      darkMode: true,
       children: (
         <div
           style={{
@@ -67,6 +68,9 @@ export default function VideoDetailsPage() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: '#000',
+            padding: '1rem',
+            borderRadius: '8px',
           }}
         >
           {video && (
@@ -81,6 +85,17 @@ export default function VideoDetailsPage() {
                 width="100%"
                 height="100%"
                 controls
+                light={false}
+                playing
+                config={{
+                  youtube: {
+                    playerVars: {
+                      showinfo: 0,
+                      controls: 1,
+                      modestbranding: 1,
+                    },
+                  },
+                }}
               />
             </div>
           )}
@@ -92,6 +107,7 @@ export default function VideoDetailsPage() {
   const handleFeedbackClick = () => {
     modal.show({
       title: 'Feedback on ' + video?.title,
+      darkMode: true,
       children: (
         <FlimFeedbackForm
           filmTitle={video?.title || ''}
@@ -119,6 +135,7 @@ export default function VideoDetailsPage() {
 
     modal.show({
       title: 'Share ' + video?.title,
+      darkMode: true,
       children: (
         <ShareLinkModal videoId={videoId} onClose={() => modal.hide()} />
       ),

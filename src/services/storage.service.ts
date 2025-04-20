@@ -56,6 +56,7 @@ class StorageService {
     return authData?.user;
   }
 
+  // Session ID methods - now only used for authenticated users
   getSessionId() {
     return localStorage.getItem('sessionId');
   }
@@ -66,6 +67,18 @@ class StorageService {
 
   removeSessionId() {
     localStorage.removeItem('sessionId');
+  }
+
+  getWatchSessionId() {
+    return localStorage.getItem('watchSessionId');
+  }
+
+  setWatchSessionId(watchSessionId: string) {
+    localStorage.setItem('watchSessionId', watchSessionId);
+  }
+
+  removeWatchSessionId() {
+    localStorage.removeItem('watchSessionId');
   }
 }
 

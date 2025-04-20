@@ -38,7 +38,6 @@ const APIUrl = {
     create: () => '/comments',
     getAll: () => '/comments',
     getByVideo: (videoId: string) => '/comments/video/' + videoId,
-    getByUser: () => '/comments/user/me',
     updateStatus: (commentId: string) => '/comments/' + commentId + '/status',
   },
 
@@ -72,12 +71,12 @@ const APIUrl = {
     heartbeat: (sessionId: string) => `/user-sessions/heartbeat/${sessionId}`,
     contentEngaged: (sessionId: string) =>
       `/user-sessions/${sessionId}/content-engaged`,
-    createGuestSession: () => `/user-sessions/guest`,
   },
 
-  videoWatches: {
-    create: () => `/video-watches`,
-    update: (watchId: string) => `/video-watches/${watchId}`,
+  watchSessions: {
+    create: () => '/watch-sessions',
+    getById: (id: string) => `/watch-sessions/${id}`,
+    update: (id: string) => `/watch-sessions/${id}`,
   },
 
   feedback: {

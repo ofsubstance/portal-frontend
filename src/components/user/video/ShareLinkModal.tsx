@@ -14,6 +14,7 @@ import {
   Paper,
   Divider,
   Avatar,
+  useTheme,
 } from '@mui/material';
 import { CreateShareLinkDto, ShareLinkDto } from '@/dtos/sharelink.dto';
 import useShareLinkAction from '@/hooks/useShareLinkAction';
@@ -34,6 +35,7 @@ export default function ShareLinkModal({
   videoId,
   onClose,
 }: ShareLinkModalProps) {
+  const theme = useTheme();
   const [validityDays, setValidityDays] = useState<number>(30);
   const [shareLink, setShareLink] = useState<ShareLinkDto | null>(null);
   const [copied, setCopied] = useState(false);
@@ -84,12 +86,40 @@ export default function ShareLinkModal({
       {!shareLink ? (
         <>
           <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel id="validity-days-label">Link Validity</InputLabel>
+            <InputLabel
+              id="validity-days-label"
+              sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+            >
+              Link Validity
+            </InputLabel>
             <Select
               labelId="validity-days-label"
               value={validityDays}
               label="Link Validity"
               onChange={(e) => setValidityDays(Number(e.target.value))}
+              sx={{
+                color: 'white',
+                '.MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                },
+                '.MuiSvgIcon-root': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    bgcolor: '#232323',
+                    color: 'white',
+                  },
+                },
+              }}
             >
               <MenuItem value={1}>1 day</MenuItem>
               <MenuItem value={7}>7 days</MenuItem>
@@ -117,7 +147,15 @@ export default function ShareLinkModal({
         </>
       ) : (
         <>
-          <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 2,
+              mb: 3,
+              bgcolor: '#232323',
+              borderColor: 'rgba(255, 255, 255, 0.15)',
+            }}
+          >
             {shareLink.video && (
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Avatar
@@ -126,10 +164,14 @@ export default function ShareLinkModal({
                   sx={{ width: 60, height: 60, mr: 2 }}
                 />
                 <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight={600}
+                    color="white"
+                  >
                     {shareLink.video.title}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="rgba(255, 255, 255, 0.7)">
                     <VideoIcon
                       style={{ verticalAlign: 'middle', marginRight: 4 }}
                     />
@@ -139,9 +181,9 @@ export default function ShareLinkModal({
               </Box>
             )}
 
-            <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
-            <Typography variant="subtitle2" gutterBottom>
+            <Typography variant="subtitle2" gutterBottom color="white">
               Your shareable link:
             </Typography>
 
@@ -152,6 +194,16 @@ export default function ShareLinkModal({
                 variant="outlined"
                 InputProps={{
                   readOnly: true,
+                  sx: {
+                    color: 'white',
+                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                    '.MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(255, 255, 255, 0.3)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(255, 255, 255, 0.5)',
+                    },
+                  },
                 }}
               />
               <Tooltip title={copied ? 'Copied!' : 'Copy to clipboard'}>
@@ -166,14 +218,14 @@ export default function ShareLinkModal({
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="rgba(255, 255, 255, 0.7)">
                 <ExpirationIcon
                   style={{ verticalAlign: 'middle', marginRight: 4 }}
                 />
                 Expires on: {formatDate(shareLink.expiration_time)}
               </Typography>
 
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="rgba(255, 255, 255, 0.7)">
                 <ViewsIcon
                   style={{ verticalAlign: 'middle', marginRight: 4 }}
                 />
@@ -187,7 +239,19 @@ export default function ShareLinkModal({
             is unique and cannot be guessed.
           </Typography>
 
-          <Button variant="outlined" fullWidth onClick={onClose}>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={onClose}
+            sx={{
+              color: 'white',
+              borderColor: 'rgba(255, 255, 255, 0.5)',
+              '&:hover': {
+                borderColor: 'white',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              },
+            }}
+          >
             Close
           </Button>
         </>

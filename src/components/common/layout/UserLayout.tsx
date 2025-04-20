@@ -30,8 +30,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import AccountMenu from '@/components/common/menu/AccountMenu';
 import useAuthAction from '@/hooks/useAuthAction';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import AppLogo from '../logo/AppLogo';
+import useVideoManagementActions from '@/hooks/useVideoManagementAction';
+import { VideoDto } from '@/dtos/video.dto';
 
 const navItems = [
   {
@@ -170,25 +172,185 @@ function DrawerContent() {
 }
 
 function SearchBar() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState<VideoDto[]>([]);
+  const { useVideoListQuery } = useVideoManagementActions();
+  const navigate = useNavigate();
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const { data: videos = [] } = useVideoListQuery();
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.trim().length > 0) {
+      // Filter videos based on search term
+      const filtered = videos.filter(
+        (video: VideoDto) =>
+          video.title.toLowerCase().includes(value.toLowerCase()) ||
+          video.genre.toLowerCase().includes(value.toLowerCase()) ||
+          video.short_desc.toLowerCase().includes(value.toLowerCase()) ||
+          (video.tags &&
+            video.tags.some((tag: string) =>
+              tag.toLowerCase().includes(value.toLowerCase())
+            ))
+      );
+
+      setSearchResults(filtered);
+      setShowResults(true);
+    } else {
+      setShowResults(false);
+    }
+  };
+
+  // Handle click outside to close search results
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Handle clicking on a search result
+  const handleResultClick = (videoId: string) => {
+    navigate(`/video/${videoId}`);
+    setShowResults(false);
+    setSearchTerm('');
+  };
+
   return (
     <Paper
+      ref={searchRef}
       sx={{
         borderRadius: 100,
         ml: 4,
         display: 'flex',
-        alignItems: 'center',
-        bgcolor: 'rgba(255, 255, 255, 0.1)',
+        flexDirection: 'column',
+        position: 'relative',
         width: 400,
       }}
     >
-      <InputBase
-        fullWidth
-        sx={{ pl: 2, color: 'white' }}
-        placeholder="Search…"
-      />
-      <IconButton sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-        <SearchIcon />
-      </IconButton>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          bgcolor: '#333333',
+          borderRadius: 100,
+        }}
+      >
+        <InputBase
+          fullWidth
+          sx={{
+            pl: 2,
+            color: 'white',
+            '&::placeholder': {
+              color: 'rgba(255, 255, 255, 0.7)',
+              opacity: 1,
+            },
+          }}
+          placeholder="Search…"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <IconButton sx={{ color: 'white' }}>
+          <SearchIcon />
+        </IconButton>
+      </Box>
+
+      {showResults && searchResults.length > 0 && (
+        <Paper
+          sx={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            mt: 1,
+            zIndex: 1000,
+            maxHeight: 400,
+            overflow: 'auto',
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          <List>
+            {searchResults.map((video) => (
+              <ListItem
+                key={video.id}
+                onClick={() => handleResultClick(video.id)}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    bgcolor: 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                >
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 45,
+                      mr: 2,
+                      borderRadius: 1,
+                      overflow: 'hidden',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={video.thumbnail_url}
+                      alt={video.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="body1" noWrap>
+                      {video.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {video.genre}
+                    </Typography>
+                  </Box>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      )}
+
+      {showResults && searchResults.length === 0 && searchTerm && (
+        <Paper
+          sx={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            mt: 1,
+            zIndex: 1000,
+            borderRadius: 2,
+            boxShadow: 3,
+            p: 2,
+          }}
+        >
+          <Typography>No results found for "{searchTerm}"</Typography>
+        </Paper>
+      )}
     </Paper>
   );
 }

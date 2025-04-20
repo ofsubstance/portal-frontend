@@ -1,9 +1,9 @@
-import { Button, MobileStepper, Typography } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { Button, MobileStepper, Typography, Box } from '@mui/material';
+import { ReactNode, useState } from 'react';
 
-import AppLogo from "@/components/common/logo/AppLogo";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import AppLogo from '@/components/common/logo/AppLogo';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 interface GuideSectionProps {
   title: ReactNode;
@@ -36,40 +36,120 @@ const steps = [
     details={
       <div className="flex flex-col gap-4">
         <span>
-          Here you can access and watch our films with your clients and
-          patients, or enjoy them on your own or with friends and family.
+          Your gateway to meaningful, thought-provoking films for personal
+          reflection, professional use with clients, or sharing with friends and
+          family.
         </span>
-
         <span>
-          <strong>Note:</strong> You can view this guide again from the top
-          menu.
+          <strong>Note:</strong> You can access this guide anytime through the
+          account menu in the top-right corner.
         </span>
       </div>
     }
   />,
   <GuideSection
-    title="Browsing Films"
-    details="Discover film details by hovering over a film to reveal its genre, duration, and synopsis. Explore the diversity and find the perfect film for your mood or occasion!"
+    title="Finding Films"
+    details={
+      <div className="flex flex-col gap-4">
+        <span>
+          <strong>Search:</strong> Use the dark search bar in the top navigation
+          to instantly find specific films. Results appear as you type, showing
+          thumbnails and titles.
+        </span>
+        <span>
+          <strong>Browse:</strong> Explore our collection on the home page, with
+          featured films in the hero section and our complete library below.
+        </span>
+        <span>
+          <strong>Filter:</strong> Refine your browsing using the sidebar
+          filters to narrow films by genre and tags that match your interests or
+          needs.
+        </span>
+      </div>
+    }
+  />,
+  <GuideSection
+    title="Exploring Film Details"
+    details={
+      <div className="flex flex-col gap-4">
+        <span>
+          Each film page provides comprehensive information to help you decide
+          what to watch:
+        </span>
+        <span>
+          <strong>Film Details:</strong> Genre, duration, publication date and a
+          brief description give you a quick overview.
+        </span>
+        <span>
+          <strong>Tags:</strong> Identify themes, topics, and related concepts
+          to help you find films relevant to specific needs.
+        </span>
+        <span>
+          <strong>Preview Options:</strong> Watch trailers or pre-roll content
+          before committing to the full film.
+        </span>
+      </div>
+    }
   />,
   <GuideSection
     title="Watching Films"
-    details="Click on a film to access its dedicated page. Here you can unlock the film, enjoy the trailer, watch it, and delve into additional information, including suggested uses, themes, struggles, impact, and more. Uncover the full story behind each film and make the most of your viewing experience!"
+    details={
+      <div className="flex flex-col gap-4">
+        <span>
+          <strong>Start Watching:</strong> Click the "Watch The Film" button on
+          any film page to begin playback in our immersive viewer.
+        </span>
+        <span>
+          <strong>Player Controls:</strong> Standard playback controls allow you
+          to pause, seek, adjust volume, and toggle fullscreen.
+        </span>
+        <span>
+          <strong>After Watching:</strong> Leave feedback, share the film, or
+          explore comments from other viewers below the player.
+        </span>
+      </div>
+    }
   />,
   <GuideSection
-    title="Welcome Rewards"
-    details="As a new user, enjoy the perk of 3 free film unlocks! Use these to access any film you like and start your cinematic journey with us."
+    title="Sharing & Engaging"
+    details={
+      <div className="flex flex-col gap-4">
+        <span>
+          <strong>Share Films:</strong> Click the "Share This Film" button to
+          create a unique link that you can send to clients, colleagues, or
+          friends.
+        </span>
+        <span>
+          <strong>Comments:</strong> Engage with other viewers by leaving
+          comments on films you've watched. Share insights or reflections to
+          enrich the community experience.
+        </span>
+        <span>
+          <strong>Feedback:</strong> Provide structured feedback on films to
+          help us improve and to share your experience with the creators.
+        </span>
+      </div>
+    }
   />,
   <GuideSection
-    title="Subscriptions and Purchases"
-    details="Unlock films by clicking the unlock button. This will take you to the unlock page, where you can enter the unlock code provided by your clinician or purchase the film. Choose the option that suits you best and gain unlimited access to a world of captivating films."
-  />,
-  <GuideSection
-    title="Available Films"
-    details="You can find films that are available to you in the '_____' section. Dive into our curated collection and start watching right away!"
-  />,
-  <GuideSection
-    title="Gaining Credits"
-    details="Earn credits to unlock more films by sending us your testimonials and endorsements. Share your experiences and enjoy additional content as a thank you from us!"
+    title="Your Profile & Activity"
+    details={
+      <div className="flex flex-col gap-4">
+        <span>
+          <strong>Profile Page:</strong> Access your profile through the account
+          menu to view your activity history, including comments, feedback, and
+          shared links.
+        </span>
+        <span>
+          <strong>Account Settings:</strong> Manage your personal information,
+          subscription details, and notification preferences from your profile.
+        </span>
+        <span>
+          <strong>Activity Tracking:</strong> Revisit films you've previously
+          watched or commented on through your profile activity log.
+        </span>
+      </div>
+    }
   />,
 ];
 
@@ -85,8 +165,26 @@ export default function UserGuide() {
   };
 
   return (
-    <div className="space-y-4">
-      {steps[activeStep]}
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '500px', // Fixed height for the guide modal
+        width: '100%',
+      }}
+    >
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflow: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 3,
+        }}
+      >
+        {steps[activeStep]}
+      </Box>
 
       <MobileStepper
         variant="dots"
@@ -94,8 +192,10 @@ export default function UserGuide() {
         activeStep={activeStep}
         position="static"
         sx={{
-          "&.MuiMobileStepper-root": {
-            boxShadow: "none",
+          '&.MuiMobileStepper-root': {
+            boxShadow: 'none',
+            borderTop: '1px solid rgba(0,0,0,0.1)',
+            padding: 2,
           },
         }}
         nextButton={
@@ -119,6 +219,6 @@ export default function UserGuide() {
           </Button>
         }
       />
-    </div>
+    </Box>
   );
 }
