@@ -1,20 +1,28 @@
-import { Button, Rating, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Rating,
+  TextField,
+  Typography,
+  CircularProgress,
+} from '@mui/material';
 
-import { filmFeedbackQuestions } from "@/constants/labels";
-import { FilmFeedbackSubmitDto } from "@/dtos/feedback.dto";
-import { filmFeedbackValidation } from "@/validators/feedback.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { filmFeedbackQuestions } from '@/constants/labels';
+import { FilmFeedbackSubmitDto } from '@/dtos/feedback.dto';
+import { filmFeedbackValidation } from '@/validators/feedback.validator';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface FilmFeedbackFormProps {
   filmTitle: string;
   onSubmit: (data: FilmFeedbackSubmitDto) => void;
+  isSubmitting?: boolean;
 }
 
 export default function FlimFeedbackForm({
   filmTitle,
   onSubmit,
+  isSubmitting = false,
 }: FilmFeedbackFormProps) {
   const [hover, setHover] = useState<Record<string, number>>({});
 
@@ -32,7 +40,7 @@ export default function FlimFeedbackForm({
       outcomeImprovement: 0,
       continueUsageLikelihood: 0,
       recommendLikelihood: 0,
-      openEndedFeedback: "",
+      openEndedFeedback: '',
     },
   });
 
@@ -45,7 +53,7 @@ export default function FlimFeedbackForm({
         <div key={question.key} className="space-y-2">
           <Typography
             component="legend"
-            color={errors[question.key] ? "error" : "initial"}
+            color={errors[question.key] ? 'error' : 'initial'}
           >
             {question.question}
           </Typography>
@@ -80,14 +88,14 @@ export default function FlimFeedbackForm({
 
       <Typography component="legend">
         Please let us know about your experience with our film (Film Title).
-        We’d love to know how/why you plan to use (Film Title); how you
+        We'd love to know how/why you plan to use (Film Title); how you
         anticipate your clients are responding to (Film Title) and why; how you
-        plan to apply (Film Title); why you’d share (Film Title) with other
-        industry professionals; and anything else that you’d like to share with
-        us about your experience. (Min 250 characters)
+        plan to apply (Film Title); why you'd share (Film Title) with other
+        industry professionals; and anything else that you'd like to share with
+        us about your experience. (Min 100 characters)
       </Typography>
       <TextField
-        {...register("openEndedFeedback")}
+        {...register('openEndedFeedback')}
         label="Open Ended Feedback"
         multiline
         rows={4}
@@ -96,8 +104,16 @@ export default function FlimFeedbackForm({
         helperText={errors.openEndedFeedback?.message}
       />
 
-      <Button type="submit" variant="contained" color="primary">
-        Submit Feedback
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        disabled={isSubmitting}
+        startIcon={
+          isSubmitting ? <CircularProgress size={20} color="inherit" /> : null
+        }
+      >
+        {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
       </Button>
     </form>
   );

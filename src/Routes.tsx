@@ -42,13 +42,6 @@ const routes = createBrowserRouter([
             }),
           },
           {
-            path: 'profile/settings/:userId',
-            lazy: async () => ({
-              Component: (await import('./pages/common/ProfileUpdatePage'))
-                .default,
-            }),
-          },
-          {
             path: 'analytics',
             lazy: async () => ({
               Component: (await import('./pages/admin/AnalyticsPage')).default,
@@ -184,13 +177,6 @@ const routes = createBrowserRouter([
             path: 'profile/:userId',
             lazy: async () => ({
               Component: (await import('./pages/common/ProfilePage')).default,
-            }),
-          },
-          {
-            path: 'profile/settings/:userId',
-            lazy: async () => ({
-              Component: (await import('./pages/common/ProfileUpdatePage'))
-                .default,
             }),
           },
         ],

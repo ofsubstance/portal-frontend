@@ -62,7 +62,7 @@ const AppPerformanceMetrics: React.FC = () => {
         </Box>
         <Typography variant="body1">
           View key performance metrics for your application. Select a date range
-          to filter the data.
+          to filter the data. akjsdhlasdhlkajsdh
         </Typography>
       </Paper>
 

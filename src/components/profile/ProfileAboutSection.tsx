@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography } from '@mui/material';
 import {
   RiPhoneFill as ContactNumIcon,
   RiCakeFill as DobIcon,
@@ -6,15 +6,15 @@ import {
   RiSpeakFill as LanguageIcon,
   RiMapPin2Fill as LocationIcon,
   RiMailFill as MailIcon,
-} from "react-icons/ri";
+} from 'react-icons/ri';
 
-import { UserDto } from "@/dtos/user.dto";
-import dayjs from "dayjs";
-import { IconType } from "react-icons/lib";
+import { UserDto } from '@/dtos/user.dto';
+import dayjs from 'dayjs';
+import { IconType } from 'react-icons/lib';
 
 function AboutItem({
   Icon,
-  text = "Not Set",
+  text = 'Not Set',
 }: {
   Icon: IconType;
   text?: string;
@@ -29,10 +29,9 @@ function AboutItem({
 
 interface ProfileAboutSectionProps {
   data: UserDto;
-  onEditClick: () => void;
 }
 
-function ProfileAboutSection({ data, onEditClick }: ProfileAboutSectionProps) {
+function ProfileAboutSection({ data }: ProfileAboutSectionProps) {
   return (
     <div className="space-y-6">
       <Typography variant="h6" fontWeight={600}>
@@ -45,7 +44,7 @@ function ProfileAboutSection({ data, onEditClick }: ProfileAboutSectionProps) {
 
       <AboutItem
         Icon={DobIcon}
-        text={dayjs(data.birthDate).format("DD MMM YYYY")}
+        text={dayjs(data.birthDate).format('DD MMM YYYY')}
       />
 
       <AboutItem Icon={GenderIcon} text={data.gender} />
@@ -53,10 +52,6 @@ function ProfileAboutSection({ data, onEditClick }: ProfileAboutSectionProps) {
       <AboutItem Icon={LanguageIcon} text={data.language} />
 
       <AboutItem Icon={LocationIcon} text={data.location} />
-
-      <Button variant="outlined" fullWidth onClick={onEditClick}>
-        Edit Profile
-      </Button>
     </div>
   );
 }

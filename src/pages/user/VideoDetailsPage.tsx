@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Toolbar } from '@mui/material';
 import FlimFeedbackForm from '@/components/user/feedback/FlimFeedbackForm';
@@ -13,6 +14,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useModal } from '@ebay/nice-modal-react';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
 import ReactPlayer from 'react-player';
+import sessionService from '@/services/session.service';
+import useFeedbackActions from '@/hooks/useFeedbackActions';
+import { toast } from 'react-toastify';
 
 dayjs.extend(relativeTime);
 
@@ -20,6 +24,7 @@ export default function VideoDetailsPage() {
   const modal = useModal(ModalHookLayout);
   const { videoId } = useParams();
   const [searchParam, setSearchParam] = useSearchParams();
+  const [engagementTracked, setEngagementTracked] = useState(false);
 
   const { useVideoQuery } = useVideoManagementActions();
   const { useVideoListQuery } = useVideoManagementActions();
@@ -27,6 +32,23 @@ export default function VideoDetailsPage() {
   const { data: videos = [] } = useVideoListQuery();
 
   const { data: video } = useVideoQuery(videoId!);
+
+  const { submitFilmFeedback, isSubmittingFeedback } = useFeedbackActions();
+
+  // Track content engagement when the video details page loads
+  useEffect(() => {
+    if (videoId && !engagementTracked) {
+      // Track the content engagement
+      sessionService
+        .trackContentEngagement()
+        .then(() => {
+          setEngagementTracked(true);
+        })
+        .catch((error) => {
+          console.error('Error tracking content engagement:', error);
+        });
+    }
+  }, [videoId, engagementTracked]);
 
   const handlePlayClick = () => {
     setSearchParam({ playing: 'true' });
@@ -73,8 +95,19 @@ export default function VideoDetailsPage() {
       children: (
         <FlimFeedbackForm
           filmTitle={video?.title || ''}
-          onSubmit={(data) => {
-            console.log(data);
+          isSubmitting={isSubmittingFeedback}
+          onSubmit={async (data) => {
+            try {
+              if (!videoId) return;
+
+              await submitFilmFeedback(videoId, data);
+
+              toast.success('Thank you for your feedback!');
+              modal.hide();
+            } catch (error) {
+              console.error('Failed to submit feedback:', error);
+              toast.error('Failed to submit feedback. Please try again.');
+            }
           }}
         />
       ),

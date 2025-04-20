@@ -3,10 +3,10 @@ import {
   resetPasswordValidation,
   signinValidation,
   signupValidation,
-} from "@/validators/auth.validator";
+} from '@/validators/auth.validator';
 
-import { z } from "zod";
-import { UserDto } from "./user.dto";
+import { z } from 'zod';
+import { UserDto } from './user.dto';
 
 export type SigninReq = z.infer<typeof signinValidation>;
 
@@ -20,4 +20,5 @@ export interface SigninRes {
   accessToken: string;
   refreshToken: string;
   user: UserDto;
+  sessionId: string;
 }

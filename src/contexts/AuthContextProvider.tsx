@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 
 import { UserDto } from '@/dtos/user.dto';
 import storageService from '../services/storage.service';
+import sessionService from '../services/session.service';
 import useUserActions from '../hooks/useUserAction';
 
 interface AuthContextProps {
@@ -31,9 +32,11 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!authenticated) {
       setAuthData(undefined);
+      sessionService.stopHeartbeat();
     } else {
       setAuthData(user ?? storageService.getCurrentUser());
-      // Removed direct navigation - this will be handled by useAuth hook
+      // Start the session heartbeat
+      sessionService.startHeartbeat();
     }
   }, [authenticated, user]);
 
@@ -41,13 +44,21 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     document.addEventListener('logout', () => {
       setAuthenticated(false);
       setAuthData(undefined);
+      sessionService.stopHeartbeat();
     });
+
+    // Check if we already have a session ID and start heartbeat if authenticated
+    if (authenticated && storageService.getSessionId()) {
+      sessionService.startHeartbeat();
+    }
 
     return () => {
       document.removeEventListener('logout', () => {
         setAuthenticated(false);
         setAuthData(undefined);
+        sessionService.stopHeartbeat();
       });
+      sessionService.stopHeartbeat();
     };
   }, []);
 

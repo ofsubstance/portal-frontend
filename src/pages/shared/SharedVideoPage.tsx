@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Box,
@@ -32,19 +32,109 @@ import useSharedLink from '@/hooks/useSharedLink';
 import { useCommentActions } from '@/hooks/useCommentActions';
 import { Avatar } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
+import sessionService from '@/services/session.service';
+import storageService from '@/services/storage.service';
+import videoWatchService from '@/services/videoWatch.service';
 
 export default function SharedVideoPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const { isLoading, isExpired, error, shareLink } = useSharedLink();
   const { useVideoListQuery } = useVideoManagementActions();
+  const [videoStarted, setVideoStarted] = useState(false);
+  const playerRef = useRef<any>(null);
 
   const { data: videos = [] } = useVideoListQuery();
 
   // Filter videos to show only 4 for the collection preview
   const previewVideos = videos.slice(0, 4);
 
+  useEffect(() => {
+    // Initialize guest session for shared video access
+    const isAuthenticated = !!storageService.getAuthData();
+
+    if (!isAuthenticated) {
+      // Start guest session and heartbeat
+      sessionService.startGuestHeartbeat();
+    }
+
+    return () => {
+      // Clean up if component unmounts and user is not authenticated
+      if (!isAuthenticated) {
+        sessionService.stopHeartbeat();
+      }
+
+      // Complete the watch session if it exists when component unmounts
+      if (videoWatchService.getWatchSession()) {
+        const currentPosition = playerRef.current?.getCurrentTime() || 0;
+        videoWatchService.completeWatchSession(currentPosition, false);
+      }
+    };
+  }, []);
+
+  // Track content engagement when user starts playing the video
+  useEffect(() => {
+    if (isPlaying && shareLink?.video) {
+      sessionService.trackContentEngagement();
+    }
+  }, [isPlaying, shareLink]);
+
   const handlePlayClick = () => {
     setIsPlaying(true);
+  };
+
+  // Handle video player events
+  const handlePlayerReady = (player: any) => {
+    playerRef.current = player.player;
+  };
+
+  // Start watch session when video actually starts playing
+  const handleVideoStart = () => {
+    if (!videoStarted && shareLink?.video) {
+      setVideoStarted(true);
+
+      // Start a new watch session
+      videoWatchService
+        .startWatchSession(shareLink.video.id)
+        .then((session) => {
+          if (session) {
+            // Start periodic updates with a function that gets the current time
+            videoWatchService.startPeriodicUpdates(
+              () => playerRef.current?.getCurrentTime() || 0
+            );
+          }
+        });
+
+      // Track the play action
+      videoWatchService.handleUserAction('play', 0);
+    }
+  };
+
+  const handleVideoPause = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.handleUserAction('pause', currentTime);
+    }
+  };
+
+  const handleVideoPlay = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.handleUserAction('play', currentTime);
+    }
+  };
+
+  const handleVideoSeek = (event: any) => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = event.seconds;
+      videoWatchService.handleUserAction('seek', currentTime);
+    }
+  };
+
+  const handleVideoEnd = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.completeWatchSession(currentTime, true);
+    }
   };
 
   // Initialize comments hook outside of conditional rendering
@@ -255,7 +345,16 @@ export default function SharedVideoPage() {
             </Grid>
           ) : (
             <Box sx={{ width: '100%', maxWidth: '1000px', mx: 'auto' }}>
-              <Vimeo video={videoData.video_url} responsive={true} />
+              <Vimeo
+                video={videoData.video_url}
+                responsive={true}
+                onReady={handlePlayerReady}
+                onPlay={handleVideoPlay}
+                onPlaying={handleVideoStart}
+                onPause={handleVideoPause}
+                onSeeked={handleVideoSeek}
+                onEnd={handleVideoEnd}
+              />
 
               <Box sx={{ mt: 3 }}>
                 <Typography variant="h4" gutterBottom color="white">

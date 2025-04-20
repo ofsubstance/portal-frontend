@@ -14,6 +14,7 @@ import {
   RiArrowDownSLine as ExpandMoreIcon,
   RiPlayCircleLine as PlayIcon,
 } from 'react-icons/ri';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
@@ -22,6 +23,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useModal } from '@ebay/nice-modal-react';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
+import sessionService from '@/services/session.service';
 
 dayjs.extend(relativeTime);
 
@@ -55,12 +57,28 @@ function VideoDescriptionItem({ title, details }: VideoDescriptionItemProps) {
 
 function VideoDetailsPage() {
   const { videoId } = useParams();
+  const [engagementTracked, setEngagementTracked] = useState(false);
 
   const navigate = useNavigate();
   const modal = useModal(ModalHookLayout);
   const { useVideoQuery, videoDeleteMutation } = useVideoManagementActions();
 
   const { data } = useVideoQuery(videoId!);
+
+  // Track content engagement when the video details page loads
+  useEffect(() => {
+    if (videoId && !engagementTracked) {
+      // Track the content engagement
+      sessionService
+        .trackContentEngagement()
+        .then(() => {
+          setEngagementTracked(true);
+        })
+        .catch((error) => {
+          console.error('Error tracking content engagement:', error);
+        });
+    }
+  }, [videoId, engagementTracked]);
 
   const handleDeleteClick = () => {
     modal.show({

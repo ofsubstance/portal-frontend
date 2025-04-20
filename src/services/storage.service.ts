@@ -11,6 +11,11 @@ class StorageService {
   }
 
   setAuthData(authData: SigninRes, remember = false) {
+    // Store sessionId in localStorage if it exists
+    if (authData.sessionId) {
+      localStorage.setItem('sessionId', authData.sessionId);
+    }
+
     if (!remember)
       return localStorage.setItem(
         'auth',
@@ -31,6 +36,7 @@ class StorageService {
   removeAuthData() {
     localStorage.removeItem('auth');
     localStorage.removeItem('auth');
+    localStorage.removeItem('sessionId');
   }
 
   setCurrentUser(user: UserDto) {
@@ -48,6 +54,18 @@ class StorageService {
   getCurrentUser() {
     const authData = this.getAuthData();
     return authData?.user;
+  }
+
+  getSessionId() {
+    return localStorage.getItem('sessionId');
+  }
+
+  setSessionId(sessionId: string) {
+    localStorage.setItem('sessionId', sessionId);
+  }
+
+  removeSessionId() {
+    localStorage.removeItem('sessionId');
   }
 }
 

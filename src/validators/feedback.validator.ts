@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const genaralFeedbackValidation = z.object({
   engagementQuality: z.number().min(1).max(5),
@@ -8,7 +8,7 @@ export const genaralFeedbackValidation = z.object({
   recommendLikelihood: z.number().min(1).max(5),
   openEndedFeedback: z
     .string()
-    .min(250, { message: "Experience must be at least 250 characters long." }),
+    .min(100, { message: 'Experience must be at least 100 characters long.' }),
 });
 
 export const filmFeedbackValidation = z.object({
@@ -19,5 +19,5 @@ export const filmFeedbackValidation = z.object({
   recommendLikelihood: z.number().min(1).max(5),
   openEndedFeedback: z
     .string()
-    .min(250, { message: "Experience must be at least 250 characters long." }),
+    .min(100, { message: 'Experience must be at least 100 characters long.' }),
 });

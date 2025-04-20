@@ -136,11 +136,6 @@ const navItems = (userId?: string): NavGroup[] => [
         text: 'Profile Details',
         icon: ProfileIcon,
       },
-      {
-        link: `/admin/profile/settings/${userId}`,
-        text: 'Settings',
-        icon: SettingsIcon,
-      },
     ],
   },
 ];

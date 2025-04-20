@@ -45,12 +45,7 @@ export default function AccountMenu() {
   const handleProfileClick = () => {
     if (user?.role === UserRole.Admin) navigate(`/admin/profile/${user?.id}`);
     else navigate(`/profile/${user?.id}`);
-  };
-
-  const handleAccountSettingsClick = () => {
-    if (user?.role === UserRole.Admin)
-      navigate(`/admin/profile/settings/${user?.id}`);
-    else navigate(`/profile/settings/${user?.id}`);
+    handleClose();
   };
 
   const handleAdminDashboardClick = () => {
@@ -152,13 +147,6 @@ export default function AccountMenu() {
             <ProfileIcon size={18} className="text-slate-600" />
           </ListItemIcon>
           Profile & Account
-        </MenuItem>
-
-        <MenuItem onClick={handleAccountSettingsClick}>
-          <ListItemIcon>
-            <SettingsIcon size={18} className="text-slate-600" />
-          </ListItemIcon>
-          Account Settings
         </MenuItem>
 
         {user?.role === UserRole.User && (

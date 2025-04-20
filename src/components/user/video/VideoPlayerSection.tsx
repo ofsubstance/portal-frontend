@@ -5,10 +5,11 @@ import {
   RiShareLine as ShareIcon,
 } from 'react-icons/ri';
 import { Box, Chip, Fab, Typography } from '@mui/material';
-
+import { useState, useEffect, useRef } from 'react';
 import { VideoDto } from '@/dtos/video.dto';
 import Vimeo from '@u-wave/react-vimeo';
 import dayjs from 'dayjs';
+import videoWatchService from '@/services/videoWatch.service';
 
 interface VideoPlayerSectionProps {
   data: VideoDto;
@@ -21,10 +22,86 @@ export default function VideoPlayerSection({
   onFeedback,
   onShare,
 }: VideoPlayerSectionProps) {
+  const [videoStarted, setVideoStarted] = useState(false);
+  const playerRef = useRef<any>(null);
+
+  // Clean up when component unmounts
+  useEffect(() => {
+    return () => {
+      // Complete the watch session if it exists when component unmounts
+      if (videoWatchService.getWatchSession()) {
+        const currentPosition = playerRef.current?.getCurrentTime() || 0;
+        videoWatchService.completeWatchSession(currentPosition, false);
+      }
+    };
+  }, []);
+
+  // Handle video player events
+  const handlePlayerReady = (player: any) => {
+    playerRef.current = player.player;
+  };
+
+  // Start watch session when video actually starts playing
+  const handleVideoStart = () => {
+    if (!videoStarted && data) {
+      setVideoStarted(true);
+
+      // Start a new watch session
+      videoWatchService.startWatchSession(data.id).then((session) => {
+        if (session) {
+          // Start periodic updates with a function that gets the current time
+          videoWatchService.startPeriodicUpdates(
+            () => playerRef.current?.getCurrentTime() || 0
+          );
+        }
+      });
+
+      // Track the play action
+      videoWatchService.handleUserAction('play', 0);
+    }
+  };
+
+  const handleVideoPause = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.handleUserAction('pause', currentTime);
+    }
+  };
+
+  const handleVideoPlay = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.handleUserAction('play', currentTime);
+    }
+  };
+
+  const handleVideoSeek = (event: any) => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = event.seconds;
+      videoWatchService.handleUserAction('seek', currentTime);
+    }
+  };
+
+  const handleVideoEnd = () => {
+    if (videoStarted && playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      videoWatchService.completeWatchSession(currentTime, true);
+    }
+  };
+
   return (
     <div className="flex md:flex-row flex-col items-start gap-8 p-6">
       <div className="flex-1 w-full">
-        <Vimeo video={data.video_url} responsive={true} />
+        <Vimeo
+          video={data.video_url}
+          responsive={true}
+          onReady={handlePlayerReady}
+          onPlay={handleVideoPlay}
+          onPlaying={handleVideoStart}
+          onPause={handleVideoPause}
+          onSeeked={handleVideoSeek}
+          onEnd={handleVideoEnd}
+        />
       </div>
       <div className="flex flex-col items-start gap-6 flex-[0.4]">
         <img

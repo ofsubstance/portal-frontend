@@ -1,11 +1,11 @@
-import { Button, Rating, TextField, Typography } from "@mui/material";
+import { Button, Rating, TextField, Typography } from '@mui/material';
 
-import { genaralFeedbackQuestions } from "@/constants/labels";
-import { GenaralFeedbackSubmitDto } from "@/dtos/feedback.dto";
-import { genaralFeedbackValidation } from "@/validators/feedback.validator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { genaralFeedbackQuestions } from '@/constants/labels';
+import { GenaralFeedbackSubmitDto } from '@/dtos/feedback.dto';
+import { genaralFeedbackValidation } from '@/validators/feedback.validator';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface GeneralFeedbackFormProps {
   onSubmit: (data: GenaralFeedbackSubmitDto) => void;
@@ -30,7 +30,7 @@ export default function GeneralFeedbackForm({
       outcomeImprovement: 0,
       continueUsageLikelihood: 0,
       recommendLikelihood: 0,
-      openEndedFeedback: "",
+      openEndedFeedback: '',
     },
   });
 
@@ -43,7 +43,7 @@ export default function GeneralFeedbackForm({
         <div key={question.key} className="space-y-2">
           <Typography
             component="legend"
-            color={errors[question.key] ? "error" : "initial"}
+            color={errors[question.key] ? 'error' : 'initial'}
           >
             {question.question}
           </Typography>
@@ -81,11 +81,11 @@ export default function GeneralFeedbackForm({
         films. We’d love to know how/why you’re using the films; how/why your
         clients are responding; how/why you’re applying the films; why you’d
         share Of Substance with other industry professionals; and anything else
-        that would be helpful for us to enhance our offerings. (Min 250
+        that would be helpful for us to enhance our offerings. (Min 100
         characters)
       </Typography>
       <TextField
-        {...register("openEndedFeedback")}
+        {...register('openEndedFeedback')}
         label="Open Ended Feedback"
         multiline
         rows={4}

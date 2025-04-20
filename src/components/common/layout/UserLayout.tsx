@@ -78,11 +78,6 @@ const navItems = [
         text: 'Profile Details',
         icon: ProfileIcon,
       },
-      {
-        link: '/admin/profile/settings',
-        text: 'Settings',
-        icon: SettingsIcon,
-      },
     ],
   },
 ];
