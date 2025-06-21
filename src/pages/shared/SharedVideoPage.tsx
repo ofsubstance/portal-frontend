@@ -14,6 +14,7 @@ import {
   Divider,
   Alert,
   CircularProgress,
+  Avatar,
 } from '@mui/material';
 import {
   RiTimeLine,
@@ -30,8 +31,8 @@ import { VideoDto } from '@/dtos/video.dto';
 import SharedVideoLayout from '@/components/shared/SharedVideoLayout';
 import useSharedLink from '@/hooks/useSharedLink';
 import { useCommentActions } from '@/hooks/useCommentActions';
-import { Avatar } from '@mui/material';
 import { formatDistanceToNow } from 'date-fns';
+import { alpha } from '@mui/material/styles';
 
 import videoWatchService from '@/services/videoWatch.service';
 import { UserEvent } from '@/dtos/watchSession.dto';
@@ -496,7 +497,7 @@ export default function SharedVideoPage() {
           {/* Comments section */}
           {approvedComments && approvedComments.length > 0 && (
             <Paper
-              elevation={1}
+              elevation={2}
               sx={{
                 p: 4,
                 mb: 6,
@@ -512,62 +513,115 @@ export default function SharedVideoPage() {
                   mb: 3,
                 }}
               >
-                <Typography variant="h5" color="text.primary">
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <RiMessage2Line
-                    style={{ verticalAlign: 'middle', marginRight: 8 }}
+                    size={24}
+                    style={{ marginRight: 10, color: '#1976d2' }}
                   />
-                  Viewer Comments ({approvedComments.length})
-                </Typography>
+                  <Typography
+                    variant="h5"
+                    fontWeight={600}
+                    color="text.primary"
+                  >
+                    Viewer Comments ({approvedComments.length})
+                  </Typography>
+                </Box>
                 <Button
                   variant="outlined"
-                  size="small"
+                  size="medium"
                   component={Link}
                   to="/signup"
                   startIcon={<RiUserAddLine />}
+                  sx={{ borderRadius: 2 }}
                 >
                   Sign Up to Comment
                 </Button>
               </Box>
               <Divider sx={{ mb: 3 }} />
 
-              {approvedComments.map((comment, index) => (
-                <Box key={comment.id} sx={{ mb: 3 }}>
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Avatar alt={comment.user?.firstname || 'User'} />
-                    <Box sx={{ flex: 1 }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight={500}
-                          color="text.primary"
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {approvedComments.map((comment) => (
+                  <Card
+                    key={comment.id}
+                    elevation={1}
+                    sx={{
+                      borderRadius: 2,
+                      transition: 'all 0.15s ease',
+                      '&:hover': {
+                        boxShadow: 2,
+                        transform: 'translateY(-1px)',
+                      },
+                      overflow: 'visible',
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Avatar
+                          alt={comment.user?.firstname || 'User'}
+                          sx={{
+                            bgcolor: 'primary.main',
+                            width: 48,
+                            height: 48,
+                            boxShadow: 1,
+                            fontSize: 20,
+                          }}
                         >
-                          {comment.user?.firstname} {comment.user?.lastname}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDistanceToNow(new Date(comment.createdAt), {
-                            addSuffix: true,
-                          })}
-                        </Typography>
+                          {comment.user?.firstname?.[0] || 'U'}
+                        </Avatar>
+                        <Box sx={{ flex: 1 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              alignItems: 'center',
+                              gap: 1.5,
+                              mb: 1.5,
+                            }}
+                          >
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: 600,
+                                color: 'text.primary',
+                              }}
+                            >
+                              {comment.user?.firstname} {comment.user?.lastname}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: 'text.secondary',
+                                bgcolor: (theme) =>
+                                  alpha(theme.palette.primary.main, 0.07),
+                                py: 0.5,
+                                px: 1,
+                                borderRadius: 1,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {formatDistanceToNow(
+                                new Date(comment.createdAt),
+                                {
+                                  addSuffix: true,
+                                }
+                              )}
+                            </Typography>
+                          </Box>
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              lineHeight: 1.6,
+                              color: 'text.primary',
+                            }}
+                          >
+                            {comment.text}
+                          </Typography>
+                        </Box>
                       </Box>
-                      <Typography
-                        variant="body2"
-                        sx={{ mt: 1 }}
-                        color="text.primary"
-                      >
-                        {comment.text}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  {index < approvedComments.length - 1 && (
-                    <Divider sx={{ my: 3 }} />
-                  )}
-                </Box>
-              ))}
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
             </Paper>
           )}
         </Container>

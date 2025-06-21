@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Toolbar } from '@mui/material';
+import {
+  Toolbar,
+  Box,
+  Container,
+  alpha,
+  useTheme,
+  Divider,
+} from '@mui/material';
 import FlimFeedbackForm from '@/components/user/feedback/FlimFeedbackForm';
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
 import VideoCommentInput from '@/components/user/video/VideoCommentInput';
@@ -25,14 +32,13 @@ export default function VideoDetailsPage() {
   const { videoId } = useParams();
   const [searchParam, setSearchParam] = useSearchParams();
   const [engagementTracked, setEngagementTracked] = useState(false);
+  const theme = useTheme();
 
   const { useVideoQuery } = useVideoManagementActions();
   const { useVideoListQuery } = useVideoManagementActions();
 
   const { data: videos = [] } = useVideoListQuery();
-
   const { data: video } = useVideoQuery(videoId!);
-
   const { submitFilmFeedback, isSubmittingFeedback } = useFeedbackActions();
 
   // Track content engagement when the video details page loads
@@ -60,8 +66,8 @@ export default function VideoDetailsPage() {
       maxWidth: 'lg',
       darkMode: true,
       children: (
-        <div
-          style={{
+        <Box
+          sx={{
             width: '100%',
             maxWidth: '800px',
             margin: 'auto',
@@ -69,15 +75,17 @@ export default function VideoDetailsPage() {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#000',
-            padding: '1rem',
-            borderRadius: '8px',
+            p: 2,
+            borderRadius: 2,
           }}
         >
           {video && (
-            <div
-              style={{
+            <Box
+              sx={{
                 width: '100%',
                 aspectRatio: '16 / 9',
+                overflow: 'hidden',
+                borderRadius: 1,
               }}
             >
               <ReactPlayer
@@ -97,9 +105,9 @@ export default function VideoDetailsPage() {
                   },
                 }}
               />
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
       ),
     });
   };
@@ -145,15 +153,25 @@ export default function VideoDetailsPage() {
   if (!video) return null;
 
   return (
-    <div className="space-y-10">
-      <div
-        className="bg-fit bg-center text-white min-h-screen relative"
-        style={{
-          backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.6)), url(${video.thumbnail_url})`,
+    <Box>
+      <Box
+        sx={{
+          background: `linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.7)), url(${video.thumbnail_url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          color: 'white',
+          minHeight: 'calc(100vh)',
+          position: 'relative',
         }}
       >
-        <div className="min-h-screen backdrop-filter backdrop-blur-md bg-black bg-opacity-20">
-          <Toolbar />
+        <Box
+          sx={{
+            minHeight: 'calc(100vh)',
+            backdropFilter: 'blur(5px)',
+            backgroundColor: alpha(theme.palette.common.black, 0.3),
+          }}
+        >
+          <Toolbar sx={{ minHeight: '64px !important', p: 0 }} />
           {searchParam.get('playing') === 'true' ? (
             <VideoPlayerSection
               data={video}
@@ -168,20 +186,29 @@ export default function VideoDetailsPage() {
               onShare={handleShareClick}
             />
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="px-10 md:px-20 space-y-4">
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: { xs: 4, md: 1 },
+          px: { xs: 2, sm: 4, md: 4 },
+        }}
+      >
         {videoId && (
-          <>
+          <Box sx={{ mb: 8 }}>
             <VideoCommentInput videoId={videoId} />
             <VideoCommentList videoId={videoId} />
-          </>
+          </Box>
         )}
-      </div>
-      <div className="space-y-6 px-10 md:px-20">
-        <VideoListSection videos={videos} />
-      </div>
-    </div>
+
+        <Divider sx={{ mb: 6, opacity: 0.3 }} />
+
+        <Box sx={{ mb: 6 }}>
+          <VideoListSection videos={videos} />
+        </Box>
+      </Container>
+    </Box>
   );
 }

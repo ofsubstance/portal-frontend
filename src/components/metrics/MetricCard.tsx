@@ -10,12 +10,7 @@ interface MetricCardProps {
   changeType?: 'positive' | 'negative' | 'neutral';
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({
-  title,
-  value,
-  change,
-  changeType = 'neutral',
-}) => {
+const MetricCard: React.FC<MetricCardProps> = ({ title, value }) => {
   return (
     <Paper
       elevation={1}
@@ -33,27 +28,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <Typography variant="h4" component="div" sx={{ fontWeight: 500, my: 1 }}>
         {value}
       </Typography>
-      {change && (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            color:
-              changeType === 'positive'
-                ? 'success.main'
-                : changeType === 'negative'
-                ? 'error.main'
-                : 'text.secondary',
-          }}
-        >
-          {changeType === 'positive' ? (
-            <TrendingUpIcon fontSize="small" sx={{ mr: 0.5 }} />
-          ) : changeType === 'negative' ? (
-            <TrendingDownIcon fontSize="small" sx={{ mr: 0.5 }} />
-          ) : null}
-          <Typography variant="body2">{change}</Typography>
-        </Box>
-      )}
     </Paper>
   );
 };

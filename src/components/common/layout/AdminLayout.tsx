@@ -29,6 +29,7 @@ import {
   RiUserHeartLine as EngagementIcon,
   RiBarChartBoxLine as MacroMetricsIcon,
   RiBarChartGroupedLine as ContentMetricsIcon,
+  RiLogoutBoxRLine as LogoutIcon,
 } from 'react-icons/ri';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconType } from 'react-icons';
@@ -178,153 +179,185 @@ function DrawerContent() {
   };
 
   return (
-    <Box className="flex flex-col gap-6 h-screen py-4">
-      <span className="pl-8 py-4">
+    <Box className="flex flex-col h-screen bg-white">
+      {/* Logo Section */}
+      <Box className="px-6 py-5 border-b border-gray-100">
         <Typography
           fontSize={'2rem'}
           color="black"
           fontFamily={'Pistilli-Roman'}
+          className="tracking-tight"
         >
           Of Substance.
         </Typography>
-      </span>
-      {navItems(authData?.id).map((group) => (
-        <div key={group.group} className="flex flex-col">
-          <Typography
-            variant="body2"
-            fontWeight={600}
-            pl={4}
-            textTransform={'uppercase'}
-          >
-            {group.group}
-          </Typography>
-          <List dense component="nav">
-            {group.items.map((item) => (
-              <div key={item.text}>
-                <ListItem
-                  disablePadding
-                  onClick={() => {
-                    if (item.subItems) {
-                      handleToggleExpand(item.text);
-                    } else if (item.link) {
-                      navigate(item.link);
-                    }
-                  }}
-                >
-                  <ListItemButton
-                    selected={
-                      item.link ? isActiveLink(item.link) : isActiveParent(item)
-                    }
-                    sx={{
-                      borderRadius: 1,
-                      paddingX: 2,
-                      paddingY: 1.5,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 2,
+      </Box>
+
+      {/* Navigation Section */}
+      <Box className="flex-1 overflow-y-auto px-4 py-6">
+        {navItems(authData?.id).map((group) => (
+          <div key={group.group} className="mb-8">
+            <Typography
+              variant="caption"
+              fontWeight={600}
+              className="px-3 mb-4 block text-gray-500 uppercase tracking-wider"
+            >
+              {group.group}
+            </Typography>
+            <List className="space-y-1">
+              {group.items.map((item) => (
+                <div key={item.text}>
+                  <ListItem
+                    disablePadding
+                    onClick={() => {
+                      if (item.subItems) {
+                        handleToggleExpand(item.text);
+                      } else if (item.link) {
+                        navigate(item.link);
+                      }
                     }}
                   >
-                    <item.icon
-                      size={20}
-                      color={
-                        (
-                          item.link
-                            ? isActiveLink(item.link)
-                            : isActiveParent(item)
-                        )
-                          ? theme.palette.primary.main
-                          : theme.palette.text.primary
+                    <ListItemButton
+                      selected={
+                        item.link
+                          ? isActiveLink(item.link)
+                          : isActiveParent(item)
                       }
-                    />
-                    <Typography
-                      variant="body2"
-                      fontWeight={500}
-                      color={
-                        (
-                          item.link
-                            ? isActiveLink(item.link)
-                            : isActiveParent(item)
-                        )
-                          ? theme.palette.primary.main
-                          : theme.palette.text.primary
-                      }
-                      sx={{ flexGrow: 1 }}
+                      sx={{
+                        borderRadius: '8px',
+                        padding: '10px 12px',
+                        transition: 'all 0.2s',
+                        '&.Mui-selected': {
+                          backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                          },
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        },
+                      }}
                     >
-                      {item.text}
-                    </Typography>
-                    {item.subItems &&
-                      (expandedItems[item.text] ? (
-                        <ExpandMoreIcon size={18} />
-                      ) : (
-                        <ExpandLessIcon size={18} />
-                      ))}
-                  </ListItemButton>
-                </ListItem>
+                      <item.icon
+                        size={20}
+                        className={`${
+                          (
+                            item.link
+                              ? isActiveLink(item.link)
+                              : isActiveParent(item)
+                          )
+                            ? 'text-primary'
+                            : 'text-gray-600'
+                        } transition-colors`}
+                      />
+                      <Typography
+                        variant="body2"
+                        fontWeight={500}
+                        sx={{
+                          ml: 2,
+                          flexGrow: 1,
+                          color: (
+                            item.link
+                              ? isActiveLink(item.link)
+                              : isActiveParent(item)
+                          )
+                            ? 'primary.main'
+                            : 'text.primary',
+                        }}
+                      >
+                        {item.text}
+                      </Typography>
+                      {item.subItems &&
+                        (expandedItems[item.text] ? (
+                          <ExpandMoreIcon size={18} className="text-gray-400" />
+                        ) : (
+                          <ExpandLessIcon size={18} className="text-gray-400" />
+                        ))}
+                    </ListItemButton>
+                  </ListItem>
 
-                {item.subItems && (
-                  <Collapse
-                    in={expandedItems[item.text]}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    <List component="div" disablePadding>
-                      {item.subItems.map((subItem) => (
-                        <ListItem
-                          key={subItem.text}
-                          disablePadding
-                          onClick={() => navigate(subItem.link)}
-                        >
-                          <ListItemButton
-                            selected={isActiveLink(subItem.link)}
-                            sx={{
-                              pl: 6,
-                              py: 1,
-                              borderRadius: 1,
-                              ml: 2,
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 2,
-                            }}
+                  {item.subItems && (
+                    <Collapse
+                      in={expandedItems[item.text]}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      <List component="div" className="mt-1">
+                        {item.subItems.map((subItem) => (
+                          <ListItem
+                            key={subItem.text}
+                            disablePadding
+                            onClick={() => navigate(subItem.link)}
                           >
-                            <subItem.icon
-                              size={18}
-                              color={
-                                isActiveLink(subItem.link)
-                                  ? theme.palette.primary.main
-                                  : theme.palette.text.secondary
-                              }
-                            />
-                            <Typography
-                              variant="body2"
-                              fontWeight={400}
-                              color={
-                                isActiveLink(subItem.link)
-                                  ? theme.palette.primary.main
-                                  : theme.palette.text.secondary
-                              }
+                            <ListItemButton
+                              selected={isActiveLink(subItem.link)}
+                              sx={{
+                                borderRadius: '8px',
+                                ml: 2,
+                                padding: '8px 12px',
+                                transition: 'all 0.2s',
+                                '&.Mui-selected': {
+                                  backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                                  },
+                                },
+                                '&:hover': {
+                                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                },
+                              }}
                             >
-                              {subItem.text}
-                            </Typography>
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                )}
-              </div>
-            ))}
-          </List>
-        </div>
-      ))}
+                              <subItem.icon
+                                size={18}
+                                className={`${
+                                  isActiveLink(subItem.link)
+                                    ? 'text-primary'
+                                    : 'text-gray-500'
+                                } transition-colors`}
+                              />
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  ml: 2,
+                                  color: isActiveLink(subItem.link)
+                                    ? 'primary.main'
+                                    : 'text.secondary',
+                                  fontWeight: isActiveLink(subItem.link)
+                                    ? 500
+                                    : 400,
+                                }}
+                              >
+                                {subItem.text}
+                              </Typography>
+                            </ListItemButton>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                </div>
+              ))}
+            </List>
+          </div>
+        ))}
+      </Box>
 
-      <Button
-        variant="contained"
-        size="large"
-        sx={{ marginTop: 'auto', mx: 2 }}
-        onClick={handleLogout}
-      >
-        LOGOUT
-      </Button>
+      {/* Logout Section */}
+      <Box className="p-4 border-t border-gray-100">
+        <Button
+          variant="outlined"
+          fullWidth
+          size="large"
+          onClick={handleLogout}
+          startIcon={<LogoutIcon size={20} />}
+          sx={{
+            borderRadius: '8px',
+            textTransform: 'none',
+            fontWeight: 500,
+          }}
+        >
+          Logout
+        </Button>
+      </Box>
     </Box>
   );
 }
@@ -359,9 +392,10 @@ export default function AdminLayout({
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
           ml: { sm: `${drawerWidth}px` },
-          backgroundColor: 'rgba(255, 255, 255, 0)',
+          backgroundColor: 'white',
+          borderBottom: '1px solid',
+          borderColor: 'rgba(0, 0, 0, 0.06)',
           boxShadow: 'none',
-          backdropFilter: 'blur(12px)',
         }}
       >
         <Toolbar
@@ -369,13 +403,20 @@ export default function AdminLayout({
             width: '100%',
             maxWidth: '100%',
             mx: 'auto',
+            height: '70px',
           }}
         >
           <IconButton
             color="primary"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{
+              mr: 2,
+              display: { sm: 'none' },
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.04)',
+              },
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -407,6 +448,7 @@ export default function AdminLayout({
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
+              borderRight: '1px solid rgba(0, 0, 0, 0.06)',
             },
           }}
         >
@@ -419,7 +461,8 @@ export default function AdminLayout({
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              border: 'none',
+              borderRight: '1px solid rgba(0, 0, 0, 0.06)',
+              boxShadow: 'none',
             },
           }}
           open
@@ -435,11 +478,11 @@ export default function AdminLayout({
           height: '100vh',
           overflow: 'auto',
           backgroundColor: 'rgb(243, 244, 249)',
+          pt: '70px',
         }}
       >
-        <Toolbar />
         <Box
-          p={2}
+          p={3}
           sx={{
             width: '100%',
             maxWidth: '100%',

@@ -455,7 +455,6 @@ export default function UserLayout({
           minHeight: '100vh',
         }}
       >
-        <Toolbar />
         {children}
       </Box>
     </Box>

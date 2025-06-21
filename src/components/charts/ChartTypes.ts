@@ -7,7 +7,7 @@ import {
   ScatterSeriesOption,
 } from 'echarts/charts';
 
-export type ChartType = 'line' | 'bar' | 'pie' | 'scatter' | 'area';
+export type ChartType = 'line' | 'bar' | 'pie' | 'scatter' | 'area' | 'sankey';
 
 export interface ChartDataPoint {
   name: string;
@@ -16,7 +16,7 @@ export interface ChartDataPoint {
 
 export interface ChartSeries {
   name: string;
-  data: ChartDataPoint[] | number[];
+  data: ChartDataPoint[] | number[] | any[];
   type: ChartType;
   stack?: string;
   areaStyle?: Record<string, unknown>;
@@ -25,6 +25,8 @@ export interface ChartSeries {
   emphasis?: Record<string, unknown>;
   radius?: string | string[];
   center?: string[];
+  links?: any[];
+  lineStyle?: Record<string, unknown>;
 }
 
 export interface ChartData {
@@ -208,6 +210,22 @@ export const generateChartOptions = (chartData: ChartData): EChartsOption => {
           emphasis: s.emphasis as any,
         };
         return scatterConfig;
+      }
+
+      if (s.type === 'sankey') {
+        return {
+          type: 'sankey',
+          name: s.name,
+          data: s.data,
+          links: s.links,
+          emphasis: s.emphasis as any,
+          lineStyle: s.lineStyle as any,
+          itemStyle: s.itemStyle as any,
+          label: {
+            formatter: '{b}',
+            position: 'right',
+          },
+        };
       }
 
       // Fallback for any other types

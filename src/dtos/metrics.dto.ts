@@ -65,3 +65,144 @@ export interface SessionEngagementDailyDto {
     engagementRate: number;
   }[];
 }
+
+export interface SessionTimeDto {
+  startDate: string;
+  endDate: string;
+  span: 'daily' | 'weekly' | 'monthly';
+  data: {
+    date: string;
+    minutes: number;
+    sessionCount: number;
+  }[];
+  averageSessionTimeMinutes: number;
+  totalSessions: number;
+}
+
+export interface UserUtilizationDto {
+  totalUsers: number;
+  data: {
+    purpose: string;
+    count: number;
+    percentage: number;
+  }[];
+}
+
+export interface UserInterestsDto {
+  totalUsers: number;
+  data: {
+    interest: string;
+    count: number;
+  }[];
+}
+
+export interface InterestSankeyDto {
+  totalUsers: number;
+  sankeyData: {
+    nodes: {
+      id: string;
+      name: string;
+    }[];
+    links: {
+      source: string;
+      target: string;
+      value: number;
+    }[];
+  };
+  nodeFrequencies: {
+    id: string;
+    count: number;
+  }[];
+}
+
+// Content Performance Metrics DTOs
+export interface VideoListItemDto {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  duration: number;
+  viewCount: number;
+}
+
+export interface VideoViewsDto {
+  videoId: string;
+  title: string;
+  period: 'daily' | 'weekly' | 'monthly';
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  totalViews: number;
+  distribution: Array<{
+    date?: string;
+    week?: string;
+    month?: string;
+    count: number;
+  }>;
+}
+
+export interface VideoPercentageWatchedDto {
+  videoId: string;
+  title: string;
+  period: 'daily' | 'weekly' | 'monthly';
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  averagePercentageWatched: number;
+  totalSessions: number;
+  distribution: Array<{
+    date?: string;
+    week?: string;
+    month?: string;
+    averagePercentage: number;
+    sessionCount: number;
+  }>;
+}
+
+// New DTOs for video shares and completion rates
+export interface VideoSharesDto {
+  videoId: string;
+  title: string;
+  period: 'daily' | 'weekly' | 'monthly';
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  totalShares: number;
+  distribution: Array<{
+    date?: string;
+    week?: string;
+    month?: string;
+    count: number;
+  }>;
+}
+
+export interface VideoCompletionRatesDto {
+  videoId: string;
+  title: string;
+  period: 'daily' | 'weekly' | 'monthly';
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  totalSessions: number;
+  completedSessions: number;
+  partialSessions: number;
+  droppedOffSessions: number;
+  completionRate: number;
+  partialRate: number;
+  dropOffRate: number;
+  distribution: Array<{
+    date?: string;
+    week?: string;
+    month?: string;
+    totalSessions: number;
+    completedSessions: number;
+    partialSessions: number;
+    droppedOffSessions: number;
+    completionRate: number;
+    partialRate: number;
+    dropOffRate: number;
+  }>;
+}

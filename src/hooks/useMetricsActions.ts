@@ -10,7 +10,8 @@ const useMetricsActions = () => {
     return useQuery({
       queryKey: ['dau', formattedDate],
       queryFn: () => metricsService.getDailyActiveUsers(formattedDate),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -19,7 +20,8 @@ const useMetricsActions = () => {
     return useQuery({
       queryKey: ['mau', formattedDate],
       queryFn: () => metricsService.getMonthlyActiveUsers(formattedDate),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -34,7 +36,8 @@ const useMetricsActions = () => {
       queryKey: ['user-trend', formattedStartDate, formattedEndDate, span],
       queryFn: () =>
         metricsService.getUserTrend(formattedStartDate, formattedEndDate, span),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -53,7 +56,8 @@ const useMetricsActions = () => {
           formattedEndDate,
           span
         ),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -64,7 +68,8 @@ const useMetricsActions = () => {
       queryKey: ['retention', formattedStartDate, formattedEndDate],
       queryFn: () =>
         metricsService.getRetentionRates(formattedStartDate, formattedEndDate),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -78,7 +83,8 @@ const useMetricsActions = () => {
           formattedStartDate,
           formattedEndDate
         ),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -96,7 +102,181 @@ const useMetricsActions = () => {
           formattedStartDate,
           formattedEndDate
         ),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useSessionTimeQuery = (
+    startDate: Date,
+    endDate: Date,
+    span: SpanType = 'daily'
+  ) => {
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+    return useQuery({
+      queryKey: ['session-time', formattedStartDate, formattedEndDate, span],
+      queryFn: () =>
+        metricsService.getSessionTime(
+          formattedStartDate,
+          formattedEndDate,
+          span
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useUserUtilizationQuery = () => {
+    return useQuery({
+      queryKey: ['user-utilization'],
+      queryFn: () => metricsService.getUserUtilization(),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useUserInterestsQuery = () => {
+    return useQuery({
+      queryKey: ['user-interests'],
+      queryFn: () => metricsService.getUserInterests(),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useInterestSankeyQuery = () => {
+    return useQuery({
+      queryKey: ['interest-sankey'],
+      queryFn: () => metricsService.getInterestSankey(),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  // Content Performance Metrics
+  const useVideoListForMetricsQuery = () => {
+    return useQuery({
+      queryKey: ['video-list-metrics'],
+      queryFn: () => metricsService.getVideoListForMetrics(),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useVideoViewsQuery = (
+    videoId: string,
+    startDate: Date,
+    endDate: Date,
+    period: SpanType = 'daily'
+  ) => {
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+    return useQuery({
+      queryKey: [
+        'video-views',
+        videoId,
+        formattedStartDate,
+        formattedEndDate,
+        period,
+      ],
+      queryFn: () =>
+        metricsService.getVideoViews(
+          videoId,
+          formattedStartDate,
+          formattedEndDate,
+          period
+        ),
+      staleTime: 0, // Always treat data as stale to ensure refresh
+      enabled: !!videoId,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useVideoPercentageWatchedQuery = (
+    videoId: string,
+    startDate: Date,
+    endDate: Date,
+    period: SpanType = 'daily'
+  ) => {
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+    return useQuery({
+      queryKey: [
+        'video-percentage-watched',
+        videoId,
+        formattedStartDate,
+        formattedEndDate,
+        period,
+      ],
+      queryFn: () =>
+        metricsService.getVideoPercentageWatched(
+          videoId,
+          formattedStartDate,
+          formattedEndDate,
+          period
+        ),
+      staleTime: 0, // Always treat data as stale to ensure refresh
+      enabled: !!videoId,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useVideoSharesQuery = (
+    videoId: string,
+    startDate: Date,
+    endDate: Date,
+    period: SpanType = 'daily'
+  ) => {
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+    return useQuery({
+      queryKey: [
+        'video-shares',
+        videoId,
+        formattedStartDate,
+        formattedEndDate,
+        period,
+      ],
+      queryFn: () =>
+        metricsService.getVideoShares(
+          videoId,
+          formattedStartDate,
+          formattedEndDate,
+          period
+        ),
+      staleTime: 0, // Always treat data as stale to ensure refresh
+      enabled: !!videoId,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useVideoCompletionRatesQuery = (
+    videoId: string,
+    startDate: Date,
+    endDate: Date,
+    period: SpanType = 'daily'
+  ) => {
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
+    return useQuery({
+      queryKey: [
+        'video-completion-rates',
+        videoId,
+        formattedStartDate,
+        formattedEndDate,
+        period,
+      ],
+      queryFn: () =>
+        metricsService.getVideoCompletionRates(
+          videoId,
+          formattedStartDate,
+          formattedEndDate,
+          period
+        ),
+      staleTime: 0, // Always treat data as stale to ensure refresh
+      enabled: !!videoId,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -108,6 +288,16 @@ const useMetricsActions = () => {
     useRetentionRatesQuery,
     useSessionEngagementQuery,
     useSessionEngagementDailyQuery,
+    useSessionTimeQuery,
+    useUserUtilizationQuery,
+    useUserInterestsQuery,
+    useInterestSankeyQuery,
+    // Content Performance
+    useVideoListForMetricsQuery,
+    useVideoViewsQuery,
+    useVideoPercentageWatchedQuery,
+    useVideoSharesQuery,
+    useVideoCompletionRatesQuery,
   };
 };
 

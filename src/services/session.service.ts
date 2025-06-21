@@ -1,6 +1,5 @@
 import APIUrl from '@/constants/apiUrl';
 import httpClient from '../utils/httpClient';
-import authService from './auth.service';
 import storageService from './storage.service';
 
 export interface HeartbeatResponse {
@@ -69,6 +68,26 @@ class SessionService {
         { engaged: true }
       );
       console.log('Content engagement tracked successfully');
+
+      // Update the user's first_content_engagement if it's null
+      const currentUser = storageService.getCurrentUser();
+      if (currentUser && currentUser.first_content_engagement === null) {
+        // Call the API to update first_content_engagement
+        try {
+          const updateResponse = await httpClient.patch(
+            APIUrl.user.updateContentEngagement(currentUser.id)
+          );
+          if (updateResponse.data.success) {
+            // Update the local user data
+            currentUser.first_content_engagement = new Date().toISOString();
+            storageService.setCurrentUser(currentUser);
+            console.log('Updated user first content engagement timestamp');
+          }
+        } catch (error) {
+          console.error('Failed to update first content engagement:', error);
+        }
+      }
+
       return response.data;
     } catch (error) {
       console.error('Failed to track content engagement:', error);
@@ -104,8 +123,6 @@ class SessionService {
         } else if (response.status === 'expired' && response.needsNewSession) {
           console.log('Session expired, cleaning up');
           this.stopHeartbeat();
-          console.log('Session expired, signing out');
-          await authService.signout();
         }
       } catch (error) {
         console.error('Error during heartbeat:', error);

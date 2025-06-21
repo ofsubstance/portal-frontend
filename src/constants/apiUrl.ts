@@ -16,6 +16,8 @@ const APIUrl = {
   },
   user: {
     getUser: (userId: string) => '/users/' + userId,
+    updateContentEngagement: (userId: string) =>
+      '/users/' + userId + '/content-engagement',
   },
   videoManagement: {
     getVideos: () => '/videos',
@@ -62,9 +64,45 @@ const APIUrl = {
     getRetention: (startDate: string, endDate: string) =>
       `/metrics/performance/retention?startDate=${startDate}&endDate=${endDate}`,
     getSessionEngagement: (startDate: string, endDate: string) =>
-      `/metrics/sessions?startDate=${startDate}&endDate=${endDate}`,
+      `/metrics/engagement/sessions?startDate=${startDate}&endDate=${endDate}`,
     getSessionEngagementDaily: (startDate: string, endDate: string) =>
-      `/metrics/sessions/daily?startDate=${startDate}&endDate=${endDate}`,
+      `/metrics/engagement/sessions/by-timespan?startDate=${startDate}&endDate=${endDate}&span=daily`,
+    getSessionTime: (startDate: string, endDate: string, span: string) =>
+      `/metrics/engagement/session-time?startDate=${startDate}&endDate=${endDate}&span=${span}`,
+    getUserUtilization: () => `/metrics/engagement/distribution/utilization`,
+    getUserInterests: () => `/metrics/engagement/distribution/interests`,
+    getInterestSankey: () =>
+      `/metrics/engagement/distribution/interests-sankey`,
+    // Content Metrics
+    getVideoList: () => `/metrics/content`,
+    getVideoViews: (
+      videoId: string,
+      startDate: string,
+      endDate: string,
+      period: string
+    ) =>
+      `/metrics/content/${videoId}/views?startDate=${startDate}&endDate=${endDate}&period=${period}`,
+    getVideoPercentageWatched: (
+      videoId: string,
+      startDate: string,
+      endDate: string,
+      period: string
+    ) =>
+      `/metrics/content/${videoId}/average-percentage-watched?startDate=${startDate}&endDate=${endDate}&period=${period}`,
+    getVideoShares: (
+      videoId: string,
+      startDate: string,
+      endDate: string,
+      period: string
+    ) =>
+      `/metrics/content/${videoId}/share-count?startDate=${startDate}&endDate=${endDate}&period=${period}`,
+    getVideoCompletionRates: (
+      videoId: string,
+      startDate: string,
+      endDate: string,
+      period: string
+    ) =>
+      `/metrics/content/${videoId}/completion-and-drop-off-rates?startDate=${startDate}&endDate=${endDate}&period=${period}`,
   },
 
   sessions: {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -9,6 +9,7 @@ import {
   IconButton,
   Link,
   CircularProgress,
+  Button,
 } from '@mui/material';
 import {
   MaterialReactTable,
@@ -24,6 +25,7 @@ import {
   RiUserLine as VisitorsIcon,
   RiTimeLine as ExpirationIcon,
   RiCalendarLine as DateIcon,
+  RiRefreshLine as RefreshIcon,
 } from 'react-icons/ri';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -34,6 +36,10 @@ import mediaUploadImg from '@/assets/mediaUpload.svg';
 dayjs.extend(relativeTime);
 
 export default function ShareLinkAnalyticsPage() {
+  // Track if data needs to be refreshed
+  const [refreshCounter, setRefreshCounter] = useState(0);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+
   // Table state
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
     []
@@ -51,7 +57,40 @@ export default function ShareLinkAnalyticsPage() {
     data: shareLinks = [],
     isLoading,
     isError,
+    refetch,
   } = useShareLinkAnalyticsQuery();
+
+  // Effect to handle auto-refresh
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+
+    if (autoRefresh) {
+      intervalId = setInterval(() => {
+        refetch();
+      }, 30000); // Refresh every 30 seconds
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [autoRefresh, refetch]);
+
+  // Effect to handle manual refresh
+  useEffect(() => {
+    if (refreshCounter > 0) {
+      refetch();
+    }
+  }, [refreshCounter, refetch]);
+
+  const handleRefresh = () => {
+    setRefreshCounter((prev) => prev + 1);
+  };
+
+  const toggleAutoRefresh = () => {
+    setAutoRefresh((prev) => !prev);
+  };
 
   // Format date for display
   const formatDate = (dateString: string | null) => {
@@ -223,7 +262,7 @@ export default function ShareLinkAnalyticsPage() {
           alignItems: 'center',
         }}
       >
-        <Box sx={{ width: '100%', maxWidth: '900px' }}>
+        <Box sx={{ width: '100%', maxWidth: '1200px' }}>
           <Typography variant="h6" gutterBottom fontWeight="500">
             Engagement History
           </Typography>
@@ -238,12 +277,12 @@ export default function ShareLinkAnalyticsPage() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
             }}
           >
-            <Box sx={{ maxHeight: 350, overflow: 'auto' }}>
+            <Box sx={{ maxHeight: 450, overflow: 'auto' }}>
               {details.map((detail, index) => (
                 <Box
                   key={index}
                   sx={{
-                    p: 2,
+                    p: 3,
                     borderBottom:
                       index < details.length - 1
                         ? '1px solid rgba(0,0,0,0.08)'
@@ -251,6 +290,7 @@ export default function ShareLinkAnalyticsPage() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
+                    gap: 2,
                     transition: 'background-color 0.2s',
                     '&:hover': {
                       backgroundColor: 'rgba(0,0,0,0.02)',
@@ -258,67 +298,64 @@ export default function ShareLinkAnalyticsPage() {
                   }}
                 >
                   <Box
-                    sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                      flex: 1,
+                    }}
                   >
-                    <Typography variant="subtitle2" fontWeight="500">
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="600"
+                      fontSize="1rem"
+                    >
                       {formatDate(detail.time)}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ fontFamily: 'monospace' }}
-                      >
-                        IP: {detail.ip}
-                      </Typography>
-                      {detail.referrer && (
-                        <Tooltip title={`Referred from: ${detail.referrer}`}>
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{
-                              maxWidth: 200,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                              cursor: 'help',
-                            }}
-                          >
-                            via: {detail.referrer}
-                          </Typography>
-                        </Tooltip>
-                      )}
-                    </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                    {detail.is_unique && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 1,
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    {detail.is_unique ? (
                       <Chip
                         label="Unique Visit"
                         size="small"
-                        color="primary"
-                        sx={{ fontWeight: 500 }}
+                        color="success"
+                        sx={{
+                          fontWeight: 600,
+                          height: '28px',
+                          fontSize: '0.85rem',
+                        }}
                       />
-                    )}
-                    {!detail.is_unique && (
+                    ) : (
                       <Chip
                         label="Return Visit"
                         size="small"
+                        color="secondary"
                         variant="outlined"
-                        color="default"
-                        sx={{ fontWeight: 500 }}
+                        sx={{
+                          fontWeight: 600,
+                          height: '28px',
+                          fontSize: '0.85rem',
+                        }}
                       />
                     )}
-                    <Tooltip
-                      title={`Time since share link creation: ${dayjs(
-                        detail.time
-                      ).diff(dayjs(), 'minutes')} minutes`}
-                    >
+                    <Tooltip title={`Accessed ${dayjs(detail.time).fromNow()}`}>
                       <Chip
                         label={dayjs(detail.time).fromNow()}
                         size="small"
                         variant="outlined"
                         color="info"
-                        sx={{ fontWeight: 500 }}
+                        sx={{
+                          fontWeight: 500,
+                          height: '28px',
+                          fontSize: '0.85rem',
+                        }}
                       />
                     </Tooltip>
                   </Box>
@@ -412,12 +449,35 @@ export default function ShareLinkAnalyticsPage() {
             Track and analyze the performance of your shared video links
           </Typography>
         </div>
-        <object
-          role="img"
-          type="image/svg+xml"
-          data={mediaUploadImg}
-          className="max-h-48"
-        />
+        8
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<RefreshIcon />}
+              onClick={handleRefresh}
+              disabled={isLoading}
+              size="small"
+            >
+              Refresh Data
+            </Button>
+            <Button
+              variant={autoRefresh ? 'contained' : 'outlined'}
+              color={autoRefresh ? 'success' : 'primary'}
+              onClick={toggleAutoRefresh}
+              size="small"
+            >
+              {autoRefresh ? 'Auto-Refresh: ON' : 'Auto-Refresh: OFF'}
+            </Button>
+          </Box> */}
+          <object
+            role="img"
+            type="image/svg+xml"
+            data={mediaUploadImg}
+            className="max-h-48"
+          />
+        </Box>
       </Paper>
 
       <Paper sx={{ overflow: 'hidden', width: '100%', margin: 0, padding: 0 }}>

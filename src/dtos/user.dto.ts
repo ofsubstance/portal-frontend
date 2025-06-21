@@ -21,4 +21,6 @@ export interface UserDto {
   language?: string;
   location?: string;
   sms_consent?: boolean;
+  last_login?: string;
+  first_content_engagement?: string | null;
 }
