@@ -18,6 +18,8 @@ const APIUrl = {
     getUser: (userId: string) => '/users/' + userId,
     updateContentEngagement: (userId: string) =>
       '/users/' + userId + '/content-engagement',
+    getAllUsers: () => '/users',
+    getUserEngagement: (userId: string) => `/users/${userId}/engagement`,
   },
   videoManagement: {
     getVideos: () => '/videos',

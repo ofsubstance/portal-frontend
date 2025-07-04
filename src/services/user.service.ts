@@ -1,5 +1,5 @@
 import { IResponse } from "@/dtos/response.dto";
-import { UserDto } from "@/dtos/user.dto";
+import { UserDto, UserEngagementDto } from "@/dtos/user.dto";
 import APIUrl from "../constants/apiUrl";
 import httpClient from "../utils/httpClient";
 import storageService from "./storage.service";
@@ -21,6 +21,22 @@ class UserService {
   async getUser(userId: string) {
     const res = await httpClient.get<IResponse<UserDto>>(
       APIUrl.user.getUser(userId)
+    );
+
+    return res.data.body;
+  }
+
+  async getAllUsers() {
+    const res = await httpClient.get<IResponse<UserDto[]>>(
+      APIUrl.user.getAllUsers()
+    );
+
+    return res.data.body;
+  }
+
+  async getUserEngagement(userId: string) {
+    const res = await httpClient.get<IResponse<UserEngagementDto>>(
+      APIUrl.user.getUserEngagement(userId)
     );
 
     return res.data.body;

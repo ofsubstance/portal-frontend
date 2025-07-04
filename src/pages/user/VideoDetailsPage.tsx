@@ -115,7 +115,6 @@ export default function VideoDetailsPage() {
   const handleFeedbackClick = () => {
     modal.show({
       title: 'Feedback on ' + video?.title,
-      darkMode: true,
       children: (
         <FlimFeedbackForm
           filmTitle={video?.title || ''}
@@ -143,7 +142,6 @@ export default function VideoDetailsPage() {
 
     modal.show({
       title: 'Share ' + video?.title,
-      darkMode: true,
       children: (
         <ShareLinkModal videoId={videoId} onClose={() => modal.hide()} />
       ),
