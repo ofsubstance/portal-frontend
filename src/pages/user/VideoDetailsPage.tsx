@@ -7,6 +7,10 @@ import {
   alpha,
   useTheme,
   Divider,
+  CircularProgress,
+  Typography,
+  Alert,
+  Button,
 } from '@mui/material';
 import FlimFeedbackForm from '@/components/user/feedback/FlimFeedbackForm';
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
@@ -38,7 +42,7 @@ export default function VideoDetailsPage() {
   const { useVideoListQuery } = useVideoManagementActions();
 
   const { data: videos = [] } = useVideoListQuery();
-  const { data: video } = useVideoQuery(videoId!);
+  const { data: video, isLoading, isError, error } = useVideoQuery(videoId!);
   const { submitFilmFeedback, isSubmittingFeedback } = useFeedbackActions();
 
   // Track content engagement when the video details page loads
@@ -148,7 +152,101 @@ export default function VideoDetailsPage() {
     });
   };
 
-  if (!video) return null;
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress color="primary" size={60} />
+          <Typography variant="h6" sx={{ mt: 2, color: 'text.secondary' }}>
+            Loading film details...
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error instanceof Error
+              ? error.message
+              : 'Failed to load film details'}
+          </Alert>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              Something went wrong
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              We couldn't load the film details. Please try again later.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => window.location.reload()}
+              sx={{ mt: 2 }}
+            >
+              Try Again
+            </Button>
+          </Box>
+        </Container>
+      </Box>
+    );
+  }
+
+  // Handle case where video is not found
+  if (!video) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            Film not found
+          </Alert>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              Film not available
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              The film you're looking for is not available or has been removed.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => window.history.back()}
+              sx={{ mt: 2 }}
+            >
+              Go Back
+            </Button>
+          </Box>
+        </Container>
+      </Box>
+    );
+  }
 
   return (
     <Box>

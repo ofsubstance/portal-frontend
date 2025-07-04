@@ -1,319 +1,1089 @@
+import React, { useState, useMemo } from 'react';
 import {
-  Paper,
-  Typography,
-  Grid,
   Box,
-  Tabs,
-  Tab,
+  Grid,
+  Typography,
+  Card,
+  Button,
+  useTheme,
+  CircularProgress,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Chip,
+  Tabs,
+  Tab,
+  Alert,
+  Divider,
 } from '@mui/material';
-import { RiBarChartBoxLine as MacroMetricsIcon } from 'react-icons/ri';
-import { useState } from 'react';
+import { DateRange, Range, RangeKeyDict } from 'react-date-range';
+import { format, subMonths } from 'date-fns';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import useMetricsActions from '@/hooks/useMetricsActions';
+import {
+  RiBarChartBoxLine as MacroMetricsIcon,
+  RiPlayCircleLine as CompletionIcon,
+  RiEyeLine as ViewsIcon,
+  RiShareForwardLine as ShareIcon,
+  RiLinksLine as ClickthroughIcon,
+  RiStarLine as EngagementIcon,
+  RiLineChartLine as PatternsIcon,
+  RiCalendarEventLine as DateIcon,
+} from 'react-icons/ri';
+import ReactECharts from 'echarts-for-react';
+import { EChartsOption } from 'echarts-for-react';
 
-// Metric Card Component
-interface MetricCardProps {
-  title: string;
-  value: string;
-  unit: string;
-  change: number;
-  icon: React.ComponentType<{ size: number; color: string }>;
-}
+const MacroContentMetricsPage: React.FC = () => {
+  const theme = useTheme();
+  const primaryColor = theme.palette.primary.main;
 
-function MetricCard({
-  title,
-  value,
-  unit,
-  change,
-  icon: Icon,
-}: MetricCardProps) {
-  const isPositive = change >= 0;
+  const [activeTab, setActiveTab] = useState(0);
+  const [dateRange, setDateRange] = useState<Range[]>([
+    {
+      startDate: subMonths(new Date(), 1),
+      endDate: new Date(),
+      key: 'selection',
+    },
+  ]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [paramChangeCounter, setParamChangeCounter] = useState(0);
 
-  return (
-    <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
-      <Box display="flex" alignItems="center" mb={2}>
-        <Box
-          sx={{
-            backgroundColor: 'primary.light',
-            borderRadius: '50%',
-            width: 40,
-            height: 40,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mr: 2,
-          }}
-        >
-          <Icon size={20} color="#fff" />
-        </Box>
-        <Typography variant="h6" fontWeight={500}>
-          {title}
-        </Typography>
-      </Box>
+  const startDate = dateRange[0].startDate || subMonths(new Date(), 1);
+  const endDate = dateRange[0].endDate || new Date();
 
-      <Typography variant="h4" fontWeight={600} mb={1}>
-        {value}{' '}
-        <Typography component="span" variant="body2" color="text.secondary">
-          {unit}
-        </Typography>
-      </Typography>
+  const {
+    useMacroContentCompletionRatesQuery,
+    useMacroContentMostViewedQuery,
+    useMacroContentMostSharedQuery,
+    useMacroContentLinkClickthroughQuery,
+    useMacroContentEngagementScoresQuery,
+    useMacroContentViewingPatternsQuery,
+  } = useMetricsActions();
 
-      <Typography
-        variant="body2"
-        color={isPositive ? 'success.main' : 'error.main'}
-        display="flex"
-        alignItems="center"
-      >
-        {isPositive ? '↑' : '↓'} {Math.abs(change)}% from last month
-      </Typography>
-    </Paper>
-  );
-}
+  // Fetch all data
+  const {
+    data: completionRatesData,
+    isLoading: isLoadingCompletion,
+    error: completionError,
+  } = useMacroContentCompletionRatesQuery(startDate, endDate);
 
-// Chart Component Placeholder
-function ChartPlaceholder({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <Paper elevation={1} sx={{ p: 3, height: '100%' }}>
-      <Typography variant="h6" fontWeight={500} mb={1}>
-        {title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mb={2}>
-        {description}
-      </Typography>
-      <Box
-        sx={{
-          height: 250,
-          backgroundColor: 'rgba(0,0,0,0.03)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: 1,
-        }}
-      >
-        <Typography color="text.secondary">
-          Chart visualization would appear here
-        </Typography>
-      </Box>
-    </Paper>
-  );
-}
+  const {
+    data: mostViewedData,
+    isLoading: isLoadingViewed,
+    error: viewedError,
+  } = useMacroContentMostViewedQuery(startDate, endDate);
 
-// Mock data for content categories
-const contentCategories = [
-  {
-    category: 'Documentary',
-    views: 45280,
-    avgWatchTime: '12:45',
-    completionRate: 68,
-    engagement: 4.2,
-  },
-  {
-    category: 'Educational',
-    views: 38750,
-    avgWatchTime: '8:30',
-    completionRate: 72,
-    engagement: 4.5,
-  },
-  {
-    category: 'Interviews',
-    views: 29450,
-    avgWatchTime: '15:20',
-    completionRate: 65,
-    engagement: 4.0,
-  },
-  {
-    category: 'Short Films',
-    views: 52680,
-    avgWatchTime: '6:15',
-    completionRate: 82,
-    engagement: 4.7,
-  },
-  {
-    category: 'Tutorials',
-    views: 31240,
-    avgWatchTime: '10:50',
-    completionRate: 75,
-    engagement: 4.3,
-  },
-];
+  const {
+    data: mostSharedData,
+    isLoading: isLoadingShared,
+    error: sharedError,
+  } = useMacroContentMostSharedQuery(startDate, endDate);
 
-function MacroContentMetricsPage() {
-  const [timeRange, setTimeRange] = useState(0);
+  const {
+    data: clickthroughData,
+    isLoading: isLoadingClickthrough,
+    error: clickthroughError,
+  } = useMacroContentLinkClickthroughQuery(startDate, endDate);
 
-  const handleTimeRangeChange = (
-    _event: React.SyntheticEvent,
-    newValue: number
-  ) => {
-    setTimeRange(newValue);
+  const {
+    data: engagementScoresData,
+    isLoading: isLoadingEngagement,
+    error: engagementError,
+  } = useMacroContentEngagementScoresQuery(startDate, endDate);
+
+  const {
+    data: viewingPatternsData,
+    isLoading: isLoadingPatterns,
+    error: patternsError,
+  } = useMacroContentViewingPatternsQuery(startDate, endDate);
+
+  const isLoading =
+    isLoadingCompletion ||
+    isLoadingViewed ||
+    isLoadingShared ||
+    isLoadingClickthrough ||
+    isLoadingEngagement ||
+    isLoadingPatterns;
+
+  const hasError =
+    completionError ||
+    viewedError ||
+    sharedError ||
+    clickthroughError ||
+    engagementError ||
+    patternsError;
+
+  // Summary metrics from the data
+  const summaryMetrics = useMemo(() => {
+    if (
+      !mostViewedData ||
+      !mostSharedData ||
+      !completionRatesData ||
+      !engagementScoresData
+    ) {
+      return [];
+    }
+
+    const totalViews = mostViewedData.data.reduce(
+      (sum, item) => sum + item.viewCount,
+      0
+    );
+    const totalShares = mostSharedData.data.reduce(
+      (sum, item) => sum + item.shareCount,
+      0
+    );
+    const avgCompletion =
+      completionRatesData.data.reduce(
+        (sum, item) => sum + item.averageCompletion,
+        0
+      ) / Math.max(completionRatesData.data.length, 1);
+    const avgEngagement =
+      engagementScoresData.data.reduce(
+        (sum, item) => sum + item.engagementScore,
+        0
+      ) / Math.max(engagementScoresData.data.length, 1);
+
+    return [
+      {
+        title: 'Total Content Views',
+        value: totalViews.toLocaleString(),
+        icon: ViewsIcon,
+        color: theme.palette.primary.main,
+      },
+      {
+        title: 'Total Shares',
+        value: totalShares.toLocaleString(),
+        icon: ShareIcon,
+        color: theme.palette.success.main,
+      },
+      {
+        title: 'Avg. Completion Rate',
+        value: `${avgCompletion.toFixed(1)}%`,
+        icon: CompletionIcon,
+        color: theme.palette.info.main,
+      },
+      {
+        title: 'Avg. Engagement Score',
+        value: avgEngagement.toFixed(1),
+        icon: EngagementIcon,
+        color: theme.palette.warning.main,
+      },
+    ];
+  }, [
+    mostViewedData,
+    mostSharedData,
+    completionRatesData,
+    engagementScoresData,
+    theme,
+  ]);
+
+  const handleDateChange = (item: RangeKeyDict) => {
+    setDateRange([item.selection]);
+  };
+
+  const formatDateDisplay = () => {
+    if (dateRange[0].startDate && dateRange[0].endDate) {
+      return `${format(dateRange[0].startDate, 'MMM dd, yyyy')} - ${format(
+        dateRange[0].endDate,
+        'MMM dd, yyyy'
+      )}`;
+    }
+    return 'Select date range';
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
+  // Chart options for viewing patterns
+  const getViewingPatternsChart = (): EChartsOption => {
+    if (!viewingPatternsData) {
+      return {
+        title: {
+          text: 'No Data Available',
+          left: 'center',
+        },
+        xAxis: {
+          type: 'category',
+          data: [],
+        },
+        yAxis: {
+          type: 'value',
+          name: 'Sessions',
+        },
+        series: [],
+      };
+    }
+
+    const hourlyData = viewingPatternsData.data.hourlyDistribution.map(
+      (item) => ({
+        hour: item.hour,
+        sessions: item.sessions,
+      })
+    );
+
+    return {
+      title: {
+        text: 'Viewing Activity by Hour',
+        left: 'center',
+      },
+      xAxis: {
+        type: 'category',
+        data: hourlyData.map((item) => item.hour),
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Sessions',
+      },
+      series: [
+        {
+          data: hourlyData.map((item) => item.sessions),
+          type: 'line',
+          smooth: true,
+          itemStyle: {
+            color: primaryColor,
+          },
+        },
+      ],
+      tooltip: {
+        trigger: 'axis',
+        formatter: '{b}: {c} sessions',
+      },
+    };
+  };
+
+  const getCompletionDistributionChart = (): EChartsOption => {
+    if (!viewingPatternsData) {
+      return {
+        title: {
+          text: 'No Data Available',
+          left: 'center',
+        },
+        series: [],
+      };
+    }
+
+    const distributionData =
+      viewingPatternsData.data.completionDistribution.map((item) => ({
+        name: item.range,
+        value: item.percentage,
+      }));
+
+    return {
+      title: {
+        text: 'Completion Rate Distribution',
+        left: 'center',
+      },
+      series: [
+        {
+          type: 'pie',
+          radius: '60%',
+          data: distributionData,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+      ],
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}%',
+      },
+    };
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 0:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Video Completion Rates
+              </Typography>
+              <TableContainer
+                component={Paper}
+                elevation={0}
+                sx={{ border: '1px solid', borderColor: 'grey.200' }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableCell>
+                        <Typography fontWeight={600}>Video</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>Genre</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Duration</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Completion %</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Sessions</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Watch Time (min)
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {completionRatesData?.data?.length ? (
+                      completionRatesData.data.map((item) => (
+                        <TableRow key={item.videoId} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={item.genre}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell align="right">{item.duration}</TableCell>
+                          <TableCell align="right">
+                            <Chip
+                              label={`${item.averageCompletion.toFixed(1)}%`}
+                              size="small"
+                              color={
+                                item.averageCompletion >= 70
+                                  ? 'success'
+                                  : item.averageCompletion >= 50
+                                  ? 'warning'
+                                  : 'error'
+                              }
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.totalSessions}
+                          </TableCell>
+                          <TableCell align="right">
+                            {Math.round(item.totalTimeWatched / 60)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                          <Typography color="text.secondary">
+                            No completion data available for the selected period
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        );
+
+      case 1:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Most Viewed Content
+              </Typography>
+              <TableContainer
+                component={Paper}
+                elevation={0}
+                sx={{ border: '1px solid', borderColor: 'grey.200' }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableCell>
+                        <Typography fontWeight={600}>Video</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>Genre</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Duration</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Views</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Unique Viewers</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Avg. Completion %
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {mostViewedData?.data?.length ? (
+                      mostViewedData.data.map((item) => (
+                        <TableRow key={item.videoId} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={item.genre}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell align="right">{item.duration}</TableCell>
+                          <TableCell align="right">
+                            <Typography fontWeight={600} color="primary">
+                              {item.viewCount}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.uniqueViewers}
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.averageCompletion.toFixed(1)}%
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                          <Typography color="text.secondary">
+                            No viewing data available for the selected period
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        );
+
+      case 2:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Most Shared Content
+              </Typography>
+              <TableContainer
+                component={Paper}
+                elevation={0}
+                sx={{ border: '1px solid', borderColor: 'grey.200' }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableCell>
+                        <Typography fontWeight={600}>Video</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>Genre</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Duration</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Shares</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Total Views</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Views per Share
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {mostSharedData?.data?.length ? (
+                      mostSharedData.data.map((item) => (
+                        <TableRow key={item.videoId} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={item.genre}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell align="right">{item.duration}</TableCell>
+                          <TableCell align="right">
+                            <Typography fontWeight={600} color="success.main">
+                              {item.shareCount}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="right">{item.totalViews}</TableCell>
+                          <TableCell align="right">
+                            {item.averageViewsPerShare.toFixed(1)}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                          <Typography color="text.secondary">
+                            No sharing data available for the selected period
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        );
+
+      case 3:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Link Clickthrough Performance
+              </Typography>
+              <TableContainer
+                component={Paper}
+                elevation={0}
+                sx={{ border: '1px solid', borderColor: 'grey.200' }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableCell>
+                        <Typography fontWeight={600}>Video</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>Genre</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Total Links</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Total Views</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Unique Engagements
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Clickthrough Rate
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {clickthroughData?.data?.length ? (
+                      clickthroughData.data.map((item) => (
+                        <TableRow key={item.videoId} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={item.genre}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell align="right">{item.totalLinks}</TableCell>
+                          <TableCell align="right">{item.totalViews}</TableCell>
+                          <TableCell align="right">
+                            {item.uniqueEngagements}
+                          </TableCell>
+                          <TableCell align="right">
+                            <Chip
+                              label={`${item.clickthroughRate}%`}
+                              size="small"
+                              color={
+                                item.clickthroughRate >= 80
+                                  ? 'success'
+                                  : item.clickthroughRate >= 50
+                                  ? 'warning'
+                                  : 'error'
+                              }
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                          <Typography color="text.secondary">
+                            No clickthrough data available for the selected
+                            period
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        );
+
+      case 4:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Content Engagement Scores
+              </Typography>
+              <TableContainer
+                component={Paper}
+                elevation={0}
+                sx={{ border: '1px solid', borderColor: 'grey.200' }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableCell>
+                        <Typography fontWeight={600}>Video</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography fontWeight={600}>Genre</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Engagement Score
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Views</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>
+                          Avg. Completion
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Shares</Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography fontWeight={600}>Feedback</Typography>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {engagementScoresData?.data?.length ? (
+                      engagementScoresData.data.map((item) => (
+                        <TableRow key={item.videoId} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={item.genre}
+                              size="small"
+                              variant="outlined"
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <Chip
+                              label={item.engagementScore.toFixed(1)}
+                              size="small"
+                              color={
+                                item.engagementScore >= 70
+                                  ? 'success'
+                                  : item.engagementScore >= 40
+                                  ? 'warning'
+                                  : 'error'
+                              }
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.metrics.totalViews}
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.metrics.avgCompletion.toFixed(1)}%
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.metrics.shareCount}
+                          </TableCell>
+                          <TableCell align="right">
+                            {item.metrics.feedbackCount}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
+                          <Typography color="text.secondary">
+                            No engagement data available for the selected period
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        );
+
+      case 5:
+        return (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom fontWeight={600}>
+                Viewing Patterns Analysis
+              </Typography>
+            </Grid>
+
+            {viewingPatternsData && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card
+                    elevation={0}
+                    sx={{ p: 3, border: '1px solid', borderColor: 'grey.200' }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={600}
+                      gutterBottom
+                    >
+                      Key Metrics
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <Typography
+                            variant="h4"
+                            color="primary"
+                            fontWeight={600}
+                          >
+                            {viewingPatternsData.data.totalSessions}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Total Sessions
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <Typography
+                            variant="h4"
+                            color="success.main"
+                            fontWeight={600}
+                          >
+                            {viewingPatternsData.data.uniqueViewers}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Unique Viewers
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Card
+                    elevation={0}
+                    sx={{ p: 3, border: '1px solid', borderColor: 'grey.200' }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight={600}
+                      gutterBottom
+                    >
+                      Session Duration
+                    </Typography>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography
+                        variant="h4"
+                        color="info.main"
+                        fontWeight={600}
+                      >
+                        {Math.round(
+                          viewingPatternsData.data.sessionDurations.average / 60
+                        )}{' '}
+                        min
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Average Session Duration
+                      </Typography>
+                    </Box>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Card
+                    elevation={0}
+                    sx={{ p: 3, border: '1px solid', borderColor: 'grey.200' }}
+                  >
+                    <ReactECharts
+                      option={getViewingPatternsChart()}
+                      style={{ height: '300px' }}
+                    />
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <Card
+                    elevation={0}
+                    sx={{ p: 3, border: '1px solid', borderColor: 'grey.200' }}
+                  >
+                    <ReactECharts
+                      option={getCompletionDistributionChart()}
+                      style={{ height: '300px' }}
+                    />
+                  </Card>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
-        <div className="space-y-4">
-          <Typography variant="h5" fontWeight={600}>
-            Macro Content Engagement Metrics
-          </Typography>
-
-          <Typography variant="subtitle1">
-            Analyze high-level content engagement patterns across the platform
-          </Typography>
-        </div>
+    <Box>
+      {/* Header Section */}
+      <Card
+        elevation={0}
+        sx={{
+          p: 4,
+          mb: 4,
+          background: `linear-gradient(135deg, ${primaryColor} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'white',
+          borderRadius: 3,
+        }}
+      >
         <Box
           sx={{
-            backgroundColor: 'primary.light',
-            borderRadius: '50%',
-            width: 60,
-            height: 60,
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: { xs: 'flex-start', md: 'center' },
+            gap: 3,
+            mb: 2,
           }}
         >
-          <MacroMetricsIcon size={30} color="#fff" />
+          <Box>
+            <Typography variant="h4" fontWeight="600" gutterBottom>
+              Macro Content Metrics
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.9 }}>
+              Analyze high-level content engagement patterns across the platform
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              flexDirection: { xs: 'column', sm: 'row' },
+              width: { xs: '100%', sm: 'auto' },
+              position: 'relative',
+            }}
+          >
+            <Button
+              variant="outlined"
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              sx={{
+                height: '45px',
+                color: 'white',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                '&:hover': {
+                  borderColor: 'rgba(255, 255, 255, 0.5)',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                },
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                minWidth: '200px',
+              }}
+              startIcon={<DateIcon size={20} />}
+            >
+              {formatDateDisplay()}
+            </Button>
+            {showDatePicker && (
+              <Card
+                elevation={6}
+                sx={{
+                  position: 'absolute',
+                  right: 0,
+                  top: '50px',
+                  zIndex: 10,
+                  overflow: 'hidden',
+                }}
+              >
+                {/* @ts-ignore */}
+                <DateRange
+                  editableDateInputs={true}
+                  onChange={handleDateChange}
+                  moveRangeOnFirstSelection={false}
+                  ranges={dateRange}
+                  maxDate={new Date()}
+                />
+                <Divider />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    p: 2,
+                    bgcolor: 'background.paper',
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      setShowDatePicker(false);
+                      setParamChangeCounter((prev) => prev + 1);
+                    }}
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      py: 1,
+                      maxWidth: '90%',
+                    }}
+                  >
+                    Apply Date Range
+                  </Button>
+                </Box>
+              </Card>
+            )}
+          </Box>
         </Box>
-      </Paper>
+      </Card>
 
-      {/* Time Range Selector */}
-      <Paper sx={{ p: 1, mb: 2 }}>
-        <Tabs
-          value={timeRange}
-          onChange={handleTimeRangeChange}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab label="Last 7 Days" />
-          <Tab label="Last 30 Days" />
-          <Tab label="Last 90 Days" />
-          <Tab label="Last 12 Months" />
-          <Tab label="Custom Range" />
-        </Tabs>
-      </Paper>
+      {/* Error Display */}
+      {hasError && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Failed to load some metrics data. Please try again later.
+        </Alert>
+      )}
 
-      {/* Key Metrics */}
-      <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Total Content Views"
-            value="197.4K"
-            unit="views"
-            change={15.8}
-            icon={MacroMetricsIcon}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Avg. Watch Time"
-            value="10:35"
-            unit="min"
-            change={7.2}
-            icon={MacroMetricsIcon}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Content Completion Rate"
-            value="72"
-            unit="%"
-            change={4.5}
-            icon={MacroMetricsIcon}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Avg. Engagement Score"
-            value="4.3"
-            unit="/5"
-            change={2.4}
-            icon={MacroMetricsIcon}
-          />
-        </Grid>
-      </Grid>
+      {/* Loading State */}
+      {isLoading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress size={60} />
+        </Box>
+      )}
 
-      {/* Content Category Performance */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" fontWeight={500} mb={2}>
-          Content Category Performance
-        </Typography>
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography fontWeight={600}>Category</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography fontWeight={600}>Views</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography fontWeight={600}>Avg. Watch Time</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography fontWeight={600}>Completion Rate (%)</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography fontWeight={600}>Engagement Score</Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {contentCategories.map((row) => (
-                <TableRow key={row.category}>
-                  <TableCell component="th" scope="row">
-                    {row.category}
-                  </TableCell>
-                  <TableCell align="right">
-                    {row.views.toLocaleString()}
-                  </TableCell>
-                  <TableCell align="right">{row.avgWatchTime}</TableCell>
-                  <TableCell align="right">{row.completionRate}%</TableCell>
-                  <TableCell align="right">{row.engagement}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+      {/* Summary Metrics */}
+      {!isLoading && summaryMetrics.length > 0 && (
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {summaryMetrics.map((metric, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Card
+                elevation={0}
+                sx={{
+                  p: 3,
+                  height: '100%',
+                  borderRadius: 3,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'grey.200',
+                  transition:
+                    'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      bgcolor: `${metric.color}15`,
+                      color: metric.color,
+                      mr: 2,
+                    }}
+                  >
+                    <metric.icon size={24} />
+                  </Box>
+                  <Typography
+                    variant="subtitle1"
+                    color="text.secondary"
+                    fontWeight={500}
+                  >
+                    {metric.title}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="h3"
+                  component="div"
+                  fontWeight={600}
+                  color="text.primary"
+                >
+                  {metric.value}
+                </Typography>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
-      {/* Charts */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Content Views by Category"
-            description="Distribution of content views across different categories"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Engagement Score Trend"
-            description="Average engagement score trend over time"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Watch Time Distribution"
-            description="Distribution of watch time across content"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartPlaceholder
-            title="Completion Rate by Content Length"
-            description="Correlation between content length and completion rate"
-          />
-        </Grid>
-      </Grid>
-    </div>
+      {/* Tabs and Content */}
+      {!isLoading && !hasError && (
+        <>
+          <Paper sx={{ mb: 3 }}>
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{
+                borderBottom: '1px solid',
+                borderColor: 'grey.200',
+                '& .MuiTab-root': {
+                  textTransform: 'none',
+                  fontWeight: 500,
+                },
+              }}
+            >
+              <Tab label="Completion Rates" icon={<CompletionIcon />} />
+              <Tab label="Most Viewed" icon={<ViewsIcon />} />
+              <Tab label="Most Shared" icon={<ShareIcon />} />
+              <Tab label="Link Performance" icon={<ClickthroughIcon />} />
+              <Tab label="Engagement Scores" icon={<EngagementIcon />} />
+              <Tab label="Viewing Patterns" icon={<PatternsIcon />} />
+            </Tabs>
+          </Paper>
+
+          <Paper sx={{ p: 3 }}>{renderTabContent()}</Paper>
+        </>
+      )}
+    </Box>
   );
-}
+};
 
 export default MacroContentMetricsPage;

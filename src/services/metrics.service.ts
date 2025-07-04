@@ -2,6 +2,12 @@ import {
   DAUDto,
   GrowthTrendDto,
   InterestSankeyDto,
+  MacroContentCompletionRatesDto,
+  MacroContentEngagementScoresDto,
+  MacroContentLinkClickthroughDto,
+  MacroContentMostSharedDto,
+  MacroContentMostViewedDto,
+  MacroContentViewingPatternsDto,
   MAUDto,
   RetentionDto,
   SessionEngagementDailyDto,
@@ -186,6 +192,68 @@ class MetricsService {
     );
     return res.data.body;
   }
+
+  // Macro Content Metrics
+  async getMacroContentCompletionRates(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentCompletionRatesDto> {
+    const res = await httpClient.get<IResponse<MacroContentCompletionRatesDto>>(
+      APIUrl.metrics.getMacroContentCompletionRates(startDate, endDate)
+    );
+    return res.data.body;
+  }
+
+  async getMacroContentMostViewed(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentMostViewedDto> {
+    const res = await httpClient.get<IResponse<MacroContentMostViewedDto>>(
+      APIUrl.metrics.getMacroContentMostViewed(startDate, endDate)
+    );
+    return res.data.body;
+  }
+
+  async getMacroContentMostShared(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentMostSharedDto> {
+    const res = await httpClient.get<IResponse<MacroContentMostSharedDto>>(
+      APIUrl.metrics.getMacroContentMostShared(startDate, endDate)
+    );
+    return res.data.body;
+  }
+
+  async getMacroContentLinkClickthrough(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentLinkClickthroughDto> {
+    const res = await httpClient.get<
+      IResponse<MacroContentLinkClickthroughDto>
+    >(APIUrl.metrics.getMacroContentLinkClickthrough(startDate, endDate));
+    return res.data.body;
+  }
+
+  async getMacroContentEngagementScores(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentEngagementScoresDto> {
+    const res = await httpClient.get<
+      IResponse<MacroContentEngagementScoresDto>
+    >(APIUrl.metrics.getMacroContentEngagementScores(startDate, endDate));
+    return res.data.body;
+  }
+
+  async getMacroContentViewingPatterns(
+    startDate: string,
+    endDate: string
+  ): Promise<MacroContentViewingPatternsDto> {
+    const res = await httpClient.get<IResponse<MacroContentViewingPatternsDto>>(
+      APIUrl.metrics.getMacroContentViewingPatterns(startDate, endDate)
+    );
+    return res.data.body;
+  }
 }
 
-export default new MetricsService();
+const metricsService = new MetricsService();
+export default metricsService;

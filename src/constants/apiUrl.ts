@@ -105,6 +105,19 @@ const APIUrl = {
       period: string
     ) =>
       `/metrics/content/${videoId}/completion-and-drop-off-rates?startDate=${startDate}&endDate=${endDate}&period=${period}`,
+    // Macro Content Metrics
+    getMacroContentCompletionRates: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/completion-rates?startDate=${startDate}&endDate=${endDate}`,
+    getMacroContentMostViewed: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/most-viewed?startDate=${startDate}&endDate=${endDate}`,
+    getMacroContentMostShared: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/most-shared?startDate=${startDate}&endDate=${endDate}`,
+    getMacroContentLinkClickthrough: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/link-clickthrough?startDate=${startDate}&endDate=${endDate}`,
+    getMacroContentEngagementScores: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/engagement-scores?startDate=${startDate}&endDate=${endDate}`,
+    getMacroContentViewingPatterns: (startDate: string, endDate: string) =>
+      `/metrics/macro-content/viewing-patterns?startDate=${startDate}&endDate=${endDate}`,
   },
 
   sessions: {

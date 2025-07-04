@@ -1,45 +1,29 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
   Paper,
-  Chip,
-  Avatar,
-  Tooltip,
-  IconButton,
-  Link,
   CircularProgress,
+  Alert,
   Button,
 } from '@mui/material';
 import {
   MaterialReactTable,
   useMaterialReactTable,
-  type MRT_ColumnDef,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
   type MRT_SortingState,
 } from 'material-react-table';
-import {
-  RiExternalLinkLine as ExternalLinkIcon,
-  RiEyeLine as ViewsIcon,
-  RiUserLine as VisitorsIcon,
-  RiTimeLine as ExpirationIcon,
-  RiCalendarLine as DateIcon,
-  RiRefreshLine as RefreshIcon,
-} from 'react-icons/ri';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { ShareLinkAnalyticsDto, EngagementDetail } from '@/dtos/sharelink.dto';
+import { RiRefreshLine as RefreshIcon } from 'react-icons/ri';
+import { ShareLinkAnalyticsDto } from '@/dtos/sharelink.dto';
 import useShareLinkAction from '@/hooks/useShareLinkAction';
+import {
+  ShareLinkTableColumns,
+  ShareLinkEngagementDetails,
+} from '@/components/admin/sharelinks';
 import mediaUploadImg from '@/assets/mediaUpload.svg';
 
-dayjs.extend(relativeTime);
-
 export default function ShareLinkAnalyticsPage() {
-  // Track if data needs to be refreshed
-  const [refreshCounter, setRefreshCounter] = useState(0);
-  const [autoRefresh, setAutoRefresh] = useState(false);
-
   // Table state
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
     []
@@ -57,316 +41,12 @@ export default function ShareLinkAnalyticsPage() {
     data: shareLinks = [],
     isLoading,
     isError,
+    error,
     refetch,
   } = useShareLinkAnalyticsQuery();
 
-  // Effect to handle auto-refresh
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
-
-    if (autoRefresh) {
-      intervalId = setInterval(() => {
-        refetch();
-      }, 30000); // Refresh every 30 seconds
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [autoRefresh, refetch]);
-
-  // Effect to handle manual refresh
-  useEffect(() => {
-    if (refreshCounter > 0) {
-      refetch();
-    }
-  }, [refreshCounter, refetch]);
-
-  const handleRefresh = () => {
-    setRefreshCounter((prev) => prev + 1);
-  };
-
-  const toggleAutoRefresh = () => {
-    setAutoRefresh((prev) => !prev);
-  };
-
-  // Format date for display
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'N/A';
-    return dayjs(dateString).format('MMM D, YYYY h:mm A');
-  };
-
-  // Define columns
-  const columns = useMemo<MRT_ColumnDef<ShareLinkAnalyticsDto>[]>(
-    () => [
-      {
-        accessorKey: 'video.title',
-        header: 'Video',
-        size: 250,
-        Cell: ({ row }) => (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar
-              variant="rounded"
-              src={row.original.video.thumbnail_url}
-              sx={{ width: 50, height: 30 }}
-            />
-            <Typography variant="body2" fontWeight={500}>
-              {row.original.video.title}
-            </Typography>
-          </Box>
-        ),
-      },
-      {
-        accessorKey: 'user.name',
-        header: 'Created By',
-        size: 200,
-        Cell: ({ row }) => (
-          <Box>
-            <Typography variant="body2">{row.original.user.name}</Typography>
-            <Typography variant="caption" color="text.secondary">
-              {row.original.user.email}
-            </Typography>
-          </Box>
-        ),
-      },
-      {
-        accessorKey: 'created_at',
-        header: 'Created',
-        size: 150,
-        Cell: ({ row }) => (
-          <Tooltip title={formatDate(row.original.created_at)}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <DateIcon size={16} />
-              <Typography variant="body2">
-                {dayjs(row.original.created_at).fromNow()}
-              </Typography>
-            </Box>
-          </Tooltip>
-        ),
-        filterFn: 'greaterThan',
-      },
-      {
-        accessorKey: 'expiration_time',
-        header: 'Expires',
-        size: 150,
-        Cell: ({ row }) => {
-          const isExpired = row.original.is_expired;
-          return (
-            <Tooltip title={formatDate(row.original.expiration_time)}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <ExpirationIcon
-                  size={16}
-                  color={isExpired ? 'red' : undefined}
-                />
-                <Typography
-                  variant="body2"
-                  color={isExpired ? 'error' : 'text.primary'}
-                >
-                  {isExpired
-                    ? 'Expired'
-                    : `${row.original.days_until_expiration} days left`}
-                </Typography>
-              </Box>
-            </Tooltip>
-          );
-        },
-        filterFn: 'greaterThan',
-      },
-      {
-        accessorKey: 'views',
-        header: 'Views',
-        size: 100,
-        Cell: ({ row }) => (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ViewsIcon size={16} />
-            <Typography variant="body2">{row.original.views}</Typography>
-          </Box>
-        ),
-        filterFn: 'greaterThan',
-      },
-      {
-        accessorKey: 'unique_visitors',
-        header: 'Unique Visitors',
-        size: 120,
-        Cell: ({ row }) => (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <VisitorsIcon size={16} />
-            <Typography variant="body2">
-              {row.original.unique_visitors}
-            </Typography>
-          </Box>
-        ),
-        filterFn: 'greaterThan',
-      },
-      {
-        accessorKey: 'last_engagement',
-        header: 'Last Engagement',
-        size: 150,
-        Cell: ({ row }) => {
-          if (!row.original.last_engagement) {
-            return <Typography variant="body2">Never</Typography>;
-          }
-          return (
-            <Tooltip title={formatDate(row.original.last_engagement)}>
-              <Typography variant="body2">
-                {dayjs(row.original.last_engagement).fromNow()}
-              </Typography>
-            </Tooltip>
-          );
-        },
-        filterFn: 'greaterThan',
-      },
-      {
-        accessorKey: 'unique_link',
-        header: 'Link',
-        size: 100,
-        Cell: ({ row }) => (
-          <Tooltip title="Open shared link">
-            <IconButton
-              component={Link}
-              href={row.original.unique_link}
-              target="_blank"
-              size="small"
-            >
-              <ExternalLinkIcon />
-            </IconButton>
-          </Tooltip>
-        ),
-        enableSorting: false,
-        enableColumnFilter: false,
-      },
-    ],
-    []
-  );
-
-  // Render engagement details
-  const renderEngagementDetails = (details: EngagementDetail[]) => {
-    if (!details.length) {
-      return (
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1" color="text.secondary">
-            No engagement data available for this share link
-          </Typography>
-        </Box>
-      );
-    }
-
-    return (
-      <Box
-        sx={{
-          p: 3,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-          <Typography variant="h6" gutterBottom fontWeight="500">
-            Engagement History
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Showing {details.length} engagement records in chronological order
-          </Typography>
-
-          <Paper
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            }}
-          >
-            <Box sx={{ maxHeight: 450, overflow: 'auto' }}>
-              {details.map((detail, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    p: 3,
-                    borderBottom:
-                      index < details.length - 1
-                        ? '1px solid rgba(0,0,0,0.08)'
-                        : 'none',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: 2,
-                    transition: 'background-color 0.2s',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0,0,0,0.02)',
-                    },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                      flex: 1,
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight="600"
-                      fontSize="1rem"
-                    >
-                      {formatDate(detail.time)}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    {detail.is_unique ? (
-                      <Chip
-                        label="Unique Visit"
-                        size="small"
-                        color="success"
-                        sx={{
-                          fontWeight: 600,
-                          height: '28px',
-                          fontSize: '0.85rem',
-                        }}
-                      />
-                    ) : (
-                      <Chip
-                        label="Return Visit"
-                        size="small"
-                        color="secondary"
-                        variant="outlined"
-                        sx={{
-                          fontWeight: 600,
-                          height: '28px',
-                          fontSize: '0.85rem',
-                        }}
-                      />
-                    )}
-                    <Tooltip title={`Accessed ${dayjs(detail.time).fromNow()}`}>
-                      <Chip
-                        label={dayjs(detail.time).fromNow()}
-                        size="small"
-                        variant="outlined"
-                        color="info"
-                        sx={{
-                          fontWeight: 500,
-                          height: '28px',
-                          fontSize: '0.85rem',
-                        }}
-                      />
-                    </Tooltip>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Box>
-      </Box>
-    );
-  };
+  // Get columns from the component
+  const columns = ShareLinkTableColumns();
 
   const table = useMaterialReactTable({
     columns,
@@ -387,7 +67,7 @@ export default function ShareLinkAnalyticsPage() {
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    enableColumnResizing: true,
+    enableColumnResizing: false,
     enableFullScreenToggle: true,
     enableColumnFilterModes: true,
     enableColumnOrdering: false,
@@ -398,79 +78,113 @@ export default function ShareLinkAnalyticsPage() {
     enableDensityToggle: true,
     positionGlobalFilter: 'left',
     muiSearchTextFieldProps: {
-      placeholder: 'Search all share links...',
+      placeholder: 'Search share links...',
       sx: { minWidth: '300px' },
       variant: 'outlined',
       size: 'small',
     },
-    renderDetailPanel: ({ row }) =>
-      renderEngagementDetails(row.original.engagement_details),
+    renderDetailPanel: ({ row }) => (
+      <ShareLinkEngagementDetails shareLink={row.original} />
+    ),
     renderEmptyRowsFallback: () => (
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'center',
+          flexDirection: 'column',
           alignItems: 'center',
-          height: '100%',
-          p: 2,
+          justifyContent: 'center',
+          height: 200,
+          gap: 2,
         }}
       >
         {isLoading ? (
           <CircularProgress size={40} />
         ) : isError ? (
-          <Typography>Error loading data. Please try again.</Typography>
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            action={
+              <Button onClick={() => refetch()} size="small">
+                Retry
+              </Button>
+            }
+          >
+            {error?.message || 'Error loading share links'}
+          </Alert>
         ) : (
-          <Typography>No share links found</Typography>
+          <>
+            <Typography variant="h6" color="text.secondary">
+              No Share Links Found
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Create your first share link to start tracking analytics
+            </Typography>
+          </>
         )}
       </Box>
     ),
     muiTableContainerProps: {
-      sx: { maxWidth: '100%' },
+      sx: {
+        maxWidth: '100%',
+        '& .MuiTableHead-root': {
+          '& .MuiTableCell-head': {
+            backgroundColor: 'grey.50',
+            fontWeight: 600,
+          },
+        },
+      },
     },
     muiTablePaperProps: {
-      sx: { margin: 0, padding: 0 },
+      elevation: 0,
+      sx: {
+        border: '1px solid',
+        borderColor: 'grey.200',
+        borderRadius: 2,
+      },
     },
-    layoutMode: 'grid',
     displayColumnDefOptions: {
       'mrt-row-expand': {
         size: 50,
+        muiTableHeadCellProps: {
+          align: 'center',
+        },
+        muiTableBodyCellProps: {
+          align: 'center',
+        },
       },
     },
   });
 
   return (
     <Box sx={{ p: 0 }} className="flex flex-col gap-5">
+      {/* Header Section */}
       <Paper className="md:flex-row flex-col-reverse flex items-center justify-between gap-5 px-4 py-6">
         <div className="space-y-4">
           <Typography variant="h5" fontWeight={600}>
             Share Link Analytics
           </Typography>
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1" color="text.secondary">
             Track and analyze the performance of your shared video links
           </Typography>
         </div>
-        8
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<RefreshIcon />}
-              onClick={handleRefresh}
-              disabled={isLoading}
-              size="small"
-            >
-              Refresh Data
-            </Button>
-            <Button
-              variant={autoRefresh ? 'contained' : 'outlined'}
-              color={autoRefresh ? 'success' : 'primary'}
-              onClick={toggleAutoRefresh}
-              size="small"
-            >
-              {autoRefresh ? 'Auto-Refresh: ON' : 'Auto-Refresh: OFF'}
-            </Button>
-          </Box> */}
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={() => refetch()}
+            disabled={isLoading}
+            size="small"
+            sx={{
+              borderColor: 'grey.300',
+              color: 'text.secondary',
+              '&:hover': {
+                borderColor: 'primary.main',
+                backgroundColor: 'primary.50',
+              },
+            }}
+          >
+            Refresh
+          </Button>
           <object
             role="img"
             type="image/svg+xml"
@@ -480,9 +194,8 @@ export default function ShareLinkAnalyticsPage() {
         </Box>
       </Paper>
 
-      <Paper sx={{ overflow: 'hidden', width: '100%', margin: 0, padding: 0 }}>
-        <MaterialReactTable table={table} />
-      </Paper>
+      {/* Table Section */}
+      <MaterialReactTable table={table} />
     </Box>
   );
 }

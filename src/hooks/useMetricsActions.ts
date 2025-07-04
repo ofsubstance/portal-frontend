@@ -280,6 +280,133 @@ const useMetricsActions = () => {
     });
   };
 
+  // Macro Content Metrics
+  const useMacroContentCompletionRatesQuery = (
+    startDate: Date,
+    endDate: Date
+  ) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-completion-rates',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentCompletionRates(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useMacroContentMostViewedQuery = (startDate: Date, endDate: Date) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-most-viewed',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentMostViewed(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useMacroContentMostSharedQuery = (startDate: Date, endDate: Date) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-most-shared',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentMostShared(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useMacroContentLinkClickthroughQuery = (
+    startDate: Date,
+    endDate: Date
+  ) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-link-clickthrough',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentLinkClickthrough(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useMacroContentEngagementScoresQuery = (
+    startDate: Date,
+    endDate: Date
+  ) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-engagement-scores',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentEngagementScores(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
+  const useMacroContentViewingPatternsQuery = (
+    startDate: Date,
+    endDate: Date
+  ) => {
+    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
+    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    return useQuery({
+      queryKey: [
+        'macro-content-viewing-patterns',
+        formattedStartDate,
+        formattedEndDate,
+      ],
+      queryFn: () =>
+        metricsService.getMacroContentViewingPatterns(
+          formattedStartDate,
+          formattedEndDate
+        ),
+      staleTime: 0,
+      refetchOnWindowFocus: false,
+    });
+  };
+
   return {
     useDailyActiveUsersQuery,
     useMonthlyActiveUsersQuery,
@@ -298,6 +425,13 @@ const useMetricsActions = () => {
     useVideoPercentageWatchedQuery,
     useVideoSharesQuery,
     useVideoCompletionRatesQuery,
+    // Macro Content Metrics
+    useMacroContentCompletionRatesQuery,
+    useMacroContentMostViewedQuery,
+    useMacroContentMostSharedQuery,
+    useMacroContentLinkClickthroughQuery,
+    useMacroContentEngagementScoresQuery,
+    useMacroContentViewingPatternsQuery,
   };
 };
 

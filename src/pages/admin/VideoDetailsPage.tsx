@@ -5,6 +5,10 @@ import {
   Button,
   Chip,
   Typography,
+  CircularProgress,
+  Box,
+  Alert,
+  Container,
 } from '@mui/material';
 import {
   RiCalendarLine as CalendarIcon,
@@ -63,7 +67,7 @@ function VideoDetailsPage() {
   const modal = useModal(ModalHookLayout);
   const { useVideoQuery, videoDeleteMutation } = useVideoManagementActions();
 
-  const { data } = useVideoQuery(videoId!);
+  const { data, isLoading, isError, error } = useVideoQuery(videoId!);
 
   // Track content engagement when the video details page loads
   useEffect(() => {
@@ -167,7 +171,80 @@ function VideoDetailsPage() {
     });
   };
 
-  if (!data) return null;
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          minHeight: '70vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress color="primary" size={60} />
+          <Typography variant="h6" sx={{ mt: 2, color: 'text.secondary' }}>
+            Loading video details...
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <Container maxWidth="sm" sx={{ py: 8 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error instanceof Error
+            ? error.message
+            : 'Failed to load video details'}
+        </Alert>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="h5" gutterBottom>
+            Something went wrong
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            We couldn't load the video details. Please try again later.
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => window.location.reload()}
+            sx={{ mt: 2 }}
+          >
+            Try Again
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
+  // Handle case where video is not found
+  if (!data) {
+    return (
+      <Container maxWidth="sm" sx={{ py: 8 }}>
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          Video not found
+        </Alert>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography variant="h5" gutterBottom>
+            Video not available
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            The video you're looking for is not available or has been removed.
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/admin/video-management')}
+            sx={{ mt: 2 }}
+          >
+            Back to Video Management
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <div className="space-y-8 text-slate-600">

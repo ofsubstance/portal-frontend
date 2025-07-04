@@ -6,6 +6,8 @@ import {
   Box,
   useTheme,
   alpha,
+  Stack,
+  Fade,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,6 +18,7 @@ import { useState } from 'react';
 import {
   RiMessage2Line as CommentIcon,
   RiSendPlaneFill as SendIcon,
+  RiUser3Line as UserIcon,
 } from 'react-icons/ri';
 
 interface VideoCommentInputProps {
@@ -24,6 +27,7 @@ interface VideoCommentInputProps {
 
 export default function VideoCommentInput({ videoId }: VideoCommentInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const { createCommentMutation } = useCommentActions(videoId);
   const theme = useTheme();
 
@@ -32,9 +36,12 @@ export default function VideoCommentInput({ videoId }: VideoCommentInputProps) {
     handleSubmit,
     reset,
     formState: { errors },
+    watch,
   } = useForm<CommentFormData>({
     resolver: zodResolver(commentValidation),
   });
+
+  const watchedText = watch('text');
 
   const onSubmit = async (data: CommentFormData) => {
     try {
@@ -45,6 +52,7 @@ export default function VideoCommentInput({ videoId }: VideoCommentInputProps) {
       });
       toast.success('Your comment has been submitted for review');
       reset();
+      setIsFocused(false);
     } catch (error) {
       toast.error('Failed to submit comment. Please try again.');
       console.error(error);
@@ -55,79 +63,181 @@ export default function VideoCommentInput({ videoId }: VideoCommentInputProps) {
 
   return (
     <Paper
-      elevation={2}
+      elevation={isFocused ? 8 : 3}
       sx={{
         p: 4,
-        mt: 4,
-        borderRadius: 2,
-        backgroundColor: alpha(theme.palette.background.paper, 0.8),
+        mt: 6,
+        borderRadius: 3,
+        backgroundColor: alpha(theme.palette.background.paper, 0.95),
+        backdropFilter: 'blur(10px)',
+        border: isFocused
+          ? `2px solid ${alpha(theme.palette.primary.main, 0.3)}`
+          : `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': {
+          boxShadow: theme.shadows[6],
+        },
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          mb: 3,
-        }}
-      >
-        <CommentIcon
-          size={24}
-          style={{ marginRight: 10, color: theme.palette.primary.main }}
-        />
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Leave a Comment
-        </Typography>
-      </Box>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          {...register('text')}
-          multiline
-          rows={4}
-          fullWidth
-          placeholder="Share your thoughts about this video..."
-          variant="outlined"
-          error={!!errors.text}
-          helperText={
-            errors.text?.message ||
-            'Your comment will be reviewed before being published'
-          }
+      <Stack spacing={3}>
+        <Box
           sx={{
-            mb: 3,
-            '& .MuiOutlinedInput-root': {
-              borderRadius: 2,
-              '&:hover fieldset': {
-                borderColor: theme.palette.primary.main,
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-              },
-            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
           }}
-        />
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitting}
-            startIcon={<SendIcon />}
+        >
+          <Box
             sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 48,
+              height: 48,
               borderRadius: 2,
-              px: 3,
-              py: 1.2,
-              fontWeight: 600,
-              textTransform: 'none',
-              boxShadow: 1,
-              '&:hover': {
-                boxShadow: 2,
-              },
+              background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+              color: 'white',
+              boxShadow: theme.shadows[2],
             }}
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Comment'}
-          </Button>
+            <CommentIcon size={24} />
+          </Box>
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: theme.palette.text.primary,
+                mb: 0.5,
+              }}
+            >
+              Share Your Thoughts
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: theme.palette.text.secondary,
+                fontSize: '0.875rem',
+              }}
+            >
+              Join the conversation about this film
+            </Typography>
+          </Box>
         </Box>
-      </form>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack spacing={3}>
+            <TextField
+              {...register('text')}
+              multiline
+              rows={isFocused ? 5 : 4}
+              fullWidth
+              placeholder="What did you think of this film? Share your insights, reflections, or questions..."
+              variant="outlined"
+              error={!!errors.text}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              helperText={
+                errors.text?.message ||
+                'Your comment will be reviewed before being published'
+              }
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  fontSize: '1rem',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: alpha(theme.palette.background.default, 0.5),
+                  '&:hover': {
+                    backgroundColor: alpha(
+                      theme.palette.background.default,
+                      0.7
+                    ),
+                  },
+                  '&:hover fieldset': {
+                    borderColor: theme.palette.primary.main,
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: alpha(
+                      theme.palette.background.default,
+                      0.9
+                    ),
+                    '& fieldset': {
+                      borderColor: theme.palette.primary.main,
+                      borderWidth: 2,
+                    },
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  lineHeight: 1.6,
+                  '&::placeholder': {
+                    color: theme.palette.text.secondary,
+                    opacity: 0.8,
+                  },
+                },
+                '& .MuiFormHelperText-root': {
+                  fontSize: '0.8rem',
+                  marginTop: 1,
+                  color: errors.text
+                    ? theme.palette.error.main
+                    : theme.palette.text.secondary,
+                },
+              }}
+            />
+
+            <Fade in={isFocused || watchedText?.length > 0}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <UserIcon size={16} />
+                  Comments are moderated for quality
+                </Typography>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isSubmitting || !watchedText?.trim()}
+                  startIcon={<SendIcon />}
+                  sx={{
+                    borderRadius: 2,
+                    px: 4,
+                    py: 1.5,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                    boxShadow: theme.shadows[2],
+                    '&:hover': {
+                      background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+                      boxShadow: theme.shadows[4],
+                      transform: 'translateY(-1px)',
+                    },
+                    '&:disabled': {
+                      background: theme.palette.action.disabledBackground,
+                      color: theme.palette.action.disabled,
+                    },
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {isSubmitting ? 'Publishing...' : 'Publish Comment'}
+                </Button>
+              </Box>
+            </Fade>
+          </Stack>
+        </form>
+      </Stack>
     </Paper>
   );
 }

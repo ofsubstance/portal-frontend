@@ -206,3 +206,115 @@ export interface VideoCompletionRatesDto {
     dropOffRate: number;
   }>;
 }
+
+// Macro Content Metrics DTOs
+export interface MacroContentCompletionRatesDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    videoId: string;
+    title: string;
+    genre: string;
+    duration: string;
+    averageCompletion: number;
+    totalSessions: number;
+    totalTimeWatched: number;
+  }[];
+}
+
+export interface MacroContentMostViewedDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    videoId: string;
+    title: string;
+    genre: string;
+    duration: string;
+    tags: string[];
+    viewCount: number;
+    uniqueViewers: number;
+    averageCompletion: number;
+  }[];
+}
+
+export interface MacroContentMostSharedDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    videoId: string;
+    title: string;
+    genre: string;
+    duration: string;
+    shareCount: number;
+    totalViews: number;
+    averageViewsPerShare: number;
+  }[];
+}
+
+export interface MacroContentLinkClickthroughDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    videoId: string;
+    title: string;
+    genre: string;
+    totalLinks: number;
+    totalViews: number;
+    uniqueEngagements: number;
+    clickthroughRate: number;
+  }[];
+}
+
+export interface MacroContentEngagementScoresDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    videoId: string;
+    title: string;
+    genre: string;
+    duration: string;
+    tags: string[];
+    engagementScore: number;
+    metrics: {
+      totalViews: number;
+      uniqueViewers: number;
+      avgCompletion: number;
+      commentCount: number;
+      feedbackCount: number;
+      shareCount: number;
+      avgEngagementLevel: number;
+      avgRecommendLikelihood: number;
+    };
+  }[];
+}
+
+export interface MacroContentViewingPatternsDto {
+  startDate: string;
+  endDate: string;
+  data: {
+    totalSessions: number;
+    uniqueViewers: number;
+    completionDistribution: {
+      range: string;
+      count: number;
+      percentage: number;
+    }[];
+    sessionDurations: {
+      average: number;
+      totalSessions: number;
+    };
+    interactions: {
+      totalInteractions: number;
+      avgInteractionsPerVideo: number;
+      videosWithInteractions: number;
+    };
+    peakViewingHours: {
+      hour: string;
+      sessions: number;
+    }[];
+    hourlyDistribution: {
+      hour: string;
+      sessions: number;
+    }[];
+  };
+}
