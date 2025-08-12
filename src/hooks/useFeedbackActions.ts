@@ -16,7 +16,12 @@ const useFeedbackActions = () => {
   ) => {
     const feedbackSubmission: FeedbackSubmission = {
       videoId,
-      ...feedbackData,
+      engagementLevel: feedbackData.engagementLevel ?? 0,
+      subjectMatterUsefulness: feedbackData.subjectMatterUsefulness ?? 0,
+      outcomeImprovement: feedbackData.outcomeImprovement ?? 0,
+      continueUsageLikelihood: feedbackData.continueUsageLikelihood ?? 0,
+      recommendLikelihood: feedbackData.recommendLikelihood ?? 0,
+      openEndedFeedback: feedbackData.openEndedFeedback,
     };
 
     return submitFilmFeedbackMutation.mutateAsync(feedbackSubmission);

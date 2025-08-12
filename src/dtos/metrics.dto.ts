@@ -63,6 +63,14 @@ export interface SessionEngagementDailyDto {
     sessions: number;
     engagedSessions: number;
     engagementRate: number;
+    body: {
+      date: string;
+      sessions: number;
+      engagedSessions: number;
+      engagementRate: number;
+      averageDurationMinutes: number;
+      totalDurationMinutes: number;
+    };
   }[];
 }
 

@@ -142,6 +142,9 @@ const APIUrl = {
     feedbacks: () => `/user-content/feedbacks`,
     sharelinks: () => `/user-content/sharelinks`,
   },
+  dataExport: {
+    exportAll: () => `/data-export/all`,
+  },
 };
 
 export default APIUrl;

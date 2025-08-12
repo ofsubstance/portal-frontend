@@ -33,8 +33,32 @@ import {
   RiPieChartLine as UtilizationIcon,
 } from 'react-icons/ri';
 import ReactECharts from 'echarts-for-react';
+import { useQuery } from '@tanstack/react-query';
 
 type SpanType = 'daily' | 'weekly' | 'monthly';
+
+interface SessionMetric {
+  date: string;
+  sessions: number;
+  engagedSessions: number;
+  engagementRate: number;
+  averageDurationMinutes: number;
+  totalDurationMinutes: number;
+}
+
+interface SessionEngagementResponse {
+  data: {
+    statusCode: number;
+    isSuccess: boolean;
+    message: string;
+    body: {
+      startDate: string;
+      endDate: string;
+      span: string;
+      data: SessionMetric[];
+    };
+  };
+}
 
 // Add this type definition for the formatter function
 type TooltipFormatterCallback = (params: any) => string;
@@ -144,7 +168,15 @@ const EngagementMetricsPage: React.FC = () => {
     setParamChangeCounter((prev) => prev + 1);
   };
 
-  // Prepare chart data
+  // Helper function to format date labels
+  const formatDateLabel = (item: SessionMetric) => {
+    if (item.date) {
+      return format(new Date(item.date), 'MM/dd');
+    }
+    return '';
+  };
+
+  // Session Engagement Chart
   const sessionEngagementRateChartData = useMemo(() => {
     if (!sessionEngagementDaily) {
       return {
@@ -157,26 +189,10 @@ const EngagementMetricsPage: React.FC = () => {
         yAxis: {
           type: 'value' as const,
         },
-        series: [
-          { data: [], type: 'line' as const, name: 'Engagement Rate (%)' },
-        ],
+        series: [{ data: [], type: 'line' as const, name: 'Engagement Rate' }],
         color: [primaryColor],
       };
     }
-
-    // Helper function to format date labels
-    const formatDateLabel = (item: any) => {
-      if (item.date) {
-        return format(new Date(item.date), 'MM/dd');
-      } else if (item.week) {
-        const [year, week] = item.week.split('-');
-        return `W${week} ${year}`;
-      } else if (item.month) {
-        const [year, month] = item.month.split('-');
-        return `${month}/${year.slice(2)}`;
-      }
-      return '';
-    };
 
     return {
       type: 'line' as const,
@@ -185,7 +201,8 @@ const EngagementMetricsPage: React.FC = () => {
       })`,
       xAxis: {
         type: 'category' as const,
-        data: sessionEngagementDaily.data.map(formatDateLabel),
+        data:
+          sessionEngagementDaily?.data?.body?.data?.map(formatDateLabel) || [],
         name: 'Date',
         axisLabel: {
           rotate: 30,
@@ -202,7 +219,9 @@ const EngagementMetricsPage: React.FC = () => {
       },
       series: [
         {
-          data: sessionEngagementDaily.data.map((item) => item.engagementRate),
+          data: sessionEngagementDaily.data.body.data.map(
+            (item: SessionMetric) => item.engagementRate
+          ),
           type: 'line' as const,
           name: 'Engagement Rate (%)',
           symbol: 'circle',
@@ -224,7 +243,9 @@ const EngagementMetricsPage: React.FC = () => {
         trigger: 'axis' as const,
         formatter: function (params: any) {
           const index = params[0].dataIndex;
-          const item = sessionEngagementDaily.data[index];
+          const item = sessionEngagementDaily.data.body.data[
+            index
+          ] as SessionMetric;
           const timeLabel = formatDateLabel(item);
 
           return `
@@ -270,20 +291,6 @@ const EngagementMetricsPage: React.FC = () => {
       };
     }
 
-    // Helper function to format date labels
-    const formatDateLabel = (item: any) => {
-      if (item.date) {
-        return format(new Date(item.date), 'MM/dd');
-      } else if (item.week) {
-        const [year, week] = item.week.split('-');
-        return `W${week} ${year}`;
-      } else if (item.month) {
-        const [year, month] = item.month.split('-');
-        return `${month}/${year.slice(2)}`;
-      }
-      return '';
-    };
-
     return {
       type: 'bar' as const,
       title: `Daily Session Count (${
@@ -291,7 +298,7 @@ const EngagementMetricsPage: React.FC = () => {
       })`,
       xAxis: {
         type: 'category' as const,
-        data: sessionEngagementDaily.data.map(formatDateLabel),
+        data: sessionEngagementDaily.data.body.data.map(formatDateLabel),
         name: 'Date',
         axisLabel: {
           rotate: 30,
@@ -308,7 +315,9 @@ const EngagementMetricsPage: React.FC = () => {
       },
       series: [
         {
-          data: sessionEngagementDaily.data.map((item) => item.sessions),
+          data: sessionEngagementDaily.data.body.data.map(
+            (item: SessionMetric) => item.sessions
+          ),
           type: 'bar' as const,
           name: 'Total Sessions',
           stack: 'total',
@@ -317,7 +326,9 @@ const EngagementMetricsPage: React.FC = () => {
           },
         },
         {
-          data: sessionEngagementDaily.data.map((item) => item.engagedSessions),
+          data: sessionEngagementDaily.data.body.data.map(
+            (item: SessionMetric) => item.engagedSessions
+          ),
           type: 'bar' as const,
           name: 'Engaged Sessions',
           stack: 'engaged',
@@ -331,7 +342,9 @@ const EngagementMetricsPage: React.FC = () => {
         trigger: 'axis' as const,
         formatter: function (params: any) {
           const index = params[0].dataIndex;
-          const item = sessionEngagementDaily.data[index];
+          const item = sessionEngagementDaily.data.body.data[
+            index
+          ] as SessionMetric;
           const timeLabel = formatDateLabel(item);
 
           return `
@@ -483,7 +496,6 @@ const EngagementMetricsPage: React.FC = () => {
     if (!userUtilization) {
       return {
         type: 'pie' as const,
-        title: 'User Utilization Purpose',
         series: [
           {
             data: [],
@@ -496,7 +508,6 @@ const EngagementMetricsPage: React.FC = () => {
 
     return {
       type: 'pie' as const,
-      title: 'User Utilization Purpose',
       series: [
         {
           data: userUtilization.data.map((item) => ({
@@ -632,7 +643,9 @@ const EngagementMetricsPage: React.FC = () => {
       {
         title: 'Avg. Session',
         value: sessionEngagement
-          ? `${Math.round(sessionEngagement.averageDurationMinutes * 10) / 10}m`
+          ? `${
+              Math.round(sessionEngagement.averageDurationMinutes * 10) / 10
+            } mins`
           : '-',
         changeType: 'positive',
         icon: DurationIcon,
@@ -640,7 +653,7 @@ const EngagementMetricsPage: React.FC = () => {
       {
         title: 'Total Duration',
         value: sessionEngagement
-          ? `${Math.round(sessionEngagement.totalDurationMinutes)}m`
+          ? `${Math.round(sessionEngagement.totalDurationMinutes)} mins`
           : '-',
         changeType: 'positive',
         icon: TotalTimeIcon,

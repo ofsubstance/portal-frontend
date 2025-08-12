@@ -19,6 +19,11 @@ import {
   Tab,
   Alert,
   Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
 } from '@mui/material';
 import { DateRange, Range, RangeKeyDict } from 'react-date-range';
 import { format, subMonths } from 'date-fns';
@@ -38,6 +43,8 @@ import {
 import ReactECharts from 'echarts-for-react';
 import { EChartsOption } from 'echarts-for-react';
 
+type SpanType = 'daily' | 'weekly' | 'monthly';
+
 const MacroContentMetricsPage: React.FC = () => {
   const theme = useTheme();
   const primaryColor = theme.palette.primary.main;
@@ -52,6 +59,7 @@ const MacroContentMetricsPage: React.FC = () => {
   ]);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [paramChangeCounter, setParamChangeCounter] = useState(0);
+  const [spanType, setSpanType] = useState<SpanType>('daily');
 
   const startDate = dateRange[0].startDate || subMonths(new Date(), 1);
   const endDate = dateRange[0].endDate || new Date();
@@ -181,6 +189,11 @@ const MacroContentMetricsPage: React.FC = () => {
     engagementScoresData,
     theme,
   ]);
+
+  const handleSpanTypeChange = (event: SelectChangeEvent) => {
+    setSpanType(event.target.value as SpanType);
+    setParamChangeCounter((prev) => prev + 1);
+  };
 
   const handleDateChange = (item: RangeKeyDict) => {
     setDateRange([item.selection]);
@@ -897,7 +910,8 @@ const MacroContentMetricsPage: React.FC = () => {
               Macro Content Metrics
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              Analyze high-level content engagement patterns across the platform
+              View key performance metrics for your macro content. Select a date
+              range to filter the data.
             </Typography>
           </Box>
           <Box
@@ -906,9 +920,51 @@ const MacroContentMetricsPage: React.FC = () => {
               gap: 2,
               flexDirection: { xs: 'column', sm: 'row' },
               width: { xs: '100%', sm: 'auto' },
-              position: 'relative',
+              '& > *': {
+                flex: 1,
+                minWidth: { sm: '180px' },
+              },
             }}
           >
+            <FormControl
+              sx={{
+                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
+                  height: '45px',
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  transform: 'translate(14px, 12px) scale(1)',
+                  '&.Mui-focused, &.MuiFormLabel-filled': {
+                    transform: 'translate(14px, -9px) scale(0.75)',
+                  },
+                },
+                '& .MuiSvgIcon-root': {
+                  color: 'white',
+                },
+              }}
+            >
+              <InputLabel id="span-type-select-label">Time Span</InputLabel>
+              <Select
+                labelId="span-type-select-label"
+                id="span-type-select"
+                value={spanType}
+                label="Time Span"
+                onChange={handleSpanTypeChange}
+              >
+                <MenuItem value="daily">Daily</MenuItem>
+                <MenuItem value="weekly">Weekly</MenuItem>
+                <MenuItem value="monthly">Monthly</MenuItem>
+              </Select>
+            </FormControl>
             <Button
               variant="outlined"
               onClick={() => setShowDatePicker(!showDatePicker)}
@@ -923,7 +979,6 @@ const MacroContentMetricsPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
-                minWidth: '200px',
               }}
               startIcon={<DateIcon size={20} />}
             >
@@ -935,12 +990,11 @@ const MacroContentMetricsPage: React.FC = () => {
                 sx={{
                   position: 'absolute',
                   right: 0,
-                  top: '50px',
                   zIndex: 10,
+                  mt: 1,
                   overflow: 'hidden',
                 }}
               >
-                {/* @ts-ignore */}
                 <DateRange
                   editableDateInputs={true}
                   onChange={handleDateChange}
@@ -1004,8 +1058,6 @@ const MacroContentMetricsPage: React.FC = () => {
                   height: '100%',
                   borderRadius: 3,
                   bgcolor: 'background.paper',
-                  border: '1px solid',
-                  borderColor: 'grey.200',
                   transition:
                     'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
                   '&:hover': {
@@ -1014,38 +1066,57 @@ const MacroContentMetricsPage: React.FC = () => {
                   },
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box
-                    sx={{
-                      width: 48,
-                      height: 48,
-                      borderRadius: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      bgcolor: `${metric.color}15`,
-                      color: metric.color,
-                      mr: 2,
-                    }}
-                  >
-                    <metric.icon size={24} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: `${theme.palette.primary.main}15`,
+                        color: theme.palette.primary.main,
+                        mr: 2,
+                        flexShrink: 0,
+                      }}
+                    >
+                      <metric.icon size={24} />
+                    </Box>
+                    <Typography
+                      variant="subtitle1"
+                      color="text.secondary"
+                      sx={{
+                        fontWeight: 500,
+                        fontSize: '0.95rem',
+                        letterSpacing: '0.015em',
+                      }}
+                    >
+                      {metric.title}
+                    </Typography>
                   </Box>
                   <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    fontWeight={500}
+                    variant="h3"
+                    component="div"
+                    sx={{
+                      mt: 1,
+                      mb: 1,
+                      fontWeight: 600,
+                      fontSize: { xs: '1.75rem', sm: '2rem', md: '2.25rem' },
+                      color: 'text.primary',
+                      lineHeight: 1.2,
+                    }}
                   >
-                    {metric.title}
+                    {metric.value}
                   </Typography>
                 </Box>
-                <Typography
-                  variant="h3"
-                  component="div"
-                  fontWeight={600}
-                  color="text.primary"
-                >
-                  {metric.value}
-                </Typography>
               </Card>
             </Grid>
           ))}

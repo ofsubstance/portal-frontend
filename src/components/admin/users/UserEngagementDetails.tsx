@@ -7,6 +7,7 @@ import UserStatsOverview from './UserStatsOverview';
 import UserEngagementStats from './UserEngagementStats';
 import UserVideoHistory from './UserVideoHistory';
 import UserTrendsCard from './UserTrendsCard';
+import UserShareableLinks from './UserShareableLinks';
 
 interface UserEngagementDetailsProps {
   userId: string;
@@ -95,10 +96,13 @@ const UserEngagementDetails = ({
       <UserProfileCard user={user} />
 
       {/* Engagement Overview */}
-      <UserStatsOverview engagement={engagement} />
+      {/* <UserStatsOverview engagement={engagement} /> */}
 
       {/* Detailed Statistics */}
       <UserEngagementStats engagement={engagement} />
+
+      {/* Shareable Links */}
+      <UserShareableLinks engagement={engagement} />
 
       {/* Video History and Trends */}
       <Grid container spacing={3} sx={{ mt: 1 }}>

@@ -110,7 +110,7 @@ export const SignupForm = ({
       },
       []
     );
-    errorMessages.forEach((message: string) => {
+    (errorMessages as string[]).forEach((message: string) => {
       toast.error(message);
     });
   };

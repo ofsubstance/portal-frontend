@@ -17,13 +17,6 @@ const UserStatsOverview = ({ engagement }: UserStatsOverviewProps) => {
     <Grid container spacing={3} sx={{ mb: 4 }}>
       <Grid item xs={6} sm={3}>
         <StatCard
-          title="Watch Time"
-          value={`${engagement.watchStats.totalWatchTimeMinutes}m`}
-          icon={TimeIcon}
-        />
-      </Grid>
-      <Grid item xs={6} sm={3}>
-        <StatCard
           title="Sessions"
           value={engagement.sessionStats.totalSessions}
           icon={StatsIcon}

@@ -10,7 +10,6 @@ import {
   MacroContentViewingPatternsDto,
   MAUDto,
   RetentionDto,
-  SessionEngagementDailyDto,
   SessionEngagementDto,
   SessionTimeDto,
   UserInterestsDto,
@@ -84,13 +83,10 @@ class MetricsService {
     return res.data.data;
   }
 
-  async getSessionEngagementDaily(
-    startDate: string,
-    endDate: string
-  ): Promise<SessionEngagementDailyDto> {
+  async getSessionEngagementDaily(startDate: string, endDate: string) {
     const res = await httpClient.get<{
       status: string;
-      data: SessionEngagementDailyDto['data'];
+      data: any;
     }>(APIUrl.metrics.getSessionEngagementDaily(startDate, endDate));
     return { data: res.data.data };
   }

@@ -120,7 +120,10 @@ const UserEngagementStats = ({ engagement }: UserEngagementStatsProps) => {
                   fontWeight={700}
                   sx={{ mb: 0.5 }}
                 >
-                  {engagement.sessionStats.averageSessionDuration}m
+                  {Math.round(
+                    engagement.sessionStats.averageSessionDuration / 60
+                  )}
+                  m
                 </Typography>
                 <Typography
                   variant="caption"

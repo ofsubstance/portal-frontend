@@ -15,11 +15,13 @@ import {
   Paper,
   Button,
   Divider,
+  Alert,
 } from '@mui/material';
 import { subDays, format } from 'date-fns';
 import { ChartCard } from '../../components/charts';
 import useMetricsActions from '@/hooks/useMetricsActions';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
+import useDataExport from '@/hooks/useDataExport';
 import { ChartData } from '@/components/charts/ChartTypes';
 import {
   RiUserLine,
@@ -28,11 +30,13 @@ import {
   RiLoginBoxLine,
   RiFileChartLine,
   RiArrowRightSLine,
+  RiDownloadLine,
 } from 'react-icons/ri';
 
 function DashboardPage() {
   const theme = useTheme();
   const primaryColor = theme.palette.primary.main;
+  const { exportAllData, isExporting, error: exportError } = useDataExport();
 
   // Date ranges for metrics
   const endDate = new Date();
@@ -135,15 +139,48 @@ function DashboardPage() {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight="600" gutterBottom>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Welcome to the Of Substance admin dashboard. Here's an overview of
-          your platform.
-        </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          gap: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" fontWeight="600" gutterBottom>
+            Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Welcome to the Of Substance admin dashboard. Here's an overview of
+            your platform.
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<RiDownloadLine />}
+          onClick={exportAllData}
+          disabled={isExporting}
+          sx={{
+            height: '45px',
+            minWidth: '160px',
+            bgcolor: theme.palette.success.main,
+            '&:hover': {
+              bgcolor: theme.palette.success.dark,
+            },
+          }}
+        >
+          {isExporting ? 'Exporting...' : 'Export Data'}
+        </Button>
       </Box>
+
+      {exportError && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {exportError}
+        </Alert>
+      )}
 
       {/* Stats Overview */}
       <Grid container spacing={3} sx={{ mb: 4 }}>

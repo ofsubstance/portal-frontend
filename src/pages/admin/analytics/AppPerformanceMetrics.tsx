@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Typography,
-  Paper,
   Button,
   useTheme,
   CircularProgress,
@@ -16,11 +15,10 @@ import {
   Divider,
 } from '@mui/material';
 import { DateRange, Range, RangeKeyDict } from 'react-date-range';
-import { addDays, format, subDays, subMonths } from 'date-fns';
+import { format, subDays, subMonths } from 'date-fns';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { ChartCard } from '../../../components/charts';
-import MetricCard from '../../../components/metrics/MetricCard';
 import { ChartData } from '../../../components/charts/ChartTypes';
 import useMetricsActions from '@/hooks/useMetricsActions';
 import {
