@@ -126,7 +126,7 @@ export default function VideoPlayerSection({
   };
 
   return (
-    <div className="flex md:flex-row flex-col items-start gap-8 p-6">
+    <div className="flex md:flex-row flex-col items-start gap-8 px-6 py-2">
       <div className="flex-1 w-full">
         <div className="player-wrapper" style={{ height: '700px' }}>
           <ReactPlayer

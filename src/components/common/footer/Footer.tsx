@@ -21,6 +21,7 @@ import {
   RiPhoneLine as PhoneIcon,
   RiExternalLinkLine as ExternalIcon,
   RiHeartFill as HeartIcon,
+  RiMapPin2Line as MapPinIcon,
 } from 'react-icons/ri';
 
 import AppLogo from '../logo/AppLogo';
@@ -140,6 +141,10 @@ export default function Footer() {
                   </Typography>
                   <Stack direction="row" spacing={2}>
                     <IconButton
+                      component="a"
+                      href="https://www.facebook.com/OfSubstance.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
                         width: 48,
                         height: 48,
@@ -157,40 +162,10 @@ export default function Footer() {
                       <FacebookIcon size={22} />
                     </IconButton>
                     <IconButton
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        background: `linear-gradient(135deg, #1DA1F2, #0F7CC4)`,
-                        color: 'white',
-                        '&:hover': {
-                          background: `linear-gradient(135deg, #0F7CC4, #1DA1F2)`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 8px 25px rgba(29, 161, 242, 0.3)',
-                        },
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      }}
-                      aria-label="Twitter"
-                    >
-                      <TwitterIcon size={22} />
-                    </IconButton>
-                    <IconButton
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        background: `linear-gradient(135deg, #E4405F, #C72A47)`,
-                        color: 'white',
-                        '&:hover': {
-                          background: `linear-gradient(135deg, #C72A47, #E4405F)`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 8px 25px rgba(228, 64, 95, 0.3)',
-                        },
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      }}
-                      aria-label="Instagram"
-                    >
-                      <InstagramIcon size={22} />
-                    </IconButton>
-                    <IconButton
+                      component="a"
+                      href="https://www.youtube.com/@ofsubstance.396"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
                         width: 48,
                         height: 48,
@@ -239,10 +214,19 @@ export default function Footer() {
                 </Typography>
                 <Stack spacing={2}>
                   {[
-                    { label: 'Home', href: '#' },
-                    { label: 'About Us', href: '#' },
-                    { label: 'Films', href: '#' },
-                    { label: 'Contact', href: '#' },
+                    { label: 'Home', href: 'https://ofsubstance.org/' },
+                    {
+                      label: 'Who we are',
+                      href: 'https://ofsubstance.org/who-we-are',
+                    },
+                    {
+                      label: 'Our Approach',
+                      href: 'https://ofsubstance.org/our-approach',
+                    },
+                    {
+                      label: 'Connect with us',
+                      href: 'https://ofsubstance.org/Connect',
+                    },
                   ].map((item) => (
                     <Link
                       key={item.label}
@@ -433,7 +417,7 @@ export default function Footer() {
                           Call Us
                         </Typography>
                         <Link
-                          href="tel:+1-800-123-4567"
+                          href="tel:+1-209-265-2551"
                           underline="none"
                           sx={{
                             color: theme.palette.common.white,
@@ -445,8 +429,76 @@ export default function Footer() {
                             transition: 'color 0.2s ease',
                           }}
                         >
-                          +1 (800) 123-4567
+                          (209) 265-2551
                         </Link>
+                      </Box>
+                    </Box>
+                  </Paper>
+
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2.5,
+                      background: `linear-gradient(135deg, ${alpha(
+                        theme.palette.primary.main,
+                        0.1
+                      )}, ${alpha(theme.palette.primary.main, 0.05)})`,
+                      backdropFilter: 'blur(10px)',
+                      border: `1px solid ${alpha(
+                        theme.palette.primary.main,
+                        0.2
+                      )}`,
+                      borderRadius: 2,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        border: `1px solid ${alpha(
+                          theme.palette.primary.main,
+                          0.4
+                        )}`,
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box
+                        sx={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 2,
+                          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        <MapPinIcon size={20} />
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: alpha(theme.palette.common.white, 0.7),
+                            mb: 0.5,
+                            fontSize: '0.8rem',
+                            fontWeight: 500,
+                          }}
+                        >
+                          Address
+                        </Typography>
+                        <Typography
+                          sx={{
+                            color: theme.palette.common.white,
+                            fontSize: '0.95rem',
+                            fontWeight: 600,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          340 Hauser Blvd. Apt. 403
+                          <br />
+                          Los Angeles, CA 90036
+                        </Typography>
                       </Box>
                     </Box>
                   </Paper>

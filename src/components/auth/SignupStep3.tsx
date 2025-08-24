@@ -4,11 +4,17 @@ import {
   InputAdornment,
   Typography,
   Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 import { SignupReq } from '@/dtos/auth.dto';
 import { useFormContext } from 'react-hook-form';
 import PersonIcon from '@mui/icons-material/Person';
+import { states } from '@/constants/states';
+import { countries } from '@/constants/countries';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -98,41 +104,49 @@ export default function SignupStep3() {
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <TextField
-            {...register('profile.stateRegion')}
-            fullWidth
-            label="State/Region"
-            variant="outlined"
-            placeholder="Your state or region"
-            error={!!errors.profile?.stateRegion}
-            helperText={errors.profile?.stateRegion?.message}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LocationOnIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <FormControl fullWidth>
+            <InputLabel id="state-region-label">State/Region</InputLabel>
+            <Select
+              {...register('profile.stateRegion')}
+              labelId="state-region-label"
+              defaultValue=""
+              label="State/Region"
+              error={!!errors.profile?.stateRegion}
+            >
+              <MenuItem value="">Select State/Region</MenuItem>
+              {states.map((state) => (
+                <MenuItem key={state.value} value={state.value}>
+                  {state.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <Typography variant="caption" color="error">
+              {errors.profile?.stateRegion?.message}
+            </Typography>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12} md={6}>
-          <TextField
-            {...register('profile.country')}
-            fullWidth
-            label="Country"
-            variant="outlined"
-            placeholder="Your country"
-            error={!!errors.profile?.country}
-            helperText={errors.profile?.country?.message}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LocationOnIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <FormControl fullWidth>
+            <InputLabel id="country-label">Country</InputLabel>
+            <Select
+              {...register('profile.country')}
+              labelId="country-label"
+              defaultValue=""
+              label="Country"
+              error={!!errors.profile?.country}
+            >
+              <MenuItem value="">Select Country</MenuItem>
+              {countries.map((country) => (
+                <MenuItem key={country.value} value={country.value}>
+                  {country.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <Typography variant="caption" color="error">
+              {errors.profile?.country?.message}
+            </Typography>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12}>
