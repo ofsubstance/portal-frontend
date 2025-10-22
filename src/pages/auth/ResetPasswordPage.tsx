@@ -33,8 +33,11 @@ function ResetPasswordPage() {
       },
       {
         onSuccess: () => {
-          toast.success('Password reset successful');
+          toast.success('Password reset successful! You can now log in with your new password.');
           navigate('/signin', { replace: true });
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Password reset failed. Please try again or request a new reset link.');
         },
       }
     );
@@ -91,8 +94,13 @@ function ResetPasswordPage() {
           placeholder="Re-enter your password"
         />
 
-        <Button type="submit" variant="contained" size="large">
-          Change Password
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={resetPasswordMutation.isPending}
+        >
+          {resetPasswordMutation.isPending ? 'Changing Password...' : 'Change Password'}
         </Button>
       </form>
     </main>

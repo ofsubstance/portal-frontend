@@ -35,7 +35,6 @@ class StorageService {
 
   removeAuthData() {
     localStorage.removeItem('auth');
-    localStorage.removeItem('auth');
     localStorage.removeItem('sessionId');
   }
 

@@ -37,8 +37,8 @@ export default function SignupStep4() {
   const selectedInterests = watch('profile.interests', []);
 
   return (
-    <div className="flex flex-col gap-6">
-      <Typography variant="body1" color="text.secondary" className="mb-2">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Typography variant="body1" color="text.secondary" className="mb-2 text-sm sm:text-base">
         Select content categories that interest you to personalize your
         experience. This step is optional.
       </Typography>
@@ -46,29 +46,32 @@ export default function SignupStep4() {
       <FormControl error={!!errors.profile?.interests} fullWidth>
         <FormLabel
           sx={{
-            fontSize: '1.15rem',
+            fontSize: '1rem',
             fontWeight: 500,
             color: 'text.primary',
-            marginBottom: '1rem',
+            marginBottom: '0.75rem',
+            '@media (min-width: 640px)': {
+              fontSize: '1.15rem',
+              marginBottom: '1rem',
+            },
           }}
         >
           What content categories are you most interested in?
         </FormLabel>
 
-        <Typography variant="body2" color="text.secondary" className="mb-4">
+        <Typography variant="body2" color="text.secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
           Select all that apply
         </Typography>
 
-        <Grid container spacing={2}>
+        <Grid container spacing={1} className="sm:spacing-2">
           {interestsOptions.map((category) => (
             <Grid item xs={12} sm={6} key={category}>
               <Paper
                 elevation={selectedInterests.includes(category) ? 2 : 0}
-                className={`transition-all duration-200 p-2 ${
-                  selectedInterests.includes(category)
+                className={`transition-all duration-200 p-2 ${selectedInterests.includes(category)
                     ? 'bg-primary-50 border border-primary-200'
                     : 'border border-gray-200 hover:border-primary-100'
-                }`}
+                  }`}
               >
                 <FormControlLabel
                   control={
@@ -85,6 +88,7 @@ export default function SignupStep4() {
                       fontWeight={
                         selectedInterests.includes(category) ? 500 : 400
                       }
+                      className="text-xs sm:text-sm"
                     >
                       {category}
                     </Typography>
@@ -103,17 +107,18 @@ export default function SignupStep4() {
         )}
 
         {selectedInterests.length > 0 && (
-          <div className="mt-6">
-            <Typography variant="subtitle2" className="mb-2">
+          <div className="mt-4 sm:mt-6">
+            <Typography variant="subtitle2" className="mb-2 text-xs sm:text-sm">
               Selected Categories ({selectedInterests.length}):
             </Typography>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1 sm:gap-2">
               {selectedInterests.map((interest) => (
                 <Chip
                   key={interest}
                   label={interest}
                   color="primary"
                   variant="outlined"
+                  size="small"
                   onDelete={() => {
                     setValue(
                       'profile.interests',

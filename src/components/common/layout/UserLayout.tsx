@@ -25,6 +25,7 @@ import {
   RiSettings2Line as SettingsIcon,
   RiUserSettingsLine as UserManagementIcon,
   RiFolderVideoLine as VideoManagementIcon,
+  RiFilmLine as FilmsIcon,
 } from 'react-icons/ri';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -37,48 +38,12 @@ import { VideoDto } from '@/dtos/video.dto';
 
 const navItems = [
   {
-    group: 'Dashboard',
+    group: 'Navigation',
     items: [
       {
-        link: '/admin',
-        text: 'Overview',
-        icon: OverviewIcon,
-      },
-      { link: '/admin/analytics', text: 'Analytics', icon: AnalyticsIcon },
-    ],
-  },
-  {
-    group: 'Management',
-    items: [
-      {
-        link: '/admin/video-management',
-        text: 'Video Management',
-        icon: VideoManagementIcon,
-      },
-      {
-        link: '/admin/playlist-management',
-        text: 'Playlist Management',
-        icon: PlaylistManagementIcon,
-      },
-      {
-        link: '/admin/user-management',
-        text: 'User Management',
-        icon: UserManagementIcon,
-      },
-      {
-        link: '/admin/payments-subscriptions',
-        text: 'Payments & Subscriptions',
-        icon: PaymentsIcon,
-      },
-    ],
-  },
-  {
-    group: 'Account',
-    items: [
-      {
-        link: '/admin/profile/1',
-        text: 'Profile Details',
-        icon: ProfileIcon,
+        link: '/',
+        text: 'All Films',
+        icon: FilmsIcon,
       },
     ],
   },
@@ -360,6 +325,7 @@ export default function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -419,7 +385,22 @@ export default function UserLayout({
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-4">
+            <Button
+              variant="outlined"
+              startIcon={<FilmsIcon />}
+              onClick={() => navigate('/')}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'rgba(255,255,255,0.5)',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                },
+              }}
+            >
+              All Films
+            </Button>
             <AccountMenu />
           </div>
         </Toolbar>

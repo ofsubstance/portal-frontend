@@ -50,11 +50,11 @@ export default function VideoCommentInput({ videoId }: VideoCommentInputProps) {
         text: data.text,
         videoId,
       });
-      toast.success('Your comment has been submitted for review');
+      toast.success('Your comment has been submitted for review. Thank you for your feedback!');
       reset();
       setIsFocused(false);
     } catch (error) {
-      toast.error('Failed to submit comment. Please try again.');
+      toast.error('Failed to submit comment. Please try again later.');
       console.error(error);
     } finally {
       setIsSubmitting(false);

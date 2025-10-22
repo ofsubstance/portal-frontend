@@ -15,8 +15,9 @@ import SignupStep3 from './SignupStep3';
 import SignupStep4 from './SignupStep4';
 import { signupValidation } from '@/validators/auth.validator';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { saveSignupFormData, getSignupFormData, clearSignupFormData } from '@/utils/formPersistence';
 
 const SIGNUP_STEPS = [
   'Get Started',
@@ -27,17 +28,28 @@ const SIGNUP_STEPS = [
 
 export const SignupForm = ({
   onSubmit,
+  isLoading = false,
 }: {
   onSubmit: (data: SignupReq) => void;
+  isLoading?: boolean;
 }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const formMethods = useForm<SignupReq>({
     resolver: zodResolver(signupValidation),
     mode: 'onChange',
+    defaultValues: getSignupFormData() || {},
   });
 
-  const { handleSubmit, trigger } = formMethods;
+  const { handleSubmit, trigger, watch } = formMethods;
+
+  // Save form data on every change
+  useEffect(() => {
+    const subscription = watch((data) => {
+      saveSignupFormData(data as Partial<SignupReq>);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
     // Prevent any default form submission
@@ -115,6 +127,12 @@ export const SignupForm = ({
     });
   };
 
+  const handleFormSubmit = (data: SignupReq) => {
+    // Clear form data on successful submission
+    clearSignupFormData();
+    onSubmit(data);
+  };
+
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
@@ -146,18 +164,18 @@ export const SignupForm = ({
   ];
 
   return (
-    <div className="w-full max-w-3xl m-auto p-4 flex flex-col gap-6">
-      <Paper elevation={3} className="p-6 rounded-lg">
-        <div className="mb-8 text-center">
+    <div className="w-full max-w-3xl m-auto p-2 sm:p-4 flex flex-col gap-4 sm:gap-6">
+      <Paper elevation={3} className="p-3 sm:p-6 rounded-lg">
+        <div className="mb-4 sm:mb-8 text-center">
           <Typography
             variant="h4"
             fontWeight="bold"
             color="primary"
-            className="mb-2"
+            className="mb-2 text-lg sm:text-2xl"
           >
             {stepTitles[activeStep]}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" className="text-sm sm:text-base">
             {stepDescriptions[activeStep]}
           </Typography>
           {activeStep === 3 && (
@@ -172,10 +190,59 @@ export const SignupForm = ({
           )}
         </div>
 
-        <Stepper activeStep={activeStep} alternativeLabel className="mb-8">
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel
+          className="mb-4 sm:mb-8"
+          sx={{
+            '& .MuiStepLabel-label': {
+              fontSize: '0.75rem',
+              '@media (min-width: 640px)': {
+                fontSize: '0.875rem',
+              },
+            },
+            '& .MuiStepLabel-labelContainer': {
+              marginTop: '4px',
+              '@media (min-width: 640px)': {
+                marginTop: '8px',
+              },
+            },
+            '& .MuiStepConnector-line': {
+              borderTopWidth: '1px',
+              '@media (min-width: 640px)': {
+                borderTopWidth: '2px',
+              },
+            },
+            '& .MuiStepConnector-root': {
+              top: '12px',
+              '@media (min-width: 640px)': {
+                top: '16px',
+              },
+            },
+            '& .MuiStepLabel-iconContainer': {
+              padding: '4px',
+              '@media (min-width: 640px)': {
+                padding: '8px',
+              },
+            },
+          }}
+        >
           {SIGNUP_STEPS.map((label, index) => (
             <Step key={label} completed={activeStep > index}>
-              <StepLabel>{label}</StepLabel>
+              <StepLabel
+                className="text-xs sm:text-sm"
+                sx={{
+                  '& .MuiStepLabel-label': {
+                    fontSize: '0.7rem',
+                    fontWeight: activeStep === index ? 600 : 400,
+                    '@media (min-width: 640px)': {
+                      fontSize: '0.8rem',
+                    },
+                  },
+                }}
+              >
+                {label}
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -183,21 +250,21 @@ export const SignupForm = ({
         <FormProvider {...formMethods}>
           <form
             className="space-y-8"
-            onSubmit={handleSubmit(onSubmit, onSubmitError)}
+            onSubmit={handleSubmit(handleFormSubmit, onSubmitError)}
             noValidate
           >
-            <div className="min-h-[280px] py-4">
+            <div className="min-h-[200px] sm:min-h-[280px] py-2 sm:py-4">
               {renderStepContent(activeStep)}
             </div>
 
-            <div className="flex gap-4 justify-between pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between pt-4 border-t border-gray-200">
               <Button
                 type="button"
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 variant="outlined"
                 size="large"
-                className="px-6"
+                className="px-4 sm:px-6 w-full sm:w-auto"
               >
                 Back
               </Button>
@@ -208,9 +275,10 @@ export const SignupForm = ({
                   variant="contained"
                   color="primary"
                   size="large"
-                  className="px-6"
+                  className="px-4 sm:px-6 w-full sm:w-auto"
+                  disabled={isLoading}
                 >
-                  Complete Sign Up
+                  {isLoading ? 'Creating Account...' : 'Complete Sign Up'}
                 </Button>
               ) : (
                 <Button
@@ -219,7 +287,8 @@ export const SignupForm = ({
                   onClick={handleNext}
                   color="primary"
                   size="large"
-                  className="px-6"
+                  className="px-4 sm:px-6 w-full sm:w-auto"
+                  disabled={isLoading}
                 >
                   Continue
                 </Button>

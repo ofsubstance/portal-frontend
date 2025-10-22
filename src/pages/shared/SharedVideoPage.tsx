@@ -51,8 +51,8 @@ export default function SharedVideoPage() {
 
   const { data: videos = [] } = useVideoListQuery();
 
-  // Filter videos to show only 4 for the collection preview
-  const previewVideos = videos.slice(0, 4);
+  // Filter videos to show only 9 for the collection preview
+  const previewVideos = videos.slice(0, 9);
 
   useEffect(() => {
     return () => {
@@ -640,7 +640,7 @@ export default function SharedVideoPage() {
 
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {previewVideos.map((video) => (
-              <Grid item xs={12} sm={6} md={3} key={video.id}>
+              <Grid item xs={12} sm={6} md={4} key={video.id}>
                 <Card
                   sx={{
                     bgcolor: 'white',

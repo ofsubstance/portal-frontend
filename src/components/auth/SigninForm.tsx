@@ -17,9 +17,10 @@ import EmailIcon from '@mui/icons-material/Email';
 
 interface SigninFormProps {
   onSubmit: SubmitHandler<SigninReq>;
+  isLoading?: boolean;
 }
 
-function SigninForm({ onSubmit }: SigninFormProps) {
+function SigninForm({ onSubmit, isLoading = false }: SigninFormProps) {
   const {
     register,
     handleSubmit,
@@ -58,7 +59,10 @@ function SigninForm({ onSubmit }: SigninFormProps) {
         fullWidth
         placeholder="Enter your password"
         error={!!errors.password}
-        helperText={errors?.password?.message}
+        helperText={
+          errors?.password?.message ||
+          'Must include uppercase, lowercase, number, and special character'
+        }
         size="small"
       />
 
@@ -93,8 +97,9 @@ function SigninForm({ onSubmit }: SigninFormProps) {
         size="medium"
         className="mt-2"
         sx={{ py: 1 }}
+        disabled={isLoading}
       >
-        Sign In
+        {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
     </form>
   );

@@ -20,7 +20,7 @@ export default function UnlockVideoSection() {
       </Typography>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {videos.slice(0, 3).map((video) => (
+        {videos.slice(0, 9).map((video) => (
           <Link key={video.id} to={"/video/" + video.id}>
             <VideoGridItem data={video} />
           </Link>

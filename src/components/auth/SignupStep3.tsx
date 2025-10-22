@@ -28,13 +28,13 @@ export default function SignupStep3() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Typography variant="body1" color="text.secondary" className="mb-2">
+      <Typography variant="body1" color="text.secondary" className="mb-2 text-sm sm:text-base">
         Tell us a bit about yourself to personalize your experience.
       </Typography>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={2} className="sm:spacing-3">
         <Grid item xs={12}>
-          <Typography variant="subtitle1" fontWeight={500} className="mb-2">
+          <Typography variant="subtitle1" fontWeight={500} className="mb-2 text-sm sm:text-base">
             Personal Information
           </Typography>
         </Grid>
@@ -98,7 +98,7 @@ export default function SignupStep3() {
 
         <Grid item xs={12}>
           <Divider className="my-2" />
-          <Typography variant="subtitle1" fontWeight={500} className="my-2">
+          <Typography variant="subtitle1" fontWeight={500} className="my-2 text-sm sm:text-base">
             Location
           </Typography>
         </Grid>
@@ -151,7 +151,7 @@ export default function SignupStep3() {
 
         <Grid item xs={12}>
           <Divider className="my-2" />
-          <Typography variant="subtitle1" fontWeight={500} className="my-2">
+          <Typography variant="subtitle1" fontWeight={500} className="my-2 text-sm sm:text-base">
             Organization (Optional)
           </Typography>
         </Grid>

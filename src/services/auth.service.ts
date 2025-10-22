@@ -14,42 +14,65 @@ import storageService from './storage.service';
 
 class AuthService {
   async signin(data: SigninReq) {
-    data.email = data.email.trim();
+    try {
+      data.email = data.email.trim();
 
-    const res = await httpClient.post<IResponse<SigninRes>>(
-      APIUrl.auth.signin(),
-      data
-    );
+      const res = await httpClient.post<IResponse<SigninRes>>(
+        APIUrl.auth.signin(),
+        data
+      );
 
-    storageService.setAuthData(res.data.body, data.remember);
+      storageService.setAuthData(res.data.body, data.remember);
 
-    return res.data;
+      return res.data;
+    } catch (error: any) {
+      // Re-throw with more specific error handling
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
   }
 
   async signup(data: SignupReq) {
-    data.email = data.email.trim();
+    try {
+      data.email = data.email.trim();
 
-    const res = await httpClient.post<IResponse<SigninRes>>(
-      APIUrl.auth.signup(),
-      data
-    );
+      const res = await httpClient.post<IResponse<SigninRes>>(
+        APIUrl.auth.signup(),
+        data
+      );
 
-    storageService.setAuthData(res.data.body);
+      storageService.setAuthData(res.data.body);
 
-    return res.data;
+      return res.data;
+    } catch (error: any) {
+      // Re-throw with more specific error handling
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
   }
 
   async resendVerification(data: { email: string }) {
-    data.email = data.email.trim();
+    try {
+      data.email = data.email.trim();
 
-    const res = await httpClient.post<IResponse<any>>(
-      APIUrl.auth.resendVerification(),
-      data
-    );
+      const res = await httpClient.post<IResponse<any>>(
+        APIUrl.auth.resendVerification(),
+        data
+      );
 
-    storageService.setAuthData(res.data.body);
+      storageService.setAuthData(res.data.body);
 
-    return res.data;
+      return res.data;
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
   }
 
   async verifyEmail(token: string) {
@@ -85,11 +108,25 @@ class AuthService {
   }
 
   async forgotPassword(data: ForgotPasswordReq) {
-    await httpClient.post(APIUrl.auth.forgotPassword(), data);
+    try {
+      await httpClient.post(APIUrl.auth.forgotPassword(), data);
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
   }
 
   async resetPassword(resetToken: string, data: ResetPasswordReq) {
-    await httpClient.put(APIUrl.auth.resetPassword(resetToken), data);
+    try {
+      await httpClient.put(APIUrl.auth.resetPassword(resetToken), data);
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw error;
+    }
   }
 
   async refreshAccessToken() {

@@ -1,6 +1,7 @@
 import { CircularProgress, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import useAuthAction from '@/hooks/useAuthAction';
 import { useIsMutating } from '@tanstack/react-query';
@@ -22,9 +23,11 @@ const VerifyEmailPage = () => {
       verifyEmail.mutate(token, {
         onSuccess: () => {
           setVerified(true);
+          toast.success('Email successfully verified! You can now log in.');
         },
-        onError: () => {
+        onError: (error) => {
           setVerified(false);
+          toast.error(error.message || 'Email verification failed. Please try again or request a new verification link.');
         },
       });
     }

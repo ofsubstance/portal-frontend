@@ -1,5 +1,6 @@
 import { Chip, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { ModalHookLayout } from '@/components/common/modal/ModalLayout';
 import { UserRole } from '@/constants/enums';
@@ -39,7 +40,15 @@ export default function AccountMenu() {
   };
 
   const handleLogout = () => {
-    signoutMutation.mutate();
+    const username = user?.firstname || 'User';
+    signoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success(`Goodbye, ${username}! You've been logged out successfully.`);
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Logout failed. Please try again.');
+      }
+    });
   };
 
   const handleProfileClick = () => {
@@ -54,8 +63,8 @@ export default function AccountMenu() {
 
   const handleUserGuideClick = () => {
     modal.show({
-      title: 'Welcome User!',
-      children: <UserGuide />,
+      title: `Welcome ${user?.firstname || 'User'}!`,
+      children: <UserGuide onClose={() => modal.hide()} />,
     });
   };
 

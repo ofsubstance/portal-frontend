@@ -90,7 +90,10 @@ function SignupPage() {
             <h1 className="text-2xl font-semibold text-gray-600 text-center">
               Create an ALL ACCESS Account to watch all our films for FREE now
             </h1>
-            <SignupForm onSubmit={onSignup} />
+            <SignupForm
+              onSubmit={onSignup}
+              isLoading={signupMutation.isPending}
+            />
 
             <Typography textAlign={'center'}>
               Already have an account?{' '}

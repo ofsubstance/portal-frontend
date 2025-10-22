@@ -56,6 +56,9 @@ export default function VideoDetailsPage() {
         })
         .catch((error) => {
           console.error('Error tracking content engagement:', error);
+          // Don't show error to user as this is background tracking
+          // but log for debugging
+          console.warn('Content engagement tracking failed, continuing without tracking');
         });
     }
   }, [videoId, engagementTracked]);

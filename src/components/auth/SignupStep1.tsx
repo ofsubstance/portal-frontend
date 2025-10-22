@@ -31,7 +31,7 @@ export default function SignupStep1() {
   const selectedValue = watch('profile.utilizationPurpose') || '';
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       <FormControl
         error={!!errors.profile?.utilizationPurpose}
         required
@@ -39,10 +39,14 @@ export default function SignupStep1() {
       >
         <FormLabel
           sx={{
-            fontSize: '1.15rem',
+            fontSize: '1rem',
             fontWeight: 500,
             color: 'text.primary',
-            marginBottom: '1rem',
+            marginBottom: '0.75rem',
+            '@media (min-width: 640px)': {
+              fontSize: '1.15rem',
+              marginBottom: '1rem',
+            },
           }}
         >
           How will you use Of Substance?
@@ -51,17 +55,16 @@ export default function SignupStep1() {
         <RadioGroup
           value={selectedValue}
           onChange={handleUtilizationPurposeChange}
-          className="flex flex-col gap-3 mt-2"
+          className="flex flex-col gap-2 sm:gap-3 mt-2"
         >
           {utilizationOptions.map((option) => (
             <Paper
               key={option}
               elevation={selectedValue === option ? 3 : 1}
-              className={`transition-all duration-200 ${
-                selectedValue === option
+              className={`transition-all duration-200 ${selectedValue === option
                   ? 'border-2 border-primary-500'
                   : 'border border-gray-200 hover:border-primary-300'
-              }`}
+                }`}
             >
               <FormControlLabel
                 value={option}
@@ -70,11 +73,12 @@ export default function SignupStep1() {
                   <Typography
                     variant="body1"
                     fontWeight={selectedValue === option ? 500 : 400}
+                    className="text-sm sm:text-base"
                   >
                     {option}
                   </Typography>
                 }
-                className="w-full p-2"
+                className="w-full p-2 sm:p-3"
                 sx={{ margin: 0 }}
               />
             </Paper>

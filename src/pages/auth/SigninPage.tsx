@@ -2,6 +2,7 @@ import { Button, Divider, Typography, Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { useContext, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import AppLogo from '@/components/common/logo/AppLogo';
 import { AuthContext } from '@/contexts/AuthContextProvider';
@@ -23,6 +24,11 @@ function SigninPage() {
     signinMutation.mutate(data, {
       onSuccess: () => {
         setAuthenticated(true);
+        toast.success(`Welcome back${data.email ? ', ' + data.email.split('@')[0] : ''}!`);
+      },
+      onError: (error) => {
+        console.error('Signin error:', error);
+        toast.error(error.message || 'Login failed. Please check your credentials and try again.');
       },
     });
 
@@ -31,8 +37,15 @@ function SigninPage() {
       googleSigninMutation.mutate(data.access_token, {
         onSuccess: () => {
           setAuthenticated(true);
+          toast.success('Google sign-in successful!');
+        },
+        onError: (error) => {
+          toast.error(error.message || 'Google sign-in failed. Please try again.');
         },
       });
+    },
+    onError: () => {
+      toast.error('Google sign-in was canceled or failed. Please try again.');
     },
   });
 
@@ -94,7 +107,10 @@ function SigninPage() {
               </Divider>
             </div>
 
-            <SigninForm onSubmit={onSignin} />
+            <SigninForm
+              onSubmit={onSignin}
+              isLoading={signinMutation.isPending || googleSigninMutation.isPending}
+            />
           </Paper>
 
           <Typography variant="body2" className="text-center mt-4">

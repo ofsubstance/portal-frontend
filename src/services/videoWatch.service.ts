@@ -1,8 +1,8 @@
 import APIUrl from '@/constants/apiUrl';
 import {
-  UserEvent,
-  UserMetadata,
-  WatchSessionResponseDto,
+    UserEvent,
+    UserMetadata,
+    WatchSessionResponseDto,
 } from '@/dtos/watchSession.dto';
 import httpClient from '../utils/httpClient';
 import storageService from './storage.service';
@@ -29,6 +29,7 @@ export interface WatchProgressData {
 class VideoWatchService {
   private watchSession: VideoWatchSession | null = null;
   private userEvents: UserEvent[] = [];
+  private isCreatingSession = false;
 
   constructor() {
     const storedWatchSessionId = storageService.getWatchSessionId();
@@ -42,7 +43,13 @@ class VideoWatchService {
   }
 
   async startWatchSession(videoId: string): Promise<VideoWatchSession | null> {
+    if (this.isCreatingSession) {
+      console.log('Session creation already in progress, skipping...');
+      return null;
+    }
+
     try {
+      this.isCreatingSession = true;
       storageService.removeWatchSessionId();
       console.log('Creating new watch session for video:', videoId);
 
@@ -89,6 +96,8 @@ class VideoWatchService {
     } catch (error) {
       console.error('Failed to create watch session:', error);
       return null;
+    } finally {
+      this.isCreatingSession = false;
     }
   }
 

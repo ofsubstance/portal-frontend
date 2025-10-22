@@ -1,37 +1,57 @@
-import { Button, MobileStepper, Typography, Box } from '@mui/material';
-import { ReactNode, useState } from 'react';
+import { Button, MobileStepper, Typography, Box, Paper, useTheme, alpha, Fade } from '@mui/material';
+import { ReactNode, useState, useEffect } from 'react';
 
 import AppLogo from '@/components/common/logo/AppLogo';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import { RiSearchLine, RiFilterLine, RiPlayCircleLine, RiShareLine, RiUserLine } from 'react-icons/ri';
 
 interface GuideSectionProps {
   title: ReactNode;
   details: ReactNode;
 }
 function GuideSection({ title, details }: GuideSectionProps) {
+  const theme = useTheme();
+
   return (
-    <div className="flex flex-col items-center justify-center gap-4 text-center">
-      <Typography
-        variant="h4"
-        fontWeight={600}
-        className="flex items-center gap-2"
-      >
-        {title}
-      </Typography>
-      <Typography component="span" fontWeight={500} fontSize={18}>
-        {details}
-      </Typography>
-    </div>
+    <Fade in={true} timeout={800}>
+      <div className="w-full max-w-[800px]">
+        <div className="flex flex-col items-center justify-center gap-6 text-center">
+          <Typography
+            variant="h4"
+            fontWeight={600}
+            className="flex items-center gap-3"
+            sx={{
+              color: theme.palette.primary.main
+            }}
+          >
+            {title}
+          </Typography>
+          <Typography
+            component="div"
+            fontWeight={400}
+            fontSize={18}
+            sx={{
+              lineHeight: 1.7,
+              color: theme.palette.text.secondary,
+              '& strong': { color: theme.palette.text.primary, fontWeight: 600 }
+            }}
+          >
+            {details}
+          </Typography>
+        </div>
+      </div>
+    </Fade>
   );
 }
 
 const steps = [
   <GuideSection
     title={
-      <>
-        Welcome to <AppLogo />
-      </>
+      <div className="flex flex-col items-center gap-2">
+        <Typography variant="h4" color="primary.main" fontWeight={600}>Welcome to</Typography>
+        <AppLogo />
+      </div>
     }
     details={
       <div className="flex flex-col gap-4">
@@ -48,7 +68,7 @@ const steps = [
     }
   />,
   <GuideSection
-    title="Finding Films"
+    title={<><RiSearchLine size={28} style={{ marginRight: '8px' }} /> Finding Films</>}
     details={
       <div className="flex flex-col gap-4">
         <span>
@@ -69,7 +89,7 @@ const steps = [
     }
   />,
   <GuideSection
-    title="Exploring Film Details"
+    title={<><RiFilterLine size={28} style={{ marginRight: '8px' }} /> Exploring Film Details</>}
     details={
       <div className="flex flex-col gap-4">
         <span>
@@ -92,7 +112,7 @@ const steps = [
     }
   />,
   <GuideSection
-    title="Watching Films"
+    title={<><RiPlayCircleLine size={28} style={{ marginRight: '8px' }} /> Watching Films</>}
     details={
       <div className="flex flex-col gap-4">
         <span>
@@ -111,7 +131,7 @@ const steps = [
     }
   />,
   <GuideSection
-    title="Sharing & Engaging"
+    title={<><RiShareLine size={28} style={{ marginRight: '8px' }} /> Sharing & Engaging</>}
     details={
       <div className="flex flex-col gap-4">
         <span>
@@ -132,7 +152,7 @@ const steps = [
     }
   />,
   <GuideSection
-    title="Your Profile & Activity"
+    title={<><RiUserLine size={28} style={{ marginRight: '8px' }} /> Your Profile & Activity</>}
     details={
       <div className="flex flex-col gap-4">
         <span>
@@ -153,11 +173,27 @@ const steps = [
   />,
 ];
 
-export default function UserGuide() {
+interface UserGuideProps {
+  onClose?: () => void;
+}
+
+export default function UserGuide({ onClose }: UserGuideProps) {
+  const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
+
+  // Handle fade transition between steps
+  useEffect(() => {
+    setFadeIn(true);
+  }, [activeStep]);
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep === steps.length - 1) {
+      // Last slide - close the modal
+      onClose?.();
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -169,8 +205,11 @@ export default function UserGuide() {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '500px', // Fixed height for the guide modal
+        height: '600px', // Increased height for better spacing
         width: '100%',
+        background: theme.palette.background.paper,
+        borderRadius: 2,
+        overflow: 'hidden',
       }}
     >
       <Box
@@ -180,7 +219,8 @@ export default function UserGuide() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 3,
+          padding: 4,
+          position: 'relative'
         }}
       >
         {steps[activeStep]}
@@ -194,26 +234,57 @@ export default function UserGuide() {
         sx={{
           '&.MuiMobileStepper-root': {
             boxShadow: 'none',
-            borderTop: '1px solid rgba(0,0,0,0.1)',
-            padding: 2,
+            borderTop: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+            padding: 3,
+            backgroundColor: theme.palette.background.paper,
           },
+          '& .MuiMobileStepper-dot': {
+            margin: '0 4px',
+            transition: 'all 0.3s ease',
+          },
+          '& .MuiMobileStepper-dotActive': {
+            width: 16,
+            borderRadius: 4,
+            backgroundColor: theme.palette.primary.main,
+          }
         }}
         nextButton={
           <Button
-            size="small"
+            size="medium"
+            variant="contained"
+            color="primary"
             onClick={handleNext}
-            disabled={activeStep === steps.length - 1}
-            endIcon={<KeyboardArrowRight />}
+            endIcon={activeStep === steps.length - 1 ? undefined : <KeyboardArrowRight />}
+            sx={{
+              borderRadius: 8,
+              px: 3,
+              py: 1,
+              boxShadow: theme.shadows[2],
+              '&:hover': {
+                boxShadow: theme.shadows[4],
+              }
+            }}
           >
-            Next
+            {activeStep === steps.length - 1 ? 'Close' : 'Next'}
           </Button>
         }
         backButton={
           <Button
-            size="small"
+            size="medium"
+            variant="outlined"
             onClick={handleBack}
             disabled={activeStep === 0}
             startIcon={<KeyboardArrowLeft />}
+            sx={{
+              borderRadius: 8,
+              px: 3,
+              py: 1,
+              borderColor: alpha(theme.palette.primary.main, 0.5),
+              '&:hover': {
+                borderColor: theme.palette.primary.main,
+                backgroundColor: alpha(theme.palette.primary.main, 0.04)
+              }
+            }}
           >
             Back
           </Button>

@@ -59,8 +59,13 @@ function ForgotPasswordPage() {
           helperText={errors?.email?.message}
         />
 
-        <Button variant="contained" size="large" type="submit">
-          Send Recovery Email
+        <Button
+          variant="contained"
+          size="large"
+          type="submit"
+          disabled={forgotPasswordMutation.isPending}
+        >
+          {forgotPasswordMutation.isPending ? 'Sending...' : 'Send Recovery Email'}
         </Button>
 
         <Typography className="text-center">

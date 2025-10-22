@@ -18,10 +18,9 @@ import {
   RiInstagramLine as InstagramIcon,
   RiYoutubeLine as YoutubeIcon,
   RiMailLine as EmailIcon,
-  RiPhoneLine as PhoneIcon,
   RiExternalLinkLine as ExternalIcon,
   RiHeartFill as HeartIcon,
-  RiMapPin2Line as MapPinIcon,
+  RiShareLine as ShareIcon,
 } from 'react-icons/ri';
 
 import AppLogo from '../logo/AppLogo';
@@ -126,64 +125,6 @@ export default function Footer() {
                   />
                 </Box>
 
-                {/* Social Media */}
-                <Box>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mb: 2,
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      color: theme.palette.common.white,
-                    }}
-                  >
-                    Follow Our Journey
-                  </Typography>
-                  <Stack direction="row" spacing={2}>
-                    <IconButton
-                      component="a"
-                      href="https://www.facebook.com/OfSubstance.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        background: `linear-gradient(135deg, #1877F2, #1557B8)`,
-                        color: 'white',
-                        '&:hover': {
-                          background: `linear-gradient(135deg, #1557B8, #1877F2)`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 8px 25px rgba(24, 119, 242, 0.3)',
-                        },
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      }}
-                      aria-label="Facebook"
-                    >
-                      <FacebookIcon size={22} />
-                    </IconButton>
-                    <IconButton
-                      component="a"
-                      href="https://www.youtube.com/@ofsubstance.396"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        background: `linear-gradient(135deg, #FF0000, #CC0000)`,
-                        color: 'white',
-                        '&:hover': {
-                          background: `linear-gradient(135deg, #CC0000, #FF0000)`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 8px 25px rgba(255, 0, 0, 0.3)',
-                        },
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      }}
-                      aria-label="YouTube"
-                    >
-                      <YoutubeIcon size={22} />
-                    </IconButton>
-                  </Stack>
-                </Box>
               </Stack>
             </Grid>
 
@@ -231,6 +172,8 @@ export default function Footer() {
                     <Link
                       key={item.label}
                       href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       underline="none"
                       sx={{
                         color: alpha(theme.palette.common.white, 0.8),
@@ -346,7 +289,7 @@ export default function Footer() {
                           Email Us
                         </Typography>
                         <Link
-                          href="mailto:contact@ofsubstance.com"
+                          href="mailto:weare@ofsubstance.org"
                           underline="none"
                           sx={{
                             color: theme.palette.common.white,
@@ -358,7 +301,7 @@ export default function Footer() {
                             transition: 'color 0.2s ease',
                           }}
                         >
-                          contact@ofsubstance.com
+                          weare@ofsubstance.org
                         </Link>
                       </Box>
                     </Box>
@@ -402,7 +345,7 @@ export default function Footer() {
                           boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
                         }}
                       >
-                        <PhoneIcon size={20} />
+                        <ShareIcon size={20} />
                       </Box>
                       <Box sx={{ flex: 1 }}>
                         <Typography
@@ -414,91 +357,54 @@ export default function Footer() {
                             fontWeight: 500,
                           }}
                         >
-                          Call Us
+                          Follow Our Journey
                         </Typography>
-                        <Link
-                          href="tel:+1-209-265-2551"
-                          underline="none"
-                          sx={{
-                            color: theme.palette.common.white,
-                            fontSize: '0.95rem',
-                            fontWeight: 600,
-                            '&:hover': {
-                              color: theme.palette.primary.light,
-                            },
-                            transition: 'color 0.2s ease',
-                          }}
-                        >
-                          (209) 265-2551
-                        </Link>
-                      </Box>
-                    </Box>
-                  </Paper>
-
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2.5,
-                      background: `linear-gradient(135deg, ${alpha(
-                        theme.palette.primary.main,
-                        0.1
-                      )}, ${alpha(theme.palette.primary.main, 0.05)})`,
-                      backdropFilter: 'blur(10px)',
-                      border: `1px solid ${alpha(
-                        theme.palette.primary.main,
-                        0.2
-                      )}`,
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        border: `1px solid ${alpha(
-                          theme.palette.primary.main,
-                          0.4
-                        )}`,
-                        transform: 'translateY(-2px)',
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box
-                        sx={{
-                          width: 44,
-                          height: 44,
-                          borderRadius: 2,
-                          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                        }}
-                      >
-                        <MapPinIcon size={20} />
-                      </Box>
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: alpha(theme.palette.common.white, 0.7),
-                            mb: 0.5,
-                            fontSize: '0.8rem',
-                            fontWeight: 500,
-                          }}
-                        >
-                          Address
-                        </Typography>
-                        <Typography
-                          sx={{
-                            color: theme.palette.common.white,
-                            fontSize: '0.95rem',
-                            fontWeight: 600,
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          340 Hauser Blvd. Apt. 403
-                          <br />
-                          Los Angeles, CA 90036
-                        </Typography>
+                        <Stack direction="row" spacing={1}>
+                          <IconButton
+                            component="a"
+                            href="https://www.facebook.com/OfSubstance.org"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              background: `linear-gradient(135deg, #1877F2, #1557B8)`,
+                              color: 'white',
+                              '&:hover': {
+                                background: `linear-gradient(135deg, #1557B8, #1877F2)`,
+                                transform: 'translateY(-1px)',
+                                boxShadow: '0 4px 12px rgba(24, 119, 242, 0.3)',
+                              },
+                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            }}
+                            aria-label="Facebook"
+                          >
+                            <FacebookIcon size={16} />
+                          </IconButton>
+                          <IconButton
+                            component="a"
+                            href="https://www.youtube.com/@ofsubstance.396"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            size="small"
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              background: `linear-gradient(135deg, #FF0000, #CC0000)`,
+                              color: 'white',
+                              '&:hover': {
+                                background: `linear-gradient(135deg, #CC0000, #FF0000)`,
+                                transform: 'translateY(-1px)',
+                                boxShadow: '0 4px 12px rgba(255, 0, 0, 0.3)',
+                              },
+                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            }}
+                            aria-label="YouTube"
+                          >
+                            <YoutubeIcon size={16} />
+                          </IconButton>
+                        </Stack>
                       </Box>
                     </Box>
                   </Paper>

@@ -38,7 +38,7 @@ export default function HeroSlider({ videos }: { videos: VideoDto[] }) {
             style={{ backgroundImage: `url(${slide.thumbnail_url})` }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black from-[20%]"></div>
-            <div className="p-14 md:pl-52 md:w-1/3 absolute inset-0 flex flex-col gap-6 justify-center items-start text-white">
+            <div className="p-4 md:p-14 md:pl-52 md:w-1/3 absolute inset-0 flex flex-col gap-6 justify-center items-start text-white">
               <Typography variant="h6" color="primary">
                 # Spotlight {index + 1}
               </Typography>

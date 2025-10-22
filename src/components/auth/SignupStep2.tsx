@@ -31,9 +31,9 @@ export default function SignupStep2() {
   };
 
   return (
-    <Box className="flex flex-col gap-6 max-w-md mx-auto">
+    <Box className="flex flex-col gap-4 sm:gap-6 max-w-md mx-auto">
       <div className="mb-2">
-        <Typography variant="body1" color="text.secondary" className="mb-6">
+        <Typography variant="body1" color="text.secondary" className="mb-4 sm:mb-6 text-sm sm:text-base">
           Your email will be used to log in and receive important account
           notifications.
         </Typography>
