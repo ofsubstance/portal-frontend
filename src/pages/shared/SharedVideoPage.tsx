@@ -46,7 +46,7 @@ export default function SharedVideoPage() {
   const [totalPlayedSeconds, setTotalPlayedSeconds] = useState(0);
   const [duration, setDuration] = useState(0);
   const [userEvents, setUserEvents] = useState<UserEvent[]>([]);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [isPlayer, setIsPlayer] = useState(false);
 
   const { data: videos = [] } = useVideoListQuery();

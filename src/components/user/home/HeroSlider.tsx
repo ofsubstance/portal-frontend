@@ -8,12 +8,20 @@ import {
   RiCalendar2Line as CalendarIcon,
   RiTimeLine as ClockIcon,
   RiPlayFill as PlayIcon,
+  RiFilmLine as FilmsIcon,
 } from 'react-icons/ri';
 import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { VideoDto } from '@/dtos/video.dto';
+
+function scrollToFilmList() {
+  const el = document.getElementById('video-list-section');
+  if (!el) return;
+  // Use window.scrollTo so Swiper's pointer-event capture doesn't interfere
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
+}
 
 export default function HeroSlider({ videos }: { videos: VideoDto[] }) {
   return (
@@ -71,16 +79,29 @@ export default function HeroSlider({ videos }: { videos: VideoDto[] }) {
               </div>
               <Typography variant="body1">{slide.short_desc}</Typography>
 
-              <Fab
-                variant="extended"
-                size="large"
-                color="primary"
-                component={Link}
-                to={'/video/' + slide.id}
-              >
-                <PlayIcon size={20} className="mr-2" />
-                Watch Now
-              </Fab>
+              <div className="flex gap-3">
+                <Fab
+                  variant="extended"
+                  size="large"
+                  color="primary"
+                  component={Link}
+                  to={'/video/' + slide.id}
+                >
+                  <PlayIcon size={20} className="mr-2" />
+                  Watch Now
+                </Fab>
+
+                <Fab
+                  variant="extended"
+                  size="large"
+                  color="inherit"
+                  onClick={scrollToFilmList}
+                  sx={{ color: 'white', bgcolor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' } }}
+                >
+                  <FilmsIcon size={20} className="mr-2" />
+                  All Films
+                </Fab>
+              </div>
             </div>
           </div>
         </SwiperSlide>

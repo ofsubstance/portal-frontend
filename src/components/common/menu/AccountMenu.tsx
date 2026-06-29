@@ -18,6 +18,7 @@ import {
   RiUser3Line as ProfileIcon,
   RiSettings4Line as SettingsIcon,
   RiQuestionLine as GuideIcon,
+  RiFileShield2Line as ClinicalPrivacyIcon,
 } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import UserGuide from '../../user/guide/UserGuide';
@@ -59,6 +60,11 @@ export default function AccountMenu() {
 
   const handleAdminDashboardClick = () => {
     navigate('/admin');
+  };
+
+  const handleClinicalPrivacyClick = () => {
+    navigate('/clinical-privacy');
+    handleClose();
   };
 
   const handleUserGuideClick = () => {
@@ -166,6 +172,13 @@ export default function AccountMenu() {
             User Guide
           </MenuItem>
         )}
+
+        <MenuItem onClick={handleClinicalPrivacyClick}>
+          <ListItemIcon>
+            <ClinicalPrivacyIcon size={18} className="text-slate-600" />
+          </ListItemIcon>
+          Clinical Use &amp; Patient Privacy
+        </MenuItem>
 
         <Divider />
 

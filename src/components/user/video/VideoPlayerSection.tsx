@@ -26,33 +26,30 @@ export default function VideoPlayerSection({
 }: VideoPlayerSectionProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [videoStarted, setVideoStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [totalPlayedSeconds, setTotalPlayedSeconds] = useState(0);
-  const [duration, setDuration] = useState(0);
+
   const playerRef = useRef<ReactPlayer | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [userEvents, setUserEvents] = useState<UserEvent[]>([]);
 
-  // Cleanup on unmount
+  // Use refs for values that must be current inside callbacks without
+  // causing stale-closure bugs.
+  const totalPlayedSecondsRef = useRef(0);
+  const durationRef = useRef(0);
+  const videoStartedRef = useRef(false);
+  const userEventsRef = useRef<UserEvent[]>([]);
+
+  // Sync videoStarted state → ref so callbacks always see the latest value
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, []);
+    videoStartedRef.current = videoStarted;
+  }, [videoStarted]);
 
-  // Custom interval to count actual watch time
+  // Accumulate actual watch time while playing
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
-        setTotalPlayedSeconds((prev) => {
-          const updated = prev + 1;
-          console.log(`⏱️ Watched: ${updated}s`);
-          return updated;
-        });
+        totalPlayedSecondsRef.current += 1;
       }, 1000);
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -67,40 +64,67 @@ export default function VideoPlayerSection({
     };
   }, [isPlaying]);
 
-  const updateWatchSession = (eventType?: string, eventTime?: number) => {
-    if (!videoStarted) return;
+  // On unmount: stop the timer and send a final progress update
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
 
+      if (videoStartedRef.current) {
+        const duration = durationRef.current;
+        const watched = totalPlayedSecondsRef.current;
+        const pct = duration > 0 ? Math.min((watched / duration) * 100, 100) : 0;
+        videoWatchService.updateWatchSession({
+          actualTimeWatched: watched,
+          percentageWatched: parseFloat(pct.toFixed(2)),
+          endTime: new Date(),
+          userEvent: userEventsRef.current,
+        });
+      }
+    };
+  }, []);
+
+  const buildProgressData = (eventType?: string, eventTime?: number) => {
     if (eventType) {
       const currentTime =
-        eventTime ?? playerRef.current?.getCurrentTime() ?? totalPlayedSeconds;
-      const userEvent = {
-        event: eventType,
-        eventTime: new Date(),
-        videoTime: currentTime,
-      };
-      setUserEvents((prev) => [...prev, userEvent]);
+        eventTime ??
+        playerRef.current?.getCurrentTime() ??
+        totalPlayedSecondsRef.current;
+
+      userEventsRef.current = [
+        ...userEventsRef.current,
+        { event: eventType, eventTime: new Date(), videoTime: currentTime },
+      ];
     }
 
-    const watchProgressData = {
-      actualTimeWatched: totalPlayedSeconds,
-      percentageWatched: parseFloat(
-        ((totalPlayedSeconds / duration) * 100).toFixed(2)
-      ),
-      userEvent: userEvents,
-    };
+    const rawPct =
+      durationRef.current > 0
+        ? (totalPlayedSecondsRef.current / durationRef.current) * 100
+        : 0;
 
-    videoWatchService.updateWatchSession(watchProgressData);
+    return {
+      actualTimeWatched: totalPlayedSecondsRef.current,
+      percentageWatched: parseFloat(Math.min(rawPct, 100).toFixed(2)),
+      userEvent: userEventsRef.current,
+    };
+  };
+
+  const updateWatchSession = (eventType?: string, eventTime?: number) => {
+    if (!videoStartedRef.current) return;
+    videoWatchService.updateWatchSession(buildProgressData(eventType, eventTime));
   };
 
   const handlePlayerReady = (player: ReactPlayer) => {
     playerRef.current = player;
   };
 
-  const handleVideoStart = () => {
-    if (!videoStarted && data) {
+  const handleVideoStart = async () => {
+    if (!videoStartedRef.current && data) {
       setVideoStarted(true);
-      const session = videoWatchService.startWatchSession(data.id);
-      console.log('🔄 Session:', session);
+      videoStartedRef.current = true;
+      await videoWatchService.startWatchSession(data.id);
     }
   };
 
@@ -115,15 +139,14 @@ export default function VideoPlayerSection({
   };
 
   const handleVideoSeek = (seconds: number) => {
-    console.log(`🔄 Seeking to: ${seconds}s`);
     updateWatchSession('seek', seconds);
   };
 
   const handleVideoEnd = () => {
     setIsPlaying(false);
-    if (videoStarted) {
+    if (videoStartedRef.current) {
       videoWatchService.completeWatchSession();
-      toast.success('Video completed! Thank you for watching.')
+      toast.success('Video completed! Thank you for watching.');
     }
   };
 
@@ -132,8 +155,7 @@ export default function VideoPlayerSection({
   };
 
   const handleDuration = (d: number) => {
-    setDuration(d);
-    console.log(`⏳ Duration: ${d}s`);
+    durationRef.current = d;
   };
 
   return (
@@ -208,12 +230,6 @@ export default function VideoPlayerSection({
               whiteSpace: 'nowrap',
               minWidth: isMobile ? '100%' : 'fit-content',
               px: isMobile ? 2 : 3,
-              '& .MuiFab-label': {
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                fontSize: isMobile ? '0.8rem' : '1rem',
-              },
             }}
           >
             <FeedbackIcon size={isMobile ? 16 : 20} className="mr-2" />
@@ -230,12 +246,6 @@ export default function VideoPlayerSection({
                 whiteSpace: 'nowrap',
                 minWidth: isMobile ? '100%' : 'fit-content',
                 px: isMobile ? 2 : 3,
-                '& .MuiFab-label': {
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  fontSize: isMobile ? '0.8rem' : '1rem',
-                },
               }}
             >
               <ShareIcon size={isMobile ? 16 : 20} className="mr-2" />

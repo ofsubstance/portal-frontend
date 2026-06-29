@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import App from './App';
 import notFoundImg from './assets/notFound.svg';
@@ -152,32 +152,44 @@ const routes = createBrowserRouter([
       {
         path: '/',
         element: (
-          <AuthGuard allowedRoles={[UserRole.User, UserRole.Admin]}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <UserLayoutPage />
-            </Suspense>
-          </AuthGuard>
+          <Suspense fallback={<div>Loading...</div>}>
+            <UserLayoutPage />
+          </Suspense>
         ),
 
         children: [
           {
+            // Home page — publicly accessible
             index: true,
             lazy: async () => ({
               Component: (await import('./pages/user/UserLandingPage')).default,
             }),
           },
           {
-            path: 'video/:videoId',
-            lazy: async () => ({
-              Component: (await import('./pages/user/VideoDetailsPage'))
-                .default,
-            }),
-          },
-          {
-            path: 'profile/:userId',
-            lazy: async () => ({
-              Component: (await import('./pages/common/ProfilePage')).default,
-            }),
+            // Protected group — requires authentication
+            element: (
+              <AuthGuard allowedRoles={[UserRole.User, UserRole.Admin]}>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Outlet />
+                </Suspense>
+              </AuthGuard>
+            ),
+            children: [
+              {
+                path: 'video/:videoId',
+                lazy: async () => ({
+                  Component: (await import('./pages/user/VideoDetailsPage'))
+                    .default,
+                }),
+              },
+              {
+                path: 'profile/:userId',
+                lazy: async () => ({
+                  Component: (await import('./pages/common/ProfilePage'))
+                    .default,
+                }),
+              },
+            ],
           },
         ],
       },
@@ -217,6 +229,12 @@ const routes = createBrowserRouter([
         path: '/verify-email',
         lazy: async () => ({
           Component: (await import('./pages/auth/VerifyEmail.page')).default,
+        }),
+      },
+      {
+        path: '/clinical-privacy',
+        lazy: async () => ({
+          Component: (await import('./pages/ClinicalPrivacyPage')).default,
         }),
       },
     ],

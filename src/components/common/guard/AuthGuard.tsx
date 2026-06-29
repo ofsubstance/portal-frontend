@@ -16,7 +16,7 @@ export default function AuthGuard({
 
   if (!isAuthenticated) {
     saveIntendedPath(location.pathname);
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/signup" replace />;
   }
 
   if (user) {

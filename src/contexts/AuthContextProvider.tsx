@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 import { UserDto } from '@/dtos/user.dto';
 import storageService from '../services/storage.service';
@@ -35,32 +35,29 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
       sessionService.stopHeartbeat();
     } else {
       setAuthData(user ?? storageService.getCurrentUser());
-      // Start the session heartbeat
       sessionService.startHeartbeat();
     }
   }, [authenticated, user]);
 
-  useEffect(() => {
-    document.addEventListener('logout', () => {
-      setAuthenticated(false);
-      setAuthData(undefined);
-      sessionService.stopHeartbeat();
-    });
+  // Stable handler so addEventListener/removeEventListener can match the same ref
+  const handleLogout = useCallback(() => {
+    setAuthenticated(false);
+    setAuthData(undefined);
+    sessionService.stopHeartbeat();
+  }, []);
 
-    // Check if we already have a session ID and start heartbeat if authenticated
+  useEffect(() => {
+    document.addEventListener('logout', handleLogout);
+
     if (authenticated && storageService.getSessionId()) {
       sessionService.startHeartbeat();
     }
 
     return () => {
-      document.removeEventListener('logout', () => {
-        setAuthenticated(false);
-        setAuthData(undefined);
-        sessionService.stopHeartbeat();
-      });
+      document.removeEventListener('logout', handleLogout);
       sessionService.stopHeartbeat();
     };
-  }, []);
+  }, [handleLogout]);
 
   return (
     <AuthContext.Provider

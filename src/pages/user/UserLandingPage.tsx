@@ -118,7 +118,7 @@ export default function UserLandingPage() {
       {!isMobile && <HeroSlider videos={slideshowVideos} />}
 
       {/* Welcome Section */}
-      <Container maxWidth="xl" sx={{ mt: isMobile ? 8 : 4, mb: 2 }}>
+      <Container id="welcome-section" maxWidth="xl" sx={{ mt: isMobile ? 8 : 4, mb: 2 }}>
         <Box sx={{ py: 2 }}>
           <Typography variant="h4" fontWeight={600} gutterBottom>
             Welcome{user?.firstname ? `, ${user.firstname}` : ''}!

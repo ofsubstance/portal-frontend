@@ -12,8 +12,6 @@ import { SigninReq } from '@/dtos/auth.dto';
 import useAuthAction from '@/hooks/useAuthAction';
 import { useAuth } from '@/hooks/useAuth';
 
-// Import a default poster image - you should replace this with your actual poster image
-import posterImage from '@/assets/userManagement.svg';
 
 function SigninPage() {
   const { authenticated, setAuthenticated } = useContext(AuthContext);
@@ -130,14 +128,12 @@ function SigninPage() {
       </div>
 
       {/* Right side - Poster */}
-      <div className="hidden lg:flex w-1/2 bg-gray-50">
-        <div className="w-full h-full flex flex-col items-center justify-center p-8">
-          <img
-            src={posterImage}
-            alt="Welcome"
-            className="w-full max-w-xl object-contain"
-          />
-        </div>
+      <div className="hidden lg:block w-1/2">
+        <img
+          src="/login.png"
+          alt="Of Substance"
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   );

@@ -31,6 +31,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import AccountMenu from '@/components/common/menu/AccountMenu';
 import useAuthAction from '@/hooks/useAuthAction';
+import { useAuth } from '@/hooks/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import AppLogo from '../logo/AppLogo';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
@@ -326,6 +327,7 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -389,7 +391,19 @@ export default function UserLayout({
             <Button
               variant="outlined"
               startIcon={<FilmsIcon />}
-              onClick={() => navigate('/')}
+              onClick={() => {
+                if (location.pathname === '/') {
+                  const el = document.getElementById('welcome-section');
+                  if (el) {
+                    window.scrollTo({
+                      top: el.getBoundingClientRect().top + window.scrollY,
+                      behavior: 'smooth',
+                    });
+                  }
+                } else {
+                  navigate('/');
+                }
+              }}
               sx={{
                 color: 'white',
                 borderColor: 'rgba(255,255,255,0.3)',
@@ -401,7 +415,33 @@ export default function UserLayout({
             >
               All Films
             </Button>
-            <AccountMenu />
+
+            {isAuthenticated ? (
+              <AccountMenu />
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => navigate('/signin')}
+                  sx={{
+                    color: 'white',
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.08)' },
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  onClick={() => navigate('/signup')}
+                >
+                  Sign Up
+                </Button>
+              </div>
+            )}
           </div>
         </Toolbar>
       </AppBar>

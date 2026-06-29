@@ -50,8 +50,17 @@ function SignupPage() {
   }, [authenticated, redirectBasedOnRole]);
 
   return (
-    <main className="flex">
-      <section className="flex flex-col p-5 gap-8 items-center justify-center flex-1 min-h-screen">
+    <main className="flex h-screen overflow-hidden">
+      {/* Right side - image (shown on large screens) */}
+      <div className="hidden lg:block w-1/2 flex-shrink-0">
+        <img
+          src="/login.png"
+          alt="Of Substance"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <section className="flex flex-col p-5 gap-8 items-center justify-center flex-1 overflow-y-auto min-h-screen">
         <AppLogo />
 
         {signupSuccess ? (

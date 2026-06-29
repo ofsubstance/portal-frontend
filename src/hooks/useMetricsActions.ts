@@ -88,19 +88,25 @@ const useMetricsActions = () => {
     });
   };
 
-  const useSessionEngagementDailyQuery = (startDate: Date, endDate: Date) => {
+  const useSessionEngagementBySpanQuery = (
+    startDate: Date,
+    endDate: Date,
+    span: SpanType = 'daily'
+  ) => {
     const formattedStartDate = format(startDate, 'yyyy-MM-dd');
     const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
-        'session-engagement-daily',
+        'session-engagement-by-span',
         formattedStartDate,
         formattedEndDate,
+        span,
       ],
       queryFn: () =>
-        metricsService.getSessionEngagementDaily(
+        metricsService.getSessionEngagementBySpan(
           formattedStartDate,
-          formattedEndDate
+          formattedEndDate,
+          span
         ),
       staleTime: 0,
       refetchOnWindowFocus: false,
@@ -285,8 +291,8 @@ const useMetricsActions = () => {
     startDate: Date,
     endDate: Date
   ) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-completion-rates',
@@ -304,8 +310,8 @@ const useMetricsActions = () => {
   };
 
   const useMacroContentMostViewedQuery = (startDate: Date, endDate: Date) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-most-viewed',
@@ -323,8 +329,8 @@ const useMetricsActions = () => {
   };
 
   const useMacroContentMostSharedQuery = (startDate: Date, endDate: Date) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-most-shared',
@@ -345,8 +351,8 @@ const useMetricsActions = () => {
     startDate: Date,
     endDate: Date
   ) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-link-clickthrough',
@@ -367,8 +373,8 @@ const useMetricsActions = () => {
     startDate: Date,
     endDate: Date
   ) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-engagement-scores',
@@ -389,8 +395,8 @@ const useMetricsActions = () => {
     startDate: Date,
     endDate: Date
   ) => {
-    const formattedStartDate = format(startDate, 'MM-dd-yyyy');
-    const formattedEndDate = format(endDate, 'MM-dd-yyyy');
+    const formattedStartDate = format(startDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(endDate, 'yyyy-MM-dd');
     return useQuery({
       queryKey: [
         'macro-content-viewing-patterns',
@@ -414,7 +420,7 @@ const useMetricsActions = () => {
     useGrowthTrendQuery,
     useRetentionRatesQuery,
     useSessionEngagementQuery,
-    useSessionEngagementDailyQuery,
+    useSessionEngagementBySpanQuery,
     useSessionTimeQuery,
     useUserUtilizationQuery,
     useUserInterestsQuery,

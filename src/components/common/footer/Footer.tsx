@@ -12,6 +12,7 @@ import {
   Paper,
   Chip,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   RiFacebookCircleFill as FacebookIcon,
   RiTwitterFill as TwitterIcon,
@@ -468,41 +469,29 @@ export default function Footer() {
 
             <Stack
               direction="row"
-              spacing={4}
-              sx={{
-                order: { xs: 1, md: 2 },
-              }}
+              sx={{ order: { xs: 1, md: 2 } }}
             >
-              <Link
-                href="#"
-                underline="none"
-                sx={{
+              <RouterLink
+                to="/clinical-privacy"
+                style={{
                   fontSize: '0.85rem',
                   color: alpha(theme.palette.common.white, 0.7),
                   fontWeight: 500,
-                  '&:hover': {
-                    color: theme.palette.primary.light,
-                  },
+                  textDecoration: 'none',
                   transition: 'color 0.2s ease',
                 }}
+                onMouseEnter={(e) =>
+                  ((e.target as HTMLElement).style.color = theme.palette.primary.light)
+                }
+                onMouseLeave={(e) =>
+                  ((e.target as HTMLElement).style.color = alpha(
+                    theme.palette.common.white,
+                    0.7,
+                  ))
+                }
               >
-                Privacy Policy
-              </Link>
-              <Link
-                href="#"
-                underline="none"
-                sx={{
-                  fontSize: '0.85rem',
-                  color: alpha(theme.palette.common.white, 0.7),
-                  fontWeight: 500,
-                  '&:hover': {
-                    color: theme.palette.primary.light,
-                  },
-                  transition: 'color 0.2s ease',
-                }}
-              >
-                Terms of Service
-              </Link>
+                Clinical Use &amp; Patient Privacy
+              </RouterLink>
             </Stack>
           </Box>
         </Box>

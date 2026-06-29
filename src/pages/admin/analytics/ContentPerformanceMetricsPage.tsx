@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
+  Button,
   Grid,
   Typography,
   Card,
-  Button,
   useTheme,
   CircularProgress,
   Select,
@@ -12,7 +12,6 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -24,10 +23,11 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { DateRange, Range, RangeKeyDict } from 'react-date-range';
-import { addDays, format, subDays, subMonths } from 'date-fns';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import { Range, RangeKeyDict } from 'react-date-range';
+import { subMonths } from 'date-fns';
+import AnalyticsDateFilter, {
+  SpanType,
+} from '@/components/analytics/AnalyticsDateFilter';
 import { ChartCard } from '../../../components/charts';
 import { ChartData } from '../../../components/charts/ChartTypes';
 import useMetricsActions from '@/hooks/useMetricsActions';
@@ -43,8 +43,7 @@ import {
   RiPieChartLine as DropOffIcon,
 } from 'react-icons/ri';
 import ReactECharts from 'echarts-for-react';
-
-type SpanType = 'daily' | 'weekly' | 'monthly';
+import { format } from 'date-fns';
 
 const ContentPerformanceMetricsPage: React.FC = () => {
   const theme = useTheme();
@@ -93,7 +92,7 @@ const ContentPerformanceMetricsPage: React.FC = () => {
     selectedVideoId,
     startDate,
     endDate,
-    spanType
+    spanType,
   );
   const {
     data: videoShares,
@@ -110,23 +109,23 @@ const ContentPerformanceMetricsPage: React.FC = () => {
     selectedVideoId,
     startDate,
     endDate,
-    spanType
+    spanType,
   );
 
   // Effect to refetch data when parameters change
   useEffect(() => {
     if (selectedVideoId) {
       refetchVideoViews().catch((err) =>
-        console.error('Error refreshing video views:', err)
+        console.error('Error refreshing video views:', err),
       );
       refetchVideoPercentageWatched().catch((err) =>
-        console.error('Error refreshing video percentage watched:', err)
+        console.error('Error refreshing video percentage watched:', err),
       );
       refetchVideoShares().catch((err) =>
-        console.error('Error refreshing video shares:', err)
+        console.error('Error refreshing video shares:', err),
       );
       refetchVideoCompletionRates().catch((err) =>
-        console.error('Error refreshing video completion rates:', err)
+        console.error('Error refreshing video completion rates:', err),
       );
     }
   }, [
@@ -141,8 +140,8 @@ const ContentPerformanceMetricsPage: React.FC = () => {
     refetchVideoCompletionRates,
   ]);
 
-  const handleSpanTypeChange = (event: SelectChangeEvent) => {
-    setSpanType(event.target.value as SpanType);
+  const handleSpanTypeChange = (span: SpanType) => {
+    setSpanType(span);
     setParamChangeCounter((prev) => prev + 1);
   };
 
@@ -319,7 +318,7 @@ const ContentPerformanceMetricsPage: React.FC = () => {
       series: [
         {
           data: videoPercentageWatched.distribution.map(
-            (item) => item.averagePercentage
+            (item) => item.averagePercentage,
           ),
           type: 'line' as const,
           name: 'Percentage',
@@ -350,7 +349,7 @@ const ContentPerformanceMetricsPage: React.FC = () => {
               ${timeLabel}
             </div>
             <div style="margin: 3px 0;">Avg. Percentage: <strong>${item.averagePercentage.toFixed(
-              1
+              1,
             )}%</strong></div>
             <div style="margin: 3px 0;">Sessions: <strong>${
               item.sessionCount
@@ -531,7 +530,7 @@ const ContentPerformanceMetricsPage: React.FC = () => {
 
     // Filter out days with zero sessions for cleaner chart
     const filteredDistribution = videoCompletionRates.distribution.filter(
-      (item) => item.totalSessions > 0
+      (item) => item.totalSessions > 0,
     );
 
     return {
@@ -710,165 +709,22 @@ const ContentPerformanceMetricsPage: React.FC = () => {
     setParamChangeCounter((prev) => prev + 1);
   };
 
-  const formatDateDisplay = () => {
-    if (dateRange[0].startDate && dateRange[0].endDate) {
-      return `${format(dateRange[0].startDate, 'MMM dd, yyyy')} - ${format(
-        dateRange[0].endDate,
-        'MMM dd, yyyy'
-      )}`;
-    }
-    return 'Select date range';
-  };
-
   return (
     <Box>
-      {/* Header Section */}
-      <Card
-        elevation={0}
-        sx={{
-          p: 4,
-          mb: 4,
-          background: `linear-gradient(135deg, ${primaryColor} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: 'white',
-          borderRadius: 3,
+      <AnalyticsDateFilter
+        title="Content Performance Metrics"
+        description="Analyze the performance of individual videos. Select a video and date range to view detailed metrics."
+        dateRange={dateRange}
+        showDatePicker={showDatePicker}
+        spanType={spanType}
+        onDateChange={handleDateChange}
+        onApplyDate={() => {
+          setShowDatePicker(false);
+          setParamChangeCounter((p) => p + 1);
         }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: { xs: 'flex-start', md: 'center' },
-            gap: 3,
-            mb: 2,
-          }}
-        >
-          <Box>
-            <Typography variant="h4" fontWeight="600" gutterBottom>
-              Content Performance Metrics
-            </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              Analyze the performance of individual videos. Select a video and
-              date range to view detailed metrics.
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 2,
-              flexDirection: { xs: 'column', sm: 'row' },
-              width: { xs: '100%', sm: 'auto' },
-              '& > *': {
-                flex: 1,
-                minWidth: { sm: '180px' },
-              },
-            }}
-          >
-            <FormControl
-              sx={{
-                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: 1,
-                '& .MuiOutlinedInput-root': {
-                  height: '45px',
-                  color: 'white',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  transform: 'translate(14px, 12px) scale(1)',
-                  '&.Mui-focused, &.MuiFormLabel-filled': {
-                    transform: 'translate(14px, -9px) scale(0.75)',
-                  },
-                },
-                '& .MuiSvgIcon-root': {
-                  color: 'white',
-                },
-              }}
-            >
-              <InputLabel id="span-type-select-label">Time Span</InputLabel>
-              <Select
-                labelId="span-type-select-label"
-                id="span-type-select"
-                value={spanType}
-                label="Time Span"
-                onChange={handleSpanTypeChange}
-              >
-                <MenuItem value="daily">Daily</MenuItem>
-                <MenuItem value="weekly">Weekly</MenuItem>
-                <MenuItem value="monthly">Monthly</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              variant="outlined"
-              onClick={() => setShowDatePicker(!showDatePicker)}
-              sx={{
-                height: '45px',
-                color: 'white',
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-                '&:hover': {
-                  borderColor: 'rgba(255, 255, 255, 0.5)',
-                  bgcolor: 'rgba(255, 255, 255, 0.1)',
-                },
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-              startIcon={<DateIcon size={20} />}
-            >
-              {formatDateDisplay()}
-            </Button>
-            {showDatePicker && (
-              <Card
-                elevation={6}
-                sx={{
-                  position: 'absolute',
-                  right: 0,
-                  zIndex: 10,
-                  mt: 1,
-                  overflow: 'hidden',
-                }}
-              >
-                <DateRange
-                  editableDateInputs={true}
-                  onChange={handleDateChange}
-                  moveRangeOnFirstSelection={false}
-                  ranges={dateRange}
-                  maxDate={new Date()}
-                />
-                <Divider />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    p: 2,
-                    bgcolor: 'background.paper',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setShowDatePicker(false);
-                      setParamChangeCounter((prev) => prev + 1);
-                    }}
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      py: 1,
-                      maxWidth: '90%',
-                    }}
-                  >
-                    Apply Date Range
-                  </Button>
-                </Box>
-              </Card>
-            )}
-          </Box>
-        </Box>
-      </Card>
+        onToggleDatePicker={() => setShowDatePicker((v) => !v)}
+        onSpanChange={handleSpanTypeChange}
+      />
 
       {/* Video Selection Section */}
       <Card

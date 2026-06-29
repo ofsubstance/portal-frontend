@@ -346,7 +346,7 @@ export default function VideoDetailsHero({
             title="Primary Lesson"
             details={data.primary_lesson}
           />
-          <VideoDescriptionItem title="Theme" details={data.theme} />
+          <VideoDescriptionItem title="Themes" details={data.theme} />
           <VideoDescriptionItem title="Impact" details={data.impact} />
         </Box>
       </Box>

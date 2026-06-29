@@ -18,6 +18,7 @@ import {
   Alert,
 } from '@mui/material';
 import { subDays, format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { ChartCard } from '../../components/charts';
 import useMetricsActions from '@/hooks/useMetricsActions';
 import useVideoManagementActions from '@/hooks/useVideoManagementAction';
@@ -28,13 +29,14 @@ import {
   RiVideoLine,
   RiTimeLine,
   RiLoginBoxLine,
-  RiFileChartLine,
   RiArrowRightSLine,
   RiDownloadLine,
+  RiLayoutGridLine,
 } from 'react-icons/ri';
 
 function DashboardPage() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const primaryColor = theme.palette.primary.main;
   const { exportAllData, isExporting, error: exportError } = useDataExport();
 
@@ -158,22 +160,30 @@ function DashboardPage() {
             your platform.
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<RiDownloadLine />}
-          onClick={exportAllData}
-          disabled={isExporting}
-          sx={{
-            height: '45px',
-            minWidth: '160px',
-            bgcolor: theme.palette.success.main,
-            '&:hover': {
-              bgcolor: theme.palette.success.dark,
-            },
-          }}
-        >
-          {isExporting ? 'Exporting...' : 'Export Data'}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
+          <Button
+            variant="outlined"
+            startIcon={<RiLayoutGridLine />}
+            onClick={() => navigate('/')}
+            sx={{ height: '45px', minWidth: '160px' }}
+          >
+            User Dashboard
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<RiDownloadLine />}
+            onClick={exportAllData}
+            disabled={isExporting}
+            sx={{
+              height: '45px',
+              minWidth: '160px',
+              bgcolor: theme.palette.success.main,
+              '&:hover': { bgcolor: theme.palette.success.dark },
+            }}
+          >
+            {isExporting ? 'Exporting...' : 'Export Data'}
+          </Button>
+        </Box>
       </Box>
 
       {exportError && (
@@ -509,9 +519,7 @@ function DashboardPage() {
                 size="small"
                 endIcon={<RiArrowRightSLine />}
                 sx={{ textTransform: 'none' }}
-                onClick={() =>
-                  (window.location.href = '/admin/analytics/performance')
-                }
+                onClick={() => navigate('/admin/analytics/performance')}
               >
                 View Details
               </Button>
@@ -554,9 +562,7 @@ function DashboardPage() {
                 size="small"
                 endIcon={<RiArrowRightSLine />}
                 sx={{ textTransform: 'none' }}
-                onClick={() =>
-                  (window.location.href = '/admin/video-management')
-                }
+                onClick={() => navigate('/admin/video-management')}
               >
                 View All
               </Button>

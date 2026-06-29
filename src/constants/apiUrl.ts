@@ -8,7 +8,6 @@ const APIUrl = {
     resendVerification: () => '/auth/resendVerification',
     verifyEmail: (token: string) => '/auth/verify-email?token=' + token,
     googleSignin: () => '/auth/google-login',
-    googleApiSignin: () => 'https://www.googleapis.com/oauth2/v3/userinfo',
     signout: () => '/auth/logout',
     refreshToken: () => '/auth/refresh',
     forgotPassword: () => '/auth/forgot-password',
@@ -26,6 +25,7 @@ const APIUrl = {
     getVideoById: (videoId: string) => '/videos/' + videoId,
     uploadVideo: () => '/videos',
     updateVideo: (videoId: string) => '/videos/' + videoId,
+    updateVideoThumbnail: (videoId: string) => '/videos/' + videoId + '/thumbnail',
     deleteVideo: (videoId: string) => '/videos/' + videoId,
   },
 
@@ -67,8 +67,8 @@ const APIUrl = {
       `/metrics/performance/retention?startDate=${startDate}&endDate=${endDate}`,
     getSessionEngagement: (startDate: string, endDate: string) =>
       `/metrics/engagement/sessions?startDate=${startDate}&endDate=${endDate}`,
-    getSessionEngagementDaily: (startDate: string, endDate: string) =>
-      `/metrics/engagement/sessions/by-timespan?startDate=${startDate}&endDate=${endDate}&span=daily`,
+    getSessionEngagementBySpan: (startDate: string, endDate: string, span: string) =>
+      `/metrics/engagement/sessions/by-timespan?startDate=${startDate}&endDate=${endDate}&span=${span}`,
     getSessionTime: (startDate: string, endDate: string, span: string) =>
       `/metrics/engagement/session-time?startDate=${startDate}&endDate=${endDate}&span=${span}`,
     getUserUtilization: () => `/metrics/engagement/distribution/utilization`,

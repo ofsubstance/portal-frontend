@@ -4,20 +4,12 @@ import {
   Grid,
   Typography,
   Card,
-  Button,
   useTheme,
   CircularProgress,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
-  Divider,
 } from '@mui/material';
-import { DateRange, Range, RangeKeyDict } from 'react-date-range';
-import { addDays, format, subDays, subMonths } from 'date-fns';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import { Range, RangeKeyDict } from 'react-date-range';
+import { format, subMonths } from 'date-fns';
+import AnalyticsDateFilter, { SpanType } from '@/components/analytics/AnalyticsDateFilter';
 import { ChartCard } from '../../../components/charts';
 import { ChartData } from '../../../components/charts/ChartTypes';
 import useMetricsActions from '@/hooks/useMetricsActions';
@@ -35,7 +27,6 @@ import {
 import ReactECharts from 'echarts-for-react';
 import { useQuery } from '@tanstack/react-query';
 
-type SpanType = 'daily' | 'weekly' | 'monthly';
 
 interface SessionMetric {
   date: string;
@@ -85,7 +76,7 @@ const EngagementMetricsPage: React.FC = () => {
 
   const {
     useSessionEngagementQuery,
-    useSessionEngagementDailyQuery,
+    useSessionEngagementBySpanQuery,
     useSessionTimeQuery,
     useUserUtilizationQuery,
     useUserInterestsQuery,
@@ -100,11 +91,11 @@ const EngagementMetricsPage: React.FC = () => {
     error: sessionEngagementError,
   } = useSessionEngagementQuery(startDate, endDate);
   const {
-    data: sessionEngagementDaily,
-    isLoading: isLoadingSessionEngagementDaily,
-    refetch: refetchSessionEngagementDaily,
-    error: sessionEngagementDailyError,
-  } = useSessionEngagementDailyQuery(startDate, endDate);
+    data: sessionEngagementBySpan,
+    isLoading: isLoadingSessionEngagementBySpan,
+    refetch: refetchSessionEngagementBySpan,
+    error: sessionEngagementBySpanError,
+  } = useSessionEngagementBySpanQuery(startDate, endDate, spanType);
   const {
     data: sessionTime,
     isLoading: isLoadingSessionTime,
@@ -135,8 +126,8 @@ const EngagementMetricsPage: React.FC = () => {
     refetchSessionEngagement().catch((err) =>
       console.error('Error refreshing session engagement:', err)
     );
-    refetchSessionEngagementDaily().catch((err) =>
-      console.error('Error refreshing daily session engagement:', err)
+    refetchSessionEngagementBySpan().catch((err) =>
+      console.error('Error refreshing session engagement by span:', err)
     );
     refetchSessionTime().catch((err) =>
       console.error('Error refreshing session time:', err)
@@ -156,15 +147,15 @@ const EngagementMetricsPage: React.FC = () => {
     spanType,
     paramChangeCounter,
     refetchSessionEngagement,
-    refetchSessionEngagementDaily,
+    refetchSessionEngagementBySpan,
     refetchSessionTime,
     refetchUserUtilization,
     refetchUserInterests,
     refetchInterestSankey,
   ]);
 
-  const handleSpanTypeChange = (event: SelectChangeEvent) => {
-    setSpanType(event.target.value as SpanType);
+  const handleSpanTypeChange = (span: SpanType) => {
+    setSpanType(span);
     setParamChangeCounter((prev) => prev + 1);
   };
 
@@ -178,7 +169,7 @@ const EngagementMetricsPage: React.FC = () => {
 
   // Session Engagement Chart
   const sessionEngagementRateChartData = useMemo(() => {
-    if (!sessionEngagementDaily) {
+    if (!sessionEngagementBySpan) {
       return {
         type: 'line' as const,
         title: 'Session Engagement Rate',
@@ -202,7 +193,7 @@ const EngagementMetricsPage: React.FC = () => {
       xAxis: {
         type: 'category' as const,
         data:
-          sessionEngagementDaily?.data?.body?.data?.map(formatDateLabel) || [],
+          sessionEngagementBySpan?.data?.body?.data?.map(formatDateLabel) || [],
         name: 'Date',
         axisLabel: {
           rotate: 30,
@@ -219,7 +210,7 @@ const EngagementMetricsPage: React.FC = () => {
       },
       series: [
         {
-          data: sessionEngagementDaily.data.body.data.map(
+          data: sessionEngagementBySpan.data.body.data.map(
             (item: SessionMetric) => item.engagementRate
           ),
           type: 'line' as const,
@@ -243,7 +234,7 @@ const EngagementMetricsPage: React.FC = () => {
         trigger: 'axis' as const,
         formatter: function (params: any) {
           const index = params[0].dataIndex;
-          const item = sessionEngagementDaily.data.body.data[
+          const item = sessionEngagementBySpan.data.body.data[
             index
           ] as SessionMetric;
           const timeLabel = formatDateLabel(item);
@@ -271,11 +262,11 @@ const EngagementMetricsPage: React.FC = () => {
         containLabel: true,
       },
     };
-  }, [sessionEngagementDaily, primaryColor, spanType]);
+  }, [sessionEngagementBySpan, primaryColor, spanType]);
 
   // Session Duration Chart
   const sessionDurationChartData = useMemo(() => {
-    if (!sessionEngagementDaily) {
+    if (!sessionEngagementBySpan) {
       return {
         type: 'bar' as const,
         title: 'Session Count',
@@ -298,7 +289,7 @@ const EngagementMetricsPage: React.FC = () => {
       })`,
       xAxis: {
         type: 'category' as const,
-        data: sessionEngagementDaily.data.body.data.map(formatDateLabel),
+        data: sessionEngagementBySpan.data.body.data.map(formatDateLabel),
         name: 'Date',
         axisLabel: {
           rotate: 30,
@@ -315,7 +306,7 @@ const EngagementMetricsPage: React.FC = () => {
       },
       series: [
         {
-          data: sessionEngagementDaily.data.body.data.map(
+          data: sessionEngagementBySpan.data.body.data.map(
             (item: SessionMetric) => item.sessions
           ),
           type: 'bar' as const,
@@ -326,7 +317,7 @@ const EngagementMetricsPage: React.FC = () => {
           },
         },
         {
-          data: sessionEngagementDaily.data.body.data.map(
+          data: sessionEngagementBySpan.data.body.data.map(
             (item: SessionMetric) => item.engagedSessions
           ),
           type: 'bar' as const,
@@ -342,7 +333,7 @@ const EngagementMetricsPage: React.FC = () => {
         trigger: 'axis' as const,
         formatter: function (params: any) {
           const index = params[0].dataIndex;
-          const item = sessionEngagementDaily.data.body.data[
+          const item = sessionEngagementBySpan.data.body.data[
             index
           ] as SessionMetric;
           const timeLabel = formatDateLabel(item);
@@ -372,7 +363,7 @@ const EngagementMetricsPage: React.FC = () => {
       },
     };
   }, [
-    sessionEngagementDaily,
+    sessionEngagementBySpan,
     primaryColor,
     theme.palette.secondary.main,
     spanType,
@@ -598,20 +589,6 @@ const EngagementMetricsPage: React.FC = () => {
     };
   }, [userInterests, theme.palette.primary.main]);
 
-  // Sankey Chart
-  const interestSankeyChartData = useMemo(() => {
-    if (!interestSankey) {
-      return {
-        title: 'Interest Connections',
-        series: [],
-      };
-    }
-
-    return {
-      title: 'Interest Connections',
-      series: [],
-    };
-  }, [interestSankey]);
 
   // Summary metrics
   const engagementMetrics = useMemo(() => {
@@ -666,165 +643,19 @@ const EngagementMetricsPage: React.FC = () => {
     setParamChangeCounter((prev) => prev + 1);
   };
 
-  const formatDateDisplay = () => {
-    if (dateRange[0].startDate && dateRange[0].endDate) {
-      return `${format(dateRange[0].startDate, 'MMM dd, yyyy')} - ${format(
-        dateRange[0].endDate,
-        'MMM dd, yyyy'
-      )}`;
-    }
-    return 'Select date range';
-  };
-
   return (
     <Box>
-      {/* Header Section */}
-      <Card
-        elevation={0}
-        sx={{
-          p: 4,
-          mb: 4,
-          background: `linear-gradient(135deg, ${primaryColor} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: 'white',
-          borderRadius: 3,
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: { xs: 'flex-start', md: 'center' },
-            gap: 3,
-            mb: 2,
-          }}
-        >
-          <Box>
-            <Typography variant="h4" fontWeight="600" gutterBottom>
-              User Engagement Metrics
-            </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              View user engagement metrics for your application. Select a date
-              range to filter the data.
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 2,
-              flexDirection: { xs: 'column', sm: 'row' },
-              width: { xs: '100%', sm: 'auto' },
-              '& > *': {
-                flex: 1,
-                minWidth: { sm: '180px' },
-              },
-            }}
-          >
-            <FormControl
-              sx={{
-                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: 1,
-                '& .MuiOutlinedInput-root': {
-                  height: '45px',
-                  color: 'white',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  transform: 'translate(14px, 12px) scale(1)',
-                  '&.Mui-focused, &.MuiFormLabel-filled': {
-                    transform: 'translate(14px, -9px) scale(0.75)',
-                  },
-                },
-                '& .MuiSvgIcon-root': {
-                  color: 'white',
-                },
-              }}
-            >
-              <InputLabel id="span-type-select-label">Time Span</InputLabel>
-              <Select
-                labelId="span-type-select-label"
-                id="span-type-select"
-                value={spanType}
-                label="Time Span"
-                onChange={handleSpanTypeChange}
-              >
-                <MenuItem value="daily">Daily</MenuItem>
-                <MenuItem value="weekly">Weekly</MenuItem>
-                <MenuItem value="monthly">Monthly</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              variant="outlined"
-              onClick={() => setShowDatePicker(!showDatePicker)}
-              sx={{
-                height: '45px',
-                color: 'white',
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-                '&:hover': {
-                  borderColor: 'rgba(255, 255, 255, 0.5)',
-                  bgcolor: 'rgba(255, 255, 255, 0.1)',
-                },
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-              startIcon={<DateIcon size={20} />}
-            >
-              {formatDateDisplay()}
-            </Button>
-            {showDatePicker && (
-              <Card
-                elevation={6}
-                sx={{
-                  position: 'absolute',
-                  right: 0,
-                  zIndex: 10,
-                  mt: 1,
-                  overflow: 'hidden',
-                }}
-              >
-                <DateRange
-                  editableDateInputs={true}
-                  onChange={handleDateChange}
-                  moveRangeOnFirstSelection={false}
-                  ranges={dateRange}
-                  maxDate={new Date()}
-                />
-                <Divider />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    p: 2,
-                    bgcolor: 'background.paper',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setShowDatePicker(false);
-                      setParamChangeCounter((prev) => prev + 1);
-                    }}
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      py: 1,
-                      maxWidth: '90%',
-                    }}
-                  >
-                    Apply Date Range
-                  </Button>
-                </Box>
-              </Card>
-            )}
-          </Box>
-        </Box>
-      </Card>
+      <AnalyticsDateFilter
+        title="User Engagement Metrics"
+        description="View user engagement metrics for your application. Select a date range to filter the data."
+        dateRange={dateRange}
+        showDatePicker={showDatePicker}
+        spanType={spanType}
+        onDateChange={handleDateChange}
+        onApplyDate={() => { setShowDatePicker(false); setParamChangeCounter((p) => p + 1); }}
+        onToggleDatePicker={() => setShowDatePicker((v) => !v)}
+        onSpanChange={handleSpanTypeChange}
+      />
 
       {/* Summary Metrics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -937,11 +768,11 @@ const EngagementMetricsPage: React.FC = () => {
             >
               Session Engagement Rate
             </Typography>
-            {isLoadingSessionEngagementDaily ? (
+            {isLoadingSessionEngagementBySpan ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
                 <CircularProgress />
               </Box>
-            ) : sessionEngagementDailyError ? (
+            ) : sessionEngagementBySpanError ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -983,11 +814,11 @@ const EngagementMetricsPage: React.FC = () => {
             >
               Session Count
             </Typography>
-            {isLoadingSessionEngagementDaily ? (
+            {isLoadingSessionEngagementBySpan ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
                 <CircularProgress />
               </Box>
-            ) : sessionEngagementDailyError ? (
+            ) : sessionEngagementBySpanError ? (
               <Box
                 sx={{
                   display: 'flex',

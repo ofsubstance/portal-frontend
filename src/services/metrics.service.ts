@@ -83,11 +83,14 @@ class MetricsService {
     return res.data.data;
   }
 
-  async getSessionEngagementDaily(startDate: string, endDate: string) {
-    const res = await httpClient.get<{
-      status: string;
-      data: any;
-    }>(APIUrl.metrics.getSessionEngagementDaily(startDate, endDate));
+  async getSessionEngagementBySpan(
+    startDate: string,
+    endDate: string,
+    span: 'daily' | 'weekly' | 'monthly' = 'daily'
+  ) {
+    const res = await httpClient.get<{ status: string; data: any }>(
+      APIUrl.metrics.getSessionEngagementBySpan(startDate, endDate, span)
+    );
     return { data: res.data.data };
   }
 

@@ -7,7 +7,6 @@ import {
 } from '@/dtos/auth.dto';
 
 import { IResponse } from '@/dtos/response.dto';
-import axios from 'axios';
 import APIUrl from '../constants/apiUrl';
 import httpClient from '../utils/httpClient';
 import storageService from './storage.service';
@@ -88,18 +87,10 @@ class AuthService {
   }
 
   async googleSignin(google_access_token: string) {
-    const googleRes = await axios.get(APIUrl.auth.googleApiSignin(), {
-      headers: {
-        Authorization: `Bearer ${google_access_token}`,
-      },
-    });
-
+    // Send the raw access token to the backend — the backend verifies it with Google
     const res = await httpClient.post<IResponse<SigninRes>>(
       APIUrl.auth.googleSignin(),
-      {
-        email: googleRes.data.email,
-        name: googleRes.data.name,
-      }
+      { accessToken: google_access_token }
     );
 
     storageService.setAuthData(res.data.body, true);
@@ -130,14 +121,10 @@ class AuthService {
   }
 
   async refreshAccessToken() {
-    const refreshToken = storageService.getLocalRefreshToken();
-
-    if (!refreshToken) return await this.signout();
-
+    // The refresh token is in an HttpOnly cookie — no body needed.
+    // withCredentials:true on the httpClient sends it automatically.
     try {
-      await httpClient.post(APIUrl.auth.refreshToken(), {
-        refreshToken,
-      });
+      await httpClient.post(APIUrl.auth.refreshToken());
     } catch (error: any) {
       storageService.removeAuthData();
       document.dispatchEvent(new Event('logout'));

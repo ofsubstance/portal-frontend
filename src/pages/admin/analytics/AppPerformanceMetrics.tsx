@@ -3,30 +3,21 @@ import {
   Box,
   Grid,
   Typography,
-  Button,
   useTheme,
   CircularProgress,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  SelectChangeEvent,
   Card,
-  Divider,
 } from '@mui/material';
-import { DateRange, Range, RangeKeyDict } from 'react-date-range';
-import { format, subDays, subMonths } from 'date-fns';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import { Range, RangeKeyDict } from 'react-date-range';
+import { format, subMonths } from 'date-fns';
 import { ChartCard } from '../../../components/charts';
 import { ChartData } from '../../../components/charts/ChartTypes';
 import useMetricsActions from '@/hooks/useMetricsActions';
+import AnalyticsDateFilter, { SpanType } from '@/components/analytics/AnalyticsDateFilter';
 import {
   RiUserLine as DauIcon,
   RiGroupLine as MauIcon,
   RiLineChartLine as GrowthIcon,
   RiUserHeartLine as RetentionIcon,
-  RiCalendarEventLine as DateIcon,
 } from 'react-icons/ri';
 
 // Add these interface types for different response formats
@@ -51,8 +42,6 @@ interface MonthlyDataPoint {
 
 // Union type for all possible data points
 type DataPoint = DailyDataPoint | WeeklyDataPoint | MonthlyDataPoint;
-
-type SpanType = 'daily' | 'weekly' | 'monthly';
 
 const AppPerformanceMetrics: React.FC = () => {
   const theme = useTheme();
@@ -139,8 +128,8 @@ const AppPerformanceMetrics: React.FC = () => {
     refetchRetention,
   ]);
 
-  const handleSpanTypeChange = (event: SelectChangeEvent) => {
-    setSpanType(event.target.value as SpanType);
+  const handleSpanTypeChange = (span: SpanType) => {
+    setSpanType(span);
     setParamChangeCounter((prev) => prev + 1);
   };
 
@@ -389,11 +378,6 @@ const AppPerformanceMetrics: React.FC = () => {
       ? growthTrend.data[growthTrend.data.length - 1]
       : null;
 
-    // Get the first cohort for retention data
-    const firstCohort = retentionData?.data?.length
-      ? retentionData.data[0]
-      : null;
-
     return [
       {
         title: 'DAU',
@@ -419,9 +403,10 @@ const AppPerformanceMetrics: React.FC = () => {
         icon: GrowthIcon,
       },
       {
-        title: 'Retention',
-        value: firstCohort ? `${firstCohort.month1}%` : '-',
-
+        title: 'Avg Retention',
+        value: retentionData?.globalStats
+          ? `${retentionData.globalStats.overallAverageRetention}%`
+          : '-',
         icon: RetentionIcon,
       },
     ];
@@ -432,165 +417,19 @@ const AppPerformanceMetrics: React.FC = () => {
     setParamChangeCounter((prev) => prev + 1);
   };
 
-  const formatDateDisplay = () => {
-    if (dateRange[0].startDate && dateRange[0].endDate) {
-      return `${format(dateRange[0].startDate, 'MMM dd, yyyy')} - ${format(
-        dateRange[0].endDate,
-        'MMM dd, yyyy'
-      )}`;
-    }
-    return 'Select date range';
-  };
-
   return (
     <Box>
-      {/* Header Section */}
-      <Card
-        elevation={0}
-        sx={{
-          p: 4,
-          mb: 4,
-          background: `linear-gradient(135deg, ${primaryColor} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: 'white',
-          borderRadius: 3,
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: { xs: 'flex-start', md: 'center' },
-            gap: 3,
-            mb: 2,
-          }}
-        >
-          <Box>
-            <Typography variant="h4" fontWeight="600" gutterBottom>
-              App Performance Metrics
-            </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9 }}>
-              View key performance metrics for your application. Select a date
-              range to filter the data.
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 2,
-              flexDirection: { xs: 'column', sm: 'row' },
-              width: { xs: '100%', sm: 'auto' },
-              '& > *': {
-                flex: 1,
-                minWidth: { sm: '180px' },
-              },
-            }}
-          >
-            <FormControl
-              sx={{
-                bgcolor: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: 1,
-                '& .MuiOutlinedInput-root': {
-                  height: '45px',
-                  color: 'white',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  transform: 'translate(14px, 12px) scale(1)',
-                  '&.Mui-focused, &.MuiFormLabel-filled': {
-                    transform: 'translate(14px, -9px) scale(0.75)',
-                  },
-                },
-                '& .MuiSvgIcon-root': {
-                  color: 'white',
-                },
-              }}
-            >
-              <InputLabel id="span-type-select-label">Time Span</InputLabel>
-              <Select
-                labelId="span-type-select-label"
-                id="span-type-select"
-                value={spanType}
-                label="Time Span"
-                onChange={handleSpanTypeChange}
-              >
-                <MenuItem value="daily">Daily</MenuItem>
-                <MenuItem value="weekly">Weekly</MenuItem>
-                <MenuItem value="monthly">Monthly</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              variant="outlined"
-              onClick={() => setShowDatePicker(!showDatePicker)}
-              sx={{
-                height: '45px',
-                color: 'white',
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-                '&:hover': {
-                  borderColor: 'rgba(255, 255, 255, 0.5)',
-                  bgcolor: 'rgba(255, 255, 255, 0.1)',
-                },
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-              startIcon={<DateIcon size={20} />}
-            >
-              {formatDateDisplay()}
-            </Button>
-            {showDatePicker && (
-              <Card
-                elevation={6}
-                sx={{
-                  position: 'absolute',
-                  right: 0,
-                  zIndex: 10,
-                  mt: 1,
-                  overflow: 'hidden',
-                }}
-              >
-                <DateRange
-                  editableDateInputs={true}
-                  onChange={handleDateChange}
-                  moveRangeOnFirstSelection={false}
-                  ranges={dateRange}
-                  maxDate={new Date()}
-                />
-                <Divider />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    p: 2,
-                    bgcolor: 'background.paper',
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setShowDatePicker(false);
-                      setParamChangeCounter((prev) => prev + 1);
-                    }}
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      py: 1,
-                      maxWidth: '90%',
-                    }}
-                  >
-                    Apply Date Range
-                  </Button>
-                </Box>
-              </Card>
-            )}
-          </Box>
-        </Box>
-      </Card>
+      <AnalyticsDateFilter
+        title="App Performance Metrics"
+        description="View key performance metrics for your application. Select a date range to filter the data."
+        dateRange={dateRange}
+        showDatePicker={showDatePicker}
+        spanType={spanType}
+        onDateChange={handleDateChange}
+        onApplyDate={() => { setShowDatePicker(false); setParamChangeCounter((p) => p + 1); }}
+        onToggleDatePicker={() => setShowDatePicker((v) => !v)}
+        onSpanChange={handleSpanTypeChange}
+      />
 
       {/* Summary Metrics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>

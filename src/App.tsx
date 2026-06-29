@@ -3,6 +3,7 @@ import ContextProvider from '@/contexts/ContextProvider';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ToastContainer } from 'react-toastify';
 import LoadingOverlay from './components/common/loader/LoadingOverlay';
+import CookieBanner from './components/common/CookieBanner';
 import { useEffect } from 'react';
 import { isSharedLink } from './utils/shareLink';
 
@@ -29,6 +30,8 @@ function App() {
       <Outlet />
 
       <LoadingOverlay />
+
+      <CookieBanner />
 
       <ToastContainer
         position={'bottom-center'}

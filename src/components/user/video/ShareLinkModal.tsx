@@ -93,7 +93,7 @@ export default function ShareLinkModal({
   };
 
   const selectedOption = validityOptions.find(
-    (option) => option.value === validityDays
+    (option) => option.value === validityDays,
   );
 
   return (
@@ -124,8 +124,8 @@ export default function ShareLinkModal({
                 </Typography>
               </Box>
               <Typography variant="body1" color="text.secondary">
-                Generate a secure, time-limited link to share this video with
-                others
+                Generate a simple, time-limited link to share this film with
+                clients or others — no account or personal information required.
               </Typography>
             </Box>
 
@@ -200,13 +200,32 @@ export default function ShareLinkModal({
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary">
-                    The link will expire in{' '}
-                    <strong>{selectedOption.label}</strong> and cannot be
-                    accessed after that. Only people with the exact link can
-                    view the video.
+                    The link expires in <strong>{selectedOption.label}</strong>{' '}
+                    and cannot be accessed after that. Anyone with the link can
+                    view the film. No login or personal information is required.
                   </Typography>
                 </Paper>
               )}
+
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  backgroundColor: 'grey.50',
+                  border: '1px solid',
+                  borderColor: 'grey.200',
+                  borderRadius: 2,
+                }}
+              >
+                <Typography variant="body2" fontWeight={600} gutterBottom>
+                  Clinician Best Practice:
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Use a single link per film for all clients. Sharing the same
+                  link helps keep viewing activity non-identifiable.
+                </Typography>
+              </Paper>
 
               {createShareLinkMutation.isError && (
                 <Alert severity="error" sx={{ mb: 3 }}>
@@ -401,14 +420,36 @@ export default function ShareLinkModal({
                 </Grid>
               </Grid>
 
-              <Alert severity="info" sx={{ mb: 3 }}>
+              <Alert severity="info" sx={{ mb: 2 }}>
                 <Typography variant="body2">
-                  <strong>Security Notice:</strong> This link will expire on{' '}
-                  {dayjs(shareLink.expiration_time).format('MMM D, YYYY')} and
-                  cannot be accessed after that date. Only share with trusted
-                  individuals.
+                  This link expires on{' '}
+                  <strong>
+                    {dayjs(shareLink.expiration_time).format('MMM D, YYYY')}
+                  </strong>{' '}
+                  and cannot be accessed after that. Anyone with the link can
+                  view the film — no login required.
                 </Typography>
               </Alert>
+
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2,
+                  mb: 3,
+                  backgroundColor: 'grey.50',
+                  border: '1px solid',
+                  borderColor: 'grey.200',
+                  borderRadius: 2,
+                }}
+              >
+                <Typography variant="body2" fontWeight={600} gutterBottom>
+                  Clinician Best Practice:
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Use a single link per film for all clients. Sharing the same
+                  link helps keep viewing activity non-identifiable.
+                </Typography>
+              </Paper>
 
               <Button
                 variant="outlined"
