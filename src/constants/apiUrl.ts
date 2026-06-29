@@ -1,7 +1,7 @@
 import { PlaylistTag } from './enums';
 
 const APIUrl = {
-  base: import.meta.env.VITE_API || 'http://localhost:5000',
+  base: import.meta.env.VITE_API || 'https://portal.ofsubstance.org',
   auth: {
     signin: () => '/auth/login',
     signup: () => '/auth/signup',
@@ -25,7 +25,8 @@ const APIUrl = {
     getVideoById: (videoId: string) => '/videos/' + videoId,
     uploadVideo: () => '/videos',
     updateVideo: (videoId: string) => '/videos/' + videoId,
-    updateVideoThumbnail: (videoId: string) => '/videos/' + videoId + '/thumbnail',
+    updateVideoThumbnail: (videoId: string) =>
+      '/videos/' + videoId + '/thumbnail',
     deleteVideo: (videoId: string) => '/videos/' + videoId,
   },
 
@@ -67,7 +68,11 @@ const APIUrl = {
       `/metrics/performance/retention?startDate=${startDate}&endDate=${endDate}`,
     getSessionEngagement: (startDate: string, endDate: string) =>
       `/metrics/engagement/sessions?startDate=${startDate}&endDate=${endDate}`,
-    getSessionEngagementBySpan: (startDate: string, endDate: string, span: string) =>
+    getSessionEngagementBySpan: (
+      startDate: string,
+      endDate: string,
+      span: string,
+    ) =>
       `/metrics/engagement/sessions/by-timespan?startDate=${startDate}&endDate=${endDate}&span=${span}`,
     getSessionTime: (startDate: string, endDate: string, span: string) =>
       `/metrics/engagement/session-time?startDate=${startDate}&endDate=${endDate}&span=${span}`,
@@ -81,28 +86,28 @@ const APIUrl = {
       videoId: string,
       startDate: string,
       endDate: string,
-      period: string
+      period: string,
     ) =>
       `/metrics/content/${videoId}/views?startDate=${startDate}&endDate=${endDate}&period=${period}`,
     getVideoPercentageWatched: (
       videoId: string,
       startDate: string,
       endDate: string,
-      period: string
+      period: string,
     ) =>
       `/metrics/content/${videoId}/average-percentage-watched?startDate=${startDate}&endDate=${endDate}&period=${period}`,
     getVideoShares: (
       videoId: string,
       startDate: string,
       endDate: string,
-      period: string
+      period: string,
     ) =>
       `/metrics/content/${videoId}/share-count?startDate=${startDate}&endDate=${endDate}&period=${period}`,
     getVideoCompletionRates: (
       videoId: string,
       startDate: string,
       endDate: string,
-      period: string
+      period: string,
     ) =>
       `/metrics/content/${videoId}/completion-and-drop-off-rates?startDate=${startDate}&endDate=${endDate}&period=${period}`,
     // Macro Content Metrics
