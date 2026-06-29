@@ -35,6 +35,12 @@ export interface RetentionDto {
   endDate: string;
   totalMonths: number;
   cohorts: number;
+  globalStats: {
+    totalCohorts: number;
+    totalUsers: number;
+    averageRetentionByMonth: Record<string, number>;
+    overallAverageRetention: number;
+  };
   data: {
     cohort: string;
     totalUsers: number;
